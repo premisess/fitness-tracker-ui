@@ -1,0 +1,232 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import API from '../services/api';
+import { useAppTheme } from '../context/ThemeContext';
+import {
+    Box, Typography, Button, AppBar, Toolbar,
+    IconButton, TextField, Card, CardContent, Divider,
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+} from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+function AccountSettings() {
+    const { theme } = useAppTheme();
+    const [nameForm, setNameForm] = useState(localStorage.getItem('name') || '');
+    const [nameError, setNameError] = useState('');
+    const [nameSuccess, setNameSuccess] = useState('');
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [deleteError, setDeleteError] = useState('');
+    const [emailForm, setEmailForm] = useState({ newEmail: '', currentPassword: '' });
+    const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    const [emailError, setEmailError] = useState('');
+    const [emailSuccess, setEmailSuccess] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordSuccess, setPasswordSuccess] = useState('');
+    const navigate = useNavigate();
+
+    const inputStyle = {
+        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
+        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
+        '& .MuiInputBase-input': { color: theme.mix(1) },
+        mb: 2,
+    };
+
+    const handleNameSubmit = async (e) => {
+        e.preventDefault();
+        setNameError(''); setNameSuccess('');
+        try {
+            await API.put('/account/name', { name: nameForm });
+            localStorage.setItem('name', nameForm.trim());
+            setNameSuccess('Display name updated successfully!');
+        } catch (err) {
+            setNameError(err.response?.data?.message || 'Failed to update name.');
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        setDeleteError('');
+        try {
+            await API.delete('/account');
+            localStorage.clear();
+            navigate('/login');
+        } catch (err) {
+            setConfirmDelete(false);
+            setDeleteError(err.response?.data?.message || err.response?.data || 'Failed to delete account.');
+        }
+    };
+
+    const handleEmailSubmit = async (e) => {
+        e.preventDefault();
+        setEmailError(''); setEmailSuccess('');
+        try {
+            const res = await API.put('/account/email', emailForm);
+            localStorage.setItem('email', res.data?.email || emailForm.newEmail);
+            setEmailSuccess('Email updated successfully!');
+            setEmailForm({ newEmail: '', currentPassword: '' });
+        } catch (err) {
+            setEmailError(err.response?.data?.message || 'Failed to update email. Check your password and try again.');
+        }
+    };
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        setPasswordError(''); setPasswordSuccess('');
+        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+            setPasswordError('New passwords do not match.');
+            return;
+        }
+        try {
+            await API.put('/account/password', {
+                currentPassword: passwordForm.currentPassword,
+                newPassword: passwordForm.newPassword,
+            });
+            setPasswordSuccess('Password updated successfully!');
+            setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (err) {
+            setPasswordError(err.response?.data?.message || 'Failed to update password. Check your current password.');
+        }
+    };
+
+    return (
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+                <Toolbar>
+                    <IconButton onClick={() => navigate('/profile')} sx={{ color: theme.mix(1), mr: 1 }}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                    <SettingsIcon sx={{ color: '#a29bfe', mr: 1 }} />
+                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                        Account Settings
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+
+            <Box sx={{ maxWidth: 600, mx: 'auto', py: 4, px: 2 }}>
+
+                {/* Display Name */}
+                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                            Display Name
+                        </Typography>
+                        {nameError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{nameError}</Typography>}
+                        {nameSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{nameSuccess}</Typography>}
+                        <Box component="form" onSubmit={handleNameSubmit}>
+                            <TextField fullWidth label="Name" value={nameForm}
+                                       onChange={(e) => setNameForm(e.target.value)}
+                                       required sx={inputStyle} />
+                            <Button fullWidth type="submit" variant="contained" sx={{
+                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                                background: 'linear-gradient(90deg, #4ecdc4, #0f3460)',
+                                '&:hover': { background: 'linear-gradient(90deg, #3aa89f, #0a2540)' }
+                            }}>
+                                Update Name
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                {/* Change Email */}
+                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                            Change Email
+                        </Typography>
+                        {emailError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{emailError}</Typography>}
+                        {emailSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{emailSuccess}</Typography>}
+                        <Box component="form" onSubmit={handleEmailSubmit}>
+                            <TextField fullWidth label="New Email" type="email" value={emailForm.newEmail}
+                                       onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+                                       required sx={inputStyle} />
+                            <TextField fullWidth label="Current Password" type="password" value={emailForm.currentPassword}
+                                       onChange={(e) => setEmailForm({ ...emailForm, currentPassword: e.target.value })}
+                                       required sx={inputStyle} />
+                            <Button fullWidth type="submit" variant="contained" sx={{
+                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                                background: 'linear-gradient(90deg, #a29bfe, #0f3460)',
+                                '&:hover': { background: 'linear-gradient(90deg, #8176d4, #0a2540)' }
+                            }}>
+                                Update Email
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                {/* Change Password */}
+                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 }}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                            Change Password
+                        </Typography>
+                        {passwordError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{passwordError}</Typography>}
+                        {passwordSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{passwordSuccess}</Typography>}
+                        <Box component="form" onSubmit={handlePasswordSubmit}>
+                            <TextField fullWidth label="Current Password" type="password" value={passwordForm.currentPassword}
+                                       onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                                       required sx={inputStyle} />
+                            <Divider sx={{ my: 2, borderColor: theme.mix(0.1) }} />
+                            <TextField fullWidth label="New Password" type="password" value={passwordForm.newPassword}
+                                       onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                                       required sx={inputStyle} />
+                            <TextField fullWidth label="Confirm New Password" type="password" value={passwordForm.confirmPassword}
+                                       onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                                       required sx={inputStyle} />
+                            <Button fullWidth type="submit" variant="contained" sx={{
+                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                                background: 'linear-gradient(90deg, #e94560, #0f3460)',
+                                '&:hover': { background: 'linear-gradient(90deg, #c73652, #0a2540)' }
+                            }}>
+                                Update Password
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                {/* Danger Zone */}
+                <Card sx={{ background: theme.mix(0.05), border: '1px solid rgba(233,69,96,0.4)', borderRadius: 3, mt: 4 }}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: '#e94560', fontWeight: 700, mb: 1, fontFamily: "'Poppins', sans-serif" }}>
+                            Delete Account
+                        </Typography>
+                        <Typography sx={{ color: theme.mix(0.5), fontSize: '0.85rem', mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                            This permanently removes your account along with every workout, goal and BMI record. It cannot be undone.
+                        </Typography>
+                        {deleteError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{deleteError}</Typography>}
+                        <Button fullWidth variant="outlined" onClick={() => setConfirmDelete(true)} sx={{
+                            py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            borderColor: '#e94560', color: '#e94560',
+                            '&:hover': { background: '#e94560', color: '#fff', borderColor: '#e94560' }
+                        }}>
+                            Delete My Account
+                        </Button>
+                    </CardContent>
+                </Card>
+            </Box>
+
+            <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+                <DialogTitle sx={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700 }}>
+                    Delete your account?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ fontFamily: "'Poppins', sans-serif" }}>
+                        Your workouts, goals, BMI records and profile will be deleted permanently. This cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setConfirmDelete(false)} sx={{ fontFamily: "'Poppins', sans-serif" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteAccount} variant="contained" sx={{
+                        background: '#e94560', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                        '&:hover': { background: '#c73652' }
+                    }}>
+                        Delete Permanently
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+}
+
+export default AccountSettings;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
@@ -46,7 +47,7 @@ function Profile() {
             setSuccess('Profile updated successfully!');
             fetchProfile();
         } catch (err) {
-            setError('Failed to update profile');
+            setError(errorMessage(err, 'Failed to update profile'));
         }
     };
 
@@ -62,7 +63,7 @@ function Profile() {
             setSuccess('Profile picture updated!');
             fetchProfile();
         } catch (err) {
-            setError('Failed to upload picture');
+            setError(errorMessage(err, 'Failed to upload picture'));
         }
     };
 

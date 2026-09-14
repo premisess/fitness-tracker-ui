@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -36,7 +37,7 @@ function Login() {
             }
         } catch (err) {
             if (err.response) {
-                setError('Invalid email or password. Please try again.');
+                setError(err.response.status === 401 ? 'Invalid email or password. Please try again.' : errorMessage(err, 'Sign in failed. Please try again.'));
             } else {
                 setError('Cannot reach the server. Make sure the backend is running, then try again.');
             }

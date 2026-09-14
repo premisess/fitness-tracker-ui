@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
@@ -78,11 +79,7 @@ function AdminDashboard() {
             fetchStats();
             fetchReports();
         } catch (err) {
-            if (err.response?.data) {
-                setError(err.response.data);
-            } else {
-                setError('Failed to delete user');
-            }
+            setError(errorMessage(err, 'Failed to delete user'));
         }
     };
 
@@ -95,9 +92,8 @@ function AdminDashboard() {
             setNewAdmin({ name: '', email: '', password: '' });
             fetchUsers();
             fetchReports();
-            // eslint-disable-next-line no-unused-vars
         } catch (err) {
-            setError('Failed to create admin');
+            setError(errorMessage(err, 'Failed to create admin'));
         }
     };
 

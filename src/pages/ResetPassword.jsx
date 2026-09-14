@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Button, TextField, Typography, Paper, Alert, CircularProgress, IconButton, InputAdornment
@@ -30,7 +31,7 @@ function ResetPassword() {
             setSuccess('Password reset successfully! Redirecting to login...');
             setTimeout(() => navigate('/login'), 3000);
         } catch (err) {
-            setError('Invalid or expired reset link. Please request a new one.');
+            setError(errorMessage(err, 'Invalid or expired reset link. Please request a new one.'));
         } finally {
             setLoading(false);
         }

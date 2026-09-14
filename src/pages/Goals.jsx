@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
@@ -76,7 +77,7 @@ function Goals() {
             fetchGoals();
         } catch (err) {
             console.error(err);
-            setError(editingId ? 'Failed to update goal' : 'Failed to add goal');
+            setError(errorMessage(err, editingId ? 'Failed to update goal' : 'Failed to add goal'));
         }
     };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
@@ -38,7 +39,7 @@ function WaterIntake() {
             setAmount('');
             fetchIntake();
         } catch (err) {
-            setError('Failed to log water intake');
+            setError(errorMessage(err, 'Failed to log water intake'));
         }
     };
 

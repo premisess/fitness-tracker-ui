@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Button, TextField, Typography, Paper, Alert, CircularProgress
@@ -23,7 +24,7 @@ function ForgotPassword() {
             await API.post('/auth/forgot-password', { email });
             setSuccess('If this email exists, a reset link has been sent. Check your inbox!');
         } catch (err) {
-            setError('Something went wrong. Please try again.');
+            setError(errorMessage(err, 'Something went wrong. Please try again.'));
         } finally {
             setLoading(false);
         }

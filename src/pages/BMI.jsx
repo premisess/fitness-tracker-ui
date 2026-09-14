@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
@@ -40,7 +41,7 @@ function BMI() {
             setForm({ weight: '', height: '', date: new Date().toISOString().split('T')[0] });
             fetchHistory();
         } catch (err) {
-            setError('Failed to calculate BMI');
+            setError(errorMessage(err, 'Failed to calculate BMI'));
         }
     };
 

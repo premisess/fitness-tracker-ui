@@ -1,0 +1,27 @@
+# SITE_ADDRESS is your domain (automatic HTTPS via Let's Encrypt), or "localhost" to try it
+# locally with a self-signed certificate. BACKEND_ADDRESS is where the Spring Boot API listens.
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy {$BACKEND_ADDRESS:backend:8080}
+	}
+
+	handle {
+		root * /srv
+		# Client-side routes like /runs/12 must still load the app.
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Vite fingerprints asset filenames, so they can be cached forever.
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(self), camera=(), microphone=()"
+	}
+}

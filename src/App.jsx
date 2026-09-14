@@ -16,6 +16,11 @@ import Nutrition from './pages/Nutrition';
 import ExerciseLibrary from './pages/ExerciseLibrary';
 import Analytics from './pages/Analytics';
 import AccountSettings from './pages/AccountSettings';
+import Records from './pages/Records';
+import ExerciseRecords from './pages/ExerciseRecords';
+import RunTracker from './pages/RunTracker';
+import RunHistory from './pages/RunHistory';
+import RunDetail from './pages/RunDetail';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -39,6 +44,11 @@ function App() {
                     <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
                     <Route path="/exercises" element={<ProtectedRoute><ExerciseLibrary /></ProtectedRoute>} />
                     <Route path="/account-settings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+                    <Route path="/records" element={<ProtectedRoute><Records /></ProtectedRoute>} />
+                    <Route path="/records/:exerciseId" element={<ProtectedRoute><ExerciseRecords /></ProtectedRoute>} />
+                    <Route path="/run" element={<ProtectedRoute><RunTracker /></ProtectedRoute>} />
+                    <Route path="/runs" element={<ProtectedRoute><RunHistory /></ProtectedRoute>} />
+                    <Route path="/runs/:workoutId" element={<ProtectedRoute><RunDetail /></ProtectedRoute>} />
                 </Routes>
             </Router>
         </ThemeProvider>

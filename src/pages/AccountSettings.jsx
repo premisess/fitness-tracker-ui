@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Box, Typography, Button, AppBar, Toolbar,
-    IconButton, TextField, Card, CardContent, Divider,
+    IconButton, TextField, Card, CardContent, Divider, MenuItem, Switch, FormControlLabel,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+const PRIVACY_OPTIONS = [
+    { value: 0, label: 'Off' },
+    { value: 200, label: '200 m' },
+    { value: 500, label: '500 m' },
+    { value: 1000, label: '1 km' },
+];
 
 function AccountSettings() {
     const { theme } = useAppTheme();
@@ -23,14 +31,29 @@ function AccountSettings() {
     const [emailSuccess, setEmailSuccess] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
+    const [location, setLocation] = useState(null);
+    const [locationError, setLocationError] = useState('');
+    const [locationSuccess, setLocationSuccess] = useState('');
+    const [confirmDeleteRoutes, setConfirmDeleteRoutes] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        let ignore = false;
+        API.get('/account/location-settings')
+            .then((res) => { if (!ignore) setLocation(res.data); })
+            .catch((err) => { if (!ignore) setLocationError(errorMessage(err, 'Could not load location settings')); });
+        return () => { ignore = true; };
+    }, []);
 
     const inputStyle = {
         '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
         '& .MuiInputLabel-root': { color: theme.mix(0.5) },
         '& .MuiInputBase-input': { color: theme.mix(1) },
+        '& .MuiSelect-icon': { color: theme.mix(0.5) },
         mb: 2,
     };
+    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 };
+    const titleStyle = { color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" };
 
     const handleNameSubmit = async (e) => {
         e.preventDefault();
@@ -40,7 +63,7 @@ function AccountSettings() {
             localStorage.setItem('name', nameForm.trim());
             setNameSuccess('Display name updated successfully!');
         } catch (err) {
-            setNameError(err.response?.data?.message || 'Failed to update name.');
+            setNameError(errorMessage(err, 'Failed to update name.'));
         }
     };
 
@@ -52,7 +75,7 @@ function AccountSettings() {
             navigate('/login');
         } catch (err) {
             setConfirmDelete(false);
-            setDeleteError(err.response?.data?.message || err.response?.data || 'Failed to delete account.');
+            setDeleteError(errorMessage(err, 'Failed to delete account.'));
         }
     };
 
@@ -65,7 +88,7 @@ function AccountSettings() {
             setEmailSuccess('Email updated successfully!');
             setEmailForm({ newEmail: '', currentPassword: '' });
         } catch (err) {
-            setEmailError(err.response?.data?.message || 'Failed to update email. Check your password and try again.');
+            setEmailError(errorMessage(err, 'Failed to update email. Check your password and try again.'));
         }
     };
 
@@ -84,7 +107,42 @@ function AccountSettings() {
             setPasswordSuccess('Password updated successfully!');
             setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
         } catch (err) {
-            setPasswordError(err.response?.data?.message || 'Failed to update password. Check your current password.');
+            setPasswordError(errorMessage(err, 'Failed to update password. Check your current password.'));
+        }
+    };
+
+    const updateLocation = async (request, successText) => {
+        setLocationError(''); setLocationSuccess('');
+        try {
+            const res = await request();
+            setLocation(res.data);
+            setLocationSuccess(successText);
+        } catch (err) {
+            setLocationError(errorMessage(err, 'Could not update location settings.'));
+        }
+    };
+
+    const handleConsent = (checked) => updateLocation(
+        () => API.put('/account/location-consent', { consent: checked }),
+        checked
+            ? 'Location tracking is on.'
+            : "Location tracking is off. GPS activities can't be recorded until you turn it back on.",
+    );
+
+    const handlePrivacy = (meters) => updateLocation(
+        () => API.put('/account/route-privacy', { routePrivacyMeters: meters }),
+        meters ? `Shared routes now hide ${meters} m around the start and finish.` : 'Privacy zone turned off.',
+    );
+
+    const handleDeleteRoutes = async () => {
+        setConfirmDeleteRoutes(false);
+        setLocationError(''); setLocationSuccess('');
+        try {
+            const res = await API.delete('/account/routes');
+            const n = res.data.deleted;
+            setLocationSuccess(`Deleted ${n} route${n === 1 ? '' : 's'}. Distances, times and splits are kept.`);
+        } catch (err) {
+            setLocationError(errorMessage(err, 'Could not delete route data.'));
         }
     };
 
@@ -105,11 +163,9 @@ function AccountSettings() {
             <Box sx={{ maxWidth: 600, mx: 'auto', py: 4, px: 2 }}>
 
                 {/* Display Name */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                <Card sx={cardStyle}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
-                            Display Name
-                        </Typography>
+                        <Typography variant="h6" sx={titleStyle}>Display Name</Typography>
                         {nameError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{nameError}</Typography>}
                         {nameSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{nameSuccess}</Typography>}
                         <Box component="form" onSubmit={handleNameSubmit}>
@@ -127,12 +183,48 @@ function AccountSettings() {
                     </CardContent>
                 </Card>
 
-                {/* Change Email */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                {/* Location & Privacy */}
+                <Card sx={cardStyle}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
-                            Change Email
+                        <Typography variant="h6" sx={{ ...titleStyle, mb: 1 }}>Location & Privacy</Typography>
+                        <Typography sx={{ color: theme.mix(0.55), fontSize: '0.85rem', mb: 2 }}>
+                            GPS is recorded only while you track an activity. Only you can see your full routes.
                         </Typography>
+                        {locationError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{locationError}</Typography>}
+                        {locationSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{locationSuccess}</Typography>}
+                        {location && (
+                            <>
+                                <FormControlLabel
+                                    sx={{ color: theme.mix(0.9), mb: 1 }}
+                                    control={<Switch checked={location.locationConsent} onChange={(e) => handleConsent(e.target.checked)} />}
+                                    label={location.locationConsent
+                                        ? `Location tracking on${location.locationConsentAt ? ` (since ${new Date(location.locationConsentAt).toLocaleDateString()})` : ''}`
+                                        : 'Location tracking off'}
+                                />
+                                <TextField select fullWidth label="Privacy zone around start & finish" value={location.routePrivacyMeters}
+                                           onChange={(e) => handlePrivacy(Number(e.target.value))}
+                                           helperText="This part of a route is hidden whenever the route is shared, so it doesn't reveal where you live."
+                                           FormHelperTextProps={{ sx: { color: theme.mix(0.45) } }}
+                                           SelectProps={{ MenuProps: { PaperProps: { sx: { background: theme.menuBg, color: theme.mix(1) } } } }}
+                                           sx={{ ...inputStyle, mt: 1 }}>
+                                    {PRIVACY_OPTIONS.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+                                </TextField>
+                                <Button fullWidth variant="outlined" onClick={() => setConfirmDeleteRoutes(true)} sx={{
+                                    py: 1.2, borderRadius: 2, fontWeight: 700,
+                                    borderColor: theme.mix(0.3), color: theme.mix(0.85),
+                                    '&:hover': { borderColor: '#e94560', color: '#e94560' }
+                                }}>
+                                    Delete all my route data
+                                </Button>
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Change Email */}
+                <Card sx={cardStyle}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={titleStyle}>Change Email</Typography>
                         {emailError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{emailError}</Typography>}
                         {emailSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{emailSuccess}</Typography>}
                         <Box component="form" onSubmit={handleEmailSubmit}>
@@ -154,11 +246,9 @@ function AccountSettings() {
                 </Card>
 
                 {/* Change Password */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 }}>
+                <Card sx={{ ...cardStyle, mb: 0 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
-                            Change Password
-                        </Typography>
+                        <Typography variant="h6" sx={titleStyle}>Change Password</Typography>
                         {passwordError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{passwordError}</Typography>}
                         {passwordSuccess && <Typography sx={{ color: '#4ecdc4', mb: 2, fontSize: '0.85rem' }}>{passwordSuccess}</Typography>}
                         <Box component="form" onSubmit={handlePasswordSubmit}>
@@ -190,7 +280,7 @@ function AccountSettings() {
                             Delete Account
                         </Typography>
                         <Typography sx={{ color: theme.mix(0.5), fontSize: '0.85rem', mb: 2, fontFamily: "'Poppins', sans-serif" }}>
-                            This permanently removes your account along with every workout, goal and BMI record. It cannot be undone.
+                            This permanently removes your account along with every workout, GPS route, goal and BMI record. It cannot be undone.
                         </Typography>
                         {deleteError && <Typography sx={{ color: '#e94560', mb: 2, fontSize: '0.85rem' }}>{deleteError}</Typography>}
                         <Button fullWidth variant="outlined" onClick={() => setConfirmDelete(true)} sx={{
@@ -204,13 +294,28 @@ function AccountSettings() {
                 </Card>
             </Box>
 
+            <Dialog open={confirmDeleteRoutes} onClose={() => setConfirmDeleteRoutes(false)}>
+                <DialogTitle sx={{ fontWeight: 700 }}>Delete all route data?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        The maps of all your GPS activities will be deleted permanently. The activities themselves, with their distance, time and splits, are kept.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setConfirmDeleteRoutes(false)}>Cancel</Button>
+                    <Button onClick={handleDeleteRoutes} variant="contained" sx={{ background: '#e94560', fontWeight: 700, '&:hover': { background: '#c73652' } }}>
+                        Delete routes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
                 <DialogTitle sx={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700 }}>
                     Delete your account?
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{ fontFamily: "'Poppins', sans-serif" }}>
-                        Your workouts, goals, BMI records and profile will be deleted permanently. This cannot be undone.
+                        Your workouts, GPS routes, goals, BMI records and profile will be deleted permanently. This cannot be undone.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>

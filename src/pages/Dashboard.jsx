@@ -227,7 +227,10 @@ function Dashboard() {
                         { label: 'BMI Calculator', path: '/bmi', color: '#ff6b35' },
                         { label: 'Nutrition', path: '/nutrition', color: '#ff6b35' },
                         { label: 'My Profile', path: '/profile', color: '#a29bfe' },
+                        { label: 'Start Run', path: '/run', color: '#4ecdc4' },
+                        { label: 'Activities', path: '/runs', color: '#45b7d1' },
                         { label: 'Exercises', path: '/exercises', color: '#e94560' },
+                        { label: 'Records', path: '/records', color: '#ffa726' },
                         { label: 'Analytics', path: '/analytics', color: '#4ecdc4' },
                     ].map((action, index) => (
                         <Button

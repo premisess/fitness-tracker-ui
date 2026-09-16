@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Workouts from './pages/Workouts';
@@ -12,6 +11,7 @@ import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import VerifyEmail from './pages/VerifyEmail';
 import Nutrition from './pages/Nutrition';
 import ExerciseLibrary from './pages/ExerciseLibrary';
 import Analytics from './pages/Analytics';
@@ -21,6 +21,10 @@ import ExerciseRecords from './pages/ExerciseRecords';
 import RunTracker from './pages/RunTracker';
 import RunHistory from './pages/RunHistory';
 import RunDetail from './pages/RunDetail';
+import Plans from './pages/Plans';
+import PlanDetail from './pages/PlanDetail';
+import Achievements from './pages/Achievements';
+import BadgeCelebration from './components/BadgeCelebration';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -29,8 +33,9 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Landing />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                    {/* One page for both: switching slides the form across the screen. */}
+                    <Route path="/login" element={<AuthPage />} />
+                    <Route path="/register" element={<AuthPage />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                     <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
                     <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
@@ -40,6 +45,7 @@ function App() {
                     <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
                     <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
                     <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
                     <Route path="/exercises" element={<ProtectedRoute><ExerciseLibrary /></ProtectedRoute>} />
@@ -49,7 +55,12 @@ function App() {
                     <Route path="/run" element={<ProtectedRoute><RunTracker /></ProtectedRoute>} />
                     <Route path="/runs" element={<ProtectedRoute><RunHistory /></ProtectedRoute>} />
                     <Route path="/runs/:workoutId" element={<ProtectedRoute><RunDetail /></ProtectedRoute>} />
+                    <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+                    <Route path="/plans/:slug" element={<ProtectedRoute><PlanDetail /></ProtectedRoute>} />
+                    <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
                 </Routes>
+                {/* Watches for saved workouts, runs and meals, and celebrates any badge they earn. */}
+                <BadgeCelebration />
             </Router>
         </ThemeProvider>
     );

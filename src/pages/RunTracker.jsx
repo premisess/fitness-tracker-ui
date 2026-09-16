@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
@@ -90,6 +90,9 @@ function releaseWakeLock(wakeLockRef) {
 function RunTracker() {
     const { theme } = useAppTheme();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    // Started from a workout plan: the saved run completes the plan's next session.
+    const countsForPlan = searchParams.get('planSession') === '1';
 
     const [settings, setSettings] = useState(null);
     const [loadError, setLoadError] = useState('');
@@ -328,6 +331,13 @@ function RunTracker() {
                 points: pointsRef.current,
             });
             clearDraft();
+            if (countsForPlan) {
+                try {
+                    await API.post('/plans/active/sessions', { workoutId: res.data.summary.workoutId });
+                } catch {
+                    // The activity is saved either way; the plan can be updated by hand.
+                }
+            }
             navigate(`/runs/${res.data.summary.workoutId}`, { replace: true });
         } catch (err) {
             setError(errorMessage(err, 'Could not save this activity'));

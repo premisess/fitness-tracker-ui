@@ -31,6 +31,32 @@ const defaultTypeFor = (exercise) => {
     return 'Weightlifting';
 };
 
+// Plan sessions prescribe things like "8-10" or "30-45 s"; start the log at the lower number.
+const firstNumber = (text) => {
+    const match = String(text).match(/\d+/);
+    return match ? Number(match[0]) : '';
+};
+
+const blocksFromPlan = (session) => session.exercises.map((exercise, index) => {
+    const timed = exercise.trackingType === 'DURATION';
+    const value = firstNumber(exercise.reps);
+    const set = {
+        ...emptySet(),
+        reps: timed ? '' : value,
+        durationSec: timed ? value : '',
+    };
+    return {
+        key: `plan-${exercise.exerciseId}-${index}`,
+        exercise: {
+            id: exercise.exerciseId,
+            name: exercise.name,
+            trackingType: exercise.trackingType,
+            thumbnailUrl: exercise.thumbnailUrl,
+        },
+        sets: Array.from({ length: exercise.sets }, () => ({ ...set })),
+    };
+});
+
 const summarizeExercise = (exercise) => {
     const working = exercise.sets.filter((s) => !s.warmup);
     const count = `${working.length} set${working.length === 1 ? '' : 's'}`;
@@ -66,6 +92,7 @@ function Workouts() {
     const [searchTag, setSearchTag] = useState('');
     const [filtered, setFiltered] = useState(false);
     const [expandedId, setExpandedId] = useState(null);
+    const [planSession, setPlanSession] = useState(null);
 
     const allTags = [...new Set(workouts.flatMap((w) => w.tags || []))];
 
@@ -101,6 +128,23 @@ function Workouts() {
                     ? current
                     : [...current, { key: `${res.data.id}-${Date.now()}`, exercise: res.data, sets: [emptySet()] }]));
                 setForm((f) => ({ ...f, type: f.type || defaultTypeFor(res.data) }));
+                setSearchParams({}, { replace: true });
+            })
+            .catch(() => {});
+        return () => { ignore = true; };
+    }, [searchParams, setSearchParams]);
+
+    // Arriving from a workout plan with ?planSession=1 fills in the prescribed session.
+    useEffect(() => {
+        if (searchParams.get('planSession') !== '1') return undefined;
+        let ignore = false;
+        API.get('/plans/active')
+            .then((res) => {
+                if (ignore || res.status !== 200 || !res.data.nextSession) return;
+                const session = res.data.nextSession;
+                setPlanSession(res.data);
+                setForm((f) => ({ ...f, type: session.workoutType, duration: session.targetMinutes }));
+                setBlocks(blocksFromPlan(session));
                 setSearchParams({}, { replace: true });
             })
             .catch(() => {});
@@ -153,7 +197,19 @@ function Workouts() {
                     };
                 }),
             });
-            setSuccess('Workout logged!');
+            let message = 'Workout logged!';
+            if (planSession) {
+                try {
+                    const planRes = await API.post('/plans/active/sessions', { workoutId: res.data.id });
+                    message = planRes.data.status === 'COMPLETED'
+                        ? `Workout logged — you finished ${planSession.plan.name}! 🎉`
+                        : `Workout logged and counted toward ${planSession.plan.name}.`;
+                } catch (planErr) {
+                    setError(errorMessage(planErr, 'Workout saved, but it could not be counted toward your plan'));
+                }
+                setPlanSession(null);
+            }
+            setSuccess(message);
             setNewRecords(res.data.newRecords || []);
             setForm(emptyForm());
             setTagInput('');
@@ -263,6 +319,13 @@ function Workouts() {
                         <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>
                             Log New Workout
                         </Typography>
+                        {planSession?.nextSession && (
+                            <Alert severity="info" sx={{ mb: 2 }}
+                                   action={<Button color="inherit" size="small" onClick={() => setPlanSession(null)}>Not now</Button>}>
+                                {planSession.plan.name} · week {planSession.currentWeek}: <strong>{planSession.nextSession.title}</strong>.
+                                Save it here and it counts toward your plan.
+                            </Alert>
+                        )}
                         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                         {success && newRecords.length === 0 && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 

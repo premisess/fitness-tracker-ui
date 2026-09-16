@@ -8,4 +8,17 @@ const API = axios.create({
     withCredentials: true,
 });
 
+// Saves that can earn a badge. BadgeCelebration listens for this and asks the server what was earned.
+export const ACTIVITY_EVENT = 'fittracker:activity';
+
+const ACTIVITY_PATHS = /^\/?(workouts|runs|nutrition\/diary|plans\/active\/sessions|water-intake|goals|bmi|auth\/verify-email)(\/|$|\?)/;
+
+API.interceptors.response.use((response) => {
+    const { method = 'get', url = '' } = response.config;
+    if (method.toLowerCase() !== 'get' && ACTIVITY_PATHS.test(url)) {
+        window.dispatchEvent(new Event(ACTIVITY_EVENT));
+    }
+    return response;
+});
+
 export default API;

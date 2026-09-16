@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from '../services/api';
+import API, { ACTIVITY_EVENT } from '../services/api';
+import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Card, CardContent,
-    Button, AppBar, Toolbar, IconButton, Avatar
+    Alert, Box, Typography, Card, CardContent,
+    Button, AppBar, Toolbar, IconButton, Avatar, LinearProgress
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
@@ -13,17 +14,25 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 function Dashboard() {
     const { theme, mode, toggleTheme } = useAppTheme();
     // The backend aggregates everything this screen shows into one call.
     const [summary, setSummary] = useState(null);
 
+    const [verifyNotice, setVerifyNotice] = useState('');
+    const [resending, setResending] = useState(false);
+
     const name = summary?.name || localStorage.getItem('name');
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchSummary();
+        // Celebrates any badge earned since the last visit.
+        window.dispatchEvent(new Event(ACTIVITY_EVENT));
     }, []);
 
     const fetchSummary = async () => {
@@ -45,6 +54,18 @@ function Dashboard() {
         navigate('/login');
     };
 
+    const resendVerification = async () => {
+        setResending(true);
+        try {
+            const res = await API.post('/auth/resend-verification');
+            setVerifyNotice(res.data?.message || 'Verification link sent.');
+        } catch (err) {
+            setVerifyNotice(errorMessage(err, 'Could not send the link. Please try again in a minute.'));
+        } finally {
+            setResending(false);
+        }
+    };
+
     const statCards = [
         { title: 'Total Workouts', value: summary?.workoutCount ?? 0, icon: <FitnessCenterIcon sx={{ fontSize: 40, color: '#e94560' }} />, unit: 'sessions' },
         { title: 'Calories Burned', value: summary?.totalCaloriesBurned ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#ff6b35' }} />, unit: 'kcal' },
@@ -52,6 +73,8 @@ function Dashboard() {
         { title: 'Water Today', value: summary?.waterTodayMl ?? 0, icon: <WaterDropIcon sx={{ fontSize: 40, color: '#45b7d1' }} />, unit: 'ml' },
         { title: 'Current Streak', value: summary?.currentStreak ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#ffa726' }} />, unit: 'days' },
         { title: 'Longest Streak', value: summary?.longestStreak ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#a29bfe' }} />, unit: 'days' },
+        { title: 'Eaten Today', value: summary?.caloriesEatenToday ?? 0, icon: <RestaurantIcon sx={{ fontSize: 40, color: '#ff6b35' }} />, unit: `of ${summary?.calorieTarget ?? 2000} kcal` },
+        { title: 'Badges', value: summary?.badgesEarned ?? 0, icon: <EmojiEventsIcon sx={{ fontSize: 40, color: '#ffd166' }} />, unit: 'earned' },
     ];
 
     const journeySteps = [
@@ -153,6 +176,45 @@ function Dashboard() {
                     {summary?.nextStep || 'Here is your fitness summary'}
                 </Typography>
 
+                {summary && !summary.emailVerified && (
+                    <Alert severity="warning" sx={{ mb: 4, width: '100%', maxWidth: 700 }}
+                           action={(
+                               <Button color="inherit" size="small" disabled={resending} onClick={resendVerification}>
+                                   Resend link
+                               </Button>
+                           )}>
+                        Please confirm your email address — we sent a link to {localStorage.getItem('email')}.
+                        {verifyNotice && <Typography sx={{ fontSize: '0.8rem', mt: 0.5 }}>{verifyNotice}</Typography>}
+                    </Alert>
+                )}
+
+                {summary?.activePlanName && (
+                    <Card onClick={() => navigate('/plans')} sx={{
+                        width: '100%', maxWidth: 700, mb: 4, cursor: 'pointer',
+                        background: 'linear-gradient(135deg, rgba(102,187,106,0.18), rgba(78,205,196,0.12))',
+                        border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3,
+                        transition: 'transform 0.2s',
+                        '&:hover': { transform: 'translateY(-3px)' },
+                    }}>
+                        <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <EventNoteIcon sx={{ fontSize: 40, color: '#66bb6a' }} />
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                                    {summary.activePlanName}
+                                </Typography>
+                                <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem', fontFamily: "'Poppins', sans-serif" }}>
+                                    {summary.nextPlanSession ? `Next up: ${summary.nextPlanSession}` : 'Plan complete — pick a new one'}
+                                </Typography>
+                                <LinearProgress variant="determinate" value={summary.planProgressPercent ?? 0}
+                                                sx={{ mt: 1, height: 6, borderRadius: 3, background: theme.mix(0.12), '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' } }} />
+                            </Box>
+                            <Typography sx={{ color: '#66bb6a', fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                                {summary.planProgressPercent ?? 0}%
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Stat Cards */}
                 <Box sx={{
                     display: 'flex',
@@ -225,7 +287,9 @@ function Dashboard() {
                         { label: 'My Goals', path: '/goals', color: '#4ecdc4' },
                         { label: 'Water Intake', path: '/water-intake', color: '#45b7d1' },
                         { label: 'BMI Calculator', path: '/bmi', color: '#ff6b35' },
-                        { label: 'Nutrition', path: '/nutrition', color: '#ff6b35' },
+                        { label: 'Food Diary', path: '/nutrition', color: '#ff6b35' },
+                        { label: 'Workout Plans', path: '/plans', color: '#66bb6a' },
+                        { label: 'Achievements', path: '/achievements', color: '#ffd166' },
                         { label: 'My Profile', path: '/profile', color: '#a29bfe' },
                         { label: 'Start Run', path: '/run', color: '#4ecdc4' },
                         { label: 'Activities', path: '/runs', color: '#45b7d1' },

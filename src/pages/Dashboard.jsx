@@ -17,6 +17,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 function Dashboard() {
     const { theme, mode, toggleTheme } = useAppTheme();
@@ -137,6 +138,14 @@ function Dashboard() {
                     }}>
                         FitTracker
                     </Typography>
+                    <Button size="small" startIcon={<WorkspacePremiumIcon />} onClick={() => navigate('/upgrade')}
+                            sx={{
+                                mr: 2, borderRadius: 999, px: 1.5, textTransform: 'none', fontWeight: 700,
+                                color: '#1a1a2e', background: summary?.ultimate ? '#ffd166' : 'linear-gradient(90deg, #ffd166, #e94560)',
+                                '&:hover': { background: '#ffd166' },
+                            }}>
+                        {summary?.ultimate ? 'Ultimate' : 'Go Ultimate'}
+                    </Button>
                     <Avatar sx={{ bgcolor: '#e94560', mr: 2, width: 35, height: 35, fontSize: '0.9rem' }}>
                         {name?.charAt(0).toUpperCase()}
                     </Avatar>

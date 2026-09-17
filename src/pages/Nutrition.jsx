@@ -114,6 +114,8 @@ function FoodDiary({ theme, navigate }) {
     const [dialogMeal, setDialogMeal] = useState(null);
     const [error, setError] = useState('');
     const [reloadKey, setReloadKey] = useState(0);
+    // 7 days is free; longer ranges are Ultimate (the server answers 402 and the upgrade dialog opens).
+    const [historyDays, setHistoryDays] = useState(7);
 
     useEffect(() => {
         let ignore = false;
@@ -125,11 +127,11 @@ function FoodDiary({ theme, navigate }) {
 
     useEffect(() => {
         let ignore = false;
-        API.get('/nutrition/history', { params: { days: 7 } })
+        API.get('/nutrition/history', { params: { days: historyDays } })
             .then((res) => { if (!ignore) setHistory(res.data); })
-            .catch(() => {});
+            .catch((err) => { if (!ignore && err.response?.status === 402) setHistoryDays(7); });
         return () => { ignore = true; };
-    }, [reloadKey]);
+    }, [reloadKey, historyDays]);
 
     const removeEntry = async (id) => {
         try {
@@ -145,7 +147,8 @@ function FoodDiary({ theme, navigate }) {
         const target = history.targets.calories;
         return {
             data: {
-                labels: history.days.map((d) => new Date(`${d.date}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short' })),
+                labels: history.days.map((d) => new Date(`${d.date}T12:00:00`).toLocaleDateString(undefined,
+                    history.days.length > 7 ? { day: 'numeric', month: 'short' } : { weekday: 'short' })),
                 datasets: [
                     {
                         type: 'bar',
@@ -293,7 +296,20 @@ function FoodDiary({ theme, navigate }) {
             {chart && (
                 <Card sx={{ ...cardStyle, mt: 3 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>Last 7 days</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                            <Typography sx={{ color: theme.mix(1), fontWeight: 700, mr: 'auto' }}>
+                                Last {history.days.length} days
+                            </Typography>
+                            {[7, 30, 90].map((days) => (
+                                <Chip key={days} size="small" onClick={() => setHistoryDays(days)}
+                                      label={days === 7 ? '7 days' : `${days} days ★`}
+                                      sx={{
+                                          cursor: 'pointer', fontWeight: 600,
+                                          background: historyDays === days ? '#ff6b35' : theme.mix(0.08),
+                                          color: historyDays === days ? '#fff' : theme.mix(0.7),
+                                      }} />
+                            ))}
+                        </Box>
                         <Box sx={{ height: 240 }}>
                             <Chart type="bar" data={chart.data} options={chart.options} />
                         </Box>

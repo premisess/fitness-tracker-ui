@@ -24,6 +24,8 @@ import RunDetail from './pages/RunDetail';
 import Plans from './pages/Plans';
 import PlanDetail from './pages/PlanDetail';
 import Achievements from './pages/Achievements';
+import Upgrade from './pages/Upgrade';
+import UpgradeDialog from './components/UpgradeDialog';
 import BadgeCelebration from './components/BadgeCelebration';
 import { ThemeProvider } from './context/ThemeContext';
 
@@ -58,9 +60,12 @@ function App() {
                     <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
                     <Route path="/plans/:slug" element={<ProtectedRoute><PlanDetail /></ProtectedRoute>} />
                     <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
+                    <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
                 </Routes>
                 {/* Watches for saved workouts, runs and meals, and celebrates any badge they earn. */}
                 <BadgeCelebration />
+                {/* Offers Ultimate when a free user reaches a paid feature. */}
+                <UpgradeDialog />
             </Router>
         </ThemeProvider>
     );

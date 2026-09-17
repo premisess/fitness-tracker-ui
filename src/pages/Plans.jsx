@@ -147,6 +147,9 @@ function Plans() {
                         <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 1.5, letterSpacing: 1 }}>
                             {active ? 'Other plans' : 'Choose a plan'}
                         </Typography>
+                        <Typography sx={{ color: theme.mix(0.45), fontSize: '0.8rem', mt: -1, mb: 2 }}>
+                            Browse any plan for free. Following one, session by session, is part of FitTracker Ultimate.
+                        </Typography>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                             {plans.map((plan) => (
                                 <Card key={plan.slug} sx={{ ...cardStyle, borderTop: `4px solid ${GOAL_COLORS[plan.goal] || '#e94560'}` }}>

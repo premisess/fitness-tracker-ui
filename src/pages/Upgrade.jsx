@@ -35,6 +35,8 @@ const FREE_FEATURES = [
 
 const ULTIMATE_FEATURES = [
     'Structured workout plans, session by session',
+    'Build your own workout plans',
+    '2 streak freezes a month to protect your streak',
     '30 to 90-day nutrition history and charts',
     'Save your own foods for quick logging',
     'Advanced analytics',

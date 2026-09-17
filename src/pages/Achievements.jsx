@@ -11,6 +11,7 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import BadgeIcon from '../components/BadgeIcon';
+import StreakFreezeCard from '../components/StreakFreezeCard';
 
 const flicker = keyframes`
   0%, 100% { transform: scale(1) rotate(-2deg); }
@@ -93,6 +94,8 @@ function Achievements() {
                                 </CardContent>
                             </Card>
                         </Box>
+
+                        <StreakFreezeCard theme={theme} onChange={(streak) => setBoard((b) => ({ ...b, currentStreak: streak.currentStreak, longestStreak: streak.longestStreak }))} />
 
                         {categories.map((category) => (
                             <Box key={category} sx={{ mb: 4 }}>

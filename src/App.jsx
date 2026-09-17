@@ -23,6 +23,7 @@ import RunHistory from './pages/RunHistory';
 import RunDetail from './pages/RunDetail';
 import Plans from './pages/Plans';
 import PlanDetail from './pages/PlanDetail';
+import PlanBuilder from './pages/PlanBuilder';
 import Achievements from './pages/Achievements';
 import Upgrade from './pages/Upgrade';
 import UpgradeDialog from './components/UpgradeDialog';
@@ -58,6 +59,8 @@ function App() {
                     <Route path="/runs" element={<ProtectedRoute><RunHistory /></ProtectedRoute>} />
                     <Route path="/runs/:workoutId" element={<ProtectedRoute><RunDetail /></ProtectedRoute>} />
                     <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+                    <Route path="/plans/new" element={<ProtectedRoute><PlanBuilder /></ProtectedRoute>} />
+                    <Route path="/plans/:slug/edit" element={<ProtectedRoute><PlanBuilder /></ProtectedRoute>} />
                     <Route path="/plans/:slug" element={<ProtectedRoute><PlanDetail /></ProtectedRoute>} />
                     <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
                     <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />

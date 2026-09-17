@@ -8,6 +8,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
@@ -21,6 +24,7 @@ function PlanDetail() {
     const [error, setError] = useState('');
     const [switching, setSwitching] = useState(false);
     const [starting, setStarting] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     useEffect(() => {
         let ignore = false;
@@ -43,6 +47,17 @@ function PlanDetail() {
                 setError(errorMessage(err, 'Could not start this plan'));
             }
             setStarting(false);
+        }
+    };
+
+    const deletePlan = async () => {
+        setError('');
+        try {
+            await API.delete(`/plans/custom/${slug}`);
+            navigate('/plans');
+        } catch (err) {
+            setConfirmDelete(false);
+            setError(errorMessage(err, 'Could not delete this plan'));
         }
     };
 
@@ -97,6 +112,24 @@ function PlanDetail() {
                                         {starting ? <CircularProgress size={22} color="inherit" /> : 'Start this plan'}
                                     </Button>
                                 )}
+                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1.5 }}>
+                                    {summary.custom && summary.editable && (
+                                        <Button size="small" startIcon={<EditIcon />} onClick={() => navigate(`/plans/${slug}/edit`)}
+                                                sx={{ color: theme.mix(0.75), textTransform: 'none' }}>
+                                            Edit
+                                        </Button>
+                                    )}
+                                    <Button size="small" startIcon={<ContentCopyIcon />} onClick={() => navigate(`/plans/new?from=${slug}`)}
+                                            sx={{ color: theme.mix(0.75), textTransform: 'none' }}>
+                                        {summary.custom ? 'Make a copy' : 'Customize a copy ★'}
+                                    </Button>
+                                    {summary.custom && (
+                                        <Button size="small" startIcon={<DeleteIcon />} onClick={() => setConfirmDelete(true)}
+                                                sx={{ color: '#e94560', textTransform: 'none' }}>
+                                            Delete
+                                        </Button>
+                                    )}
+                                </Box>
                             </CardContent>
                         </Card>
 
@@ -148,6 +181,22 @@ function PlanDetail() {
                     </>
                 )}
             </Box>
+
+            <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}
+                    slotProps={{ paper: { sx: { background: theme.menuBg, color: theme.mix(1), borderRadius: 3 } } }}>
+                <DialogTitle sx={{ fontWeight: 700 }}>Delete this plan?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ color: theme.mix(0.7) }}>
+                        The plan and your progress on it are removed. Workouts you logged for it stay in your history.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setConfirmDelete(false)} sx={{ color: theme.mix(0.6), textTransform: 'none' }}>Keep it</Button>
+                    <Button onClick={deletePlan} variant="contained" color="error" sx={{ borderRadius: 999, textTransform: 'none', fontWeight: 700 }}>
+                        Delete plan
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog open={switching} onClose={() => setSwitching(false)}
                     slotProps={{ paper: { sx: { background: theme.menuBg, color: theme.mix(1), borderRadius: 3 } } }}>

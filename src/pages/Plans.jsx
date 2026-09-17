@@ -9,6 +9,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import AddIcon from '@mui/icons-material/Add';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
@@ -147,16 +148,25 @@ function Plans() {
                         <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 1.5, letterSpacing: 1 }}>
                             {active ? 'Other plans' : 'Choose a plan'}
                         </Typography>
-                        <Typography sx={{ color: theme.mix(0.45), fontSize: '0.8rem', mt: -1, mb: 2 }}>
-                            Browse any plan for free. Following one, session by session, is part of FitTracker Ultimate.
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: -1, mb: 2 }}>
+                            <Typography sx={{ color: theme.mix(0.45), fontSize: '0.8rem', flex: 1, minWidth: 220 }}>
+                                Browse any plan for free. Following one, or building your own, is part of FitTracker Ultimate.
+                            </Typography>
+                            <Button startIcon={<AddIcon />} onClick={() => navigate('/plans/new')} variant="contained"
+                                    sx={{ borderRadius: 999, textTransform: 'none', fontWeight: 700, background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' }}>
+                                Build your own plan
+                            </Button>
+                        </Box>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                             {plans.map((plan) => (
                                 <Card key={plan.slug} sx={{ ...cardStyle, borderTop: `4px solid ${GOAL_COLORS[plan.goal] || '#e94560'}` }}>
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: 1 }}>
                                             <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.05rem' }}>{plan.name}</Typography>
-                                            {plan.active && <Chip size="small" label="Active" sx={{ background: '#66bb6a', color: '#fff', fontWeight: 700 }} />}
+                                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                                {plan.custom && <Chip size="small" label="Mine" sx={{ background: '#4fc3f7', color: '#1a1a2e', fontWeight: 700 }} />}
+                                                {plan.active && <Chip size="small" label="Active" sx={{ background: '#66bb6a', color: '#fff', fontWeight: 700 }} />}
+                                            </Box>
                                         </Box>
                                         <Typography sx={{ color: theme.mix(0.55), fontSize: '0.85rem', mt: 0.5, mb: 1.5 }}>{plan.summary}</Typography>
                                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 2 }}>

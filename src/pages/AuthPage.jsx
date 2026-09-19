@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import {
-    Alert, Box, Button, CircularProgress, Divider, IconButton, InputAdornment, TextField, Typography, useMediaQuery,
+    Alert, Box, Button, Card, CircularProgress, Divider, IconButton, InputAdornment, TextField, Typography, useMediaQuery,
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Visibility from '@mui/icons-material/Visibility';
@@ -15,9 +15,8 @@ import { useAppTheme } from '../context/ThemeContext';
 import AuthScene from '../components/AuthScene';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 
-// On wide screens the form takes this share of the width and the animated scene fills the rest.
-const FORM_WIDTH = 42;
-const EASE = 'cubic-bezier(0.77, 0, 0.175, 1)';
+// On wide screens the marketing card keeps this height so both cards match.
+const SCENE_HEIGHT = 660;
 const FONT = "'Poppins', sans-serif";
 
 const rise = keyframes`
@@ -45,8 +44,8 @@ function passwordStrength(password) {
 }
 
 /**
- * Sign in (/login) and sign up (/register) on one page. Switching between them slides the form to the
- * other side of the screen while the animated scene moves the opposite way.
+ * Sign in (/login) and sign up (/register): a marketing card and an auth card side by side on wide
+ * screens, stacked on phones. Switching modes swaps the copy with a gentle fade.
  */
 function AuthPage() {
     const location = useLocation();
@@ -66,7 +65,7 @@ function AuthPage() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    // Start off-screen and slide in on the next frame.
+    // Fade the cards in on the next frame.
     useEffect(() => {
         const frame = requestAnimationFrame(() => setEntered(true));
         return () => cancelAnimationFrame(frame);
@@ -133,54 +132,50 @@ function AuthPage() {
         '& .MuiIconButton-root': { color: theme.mix(0.5) },
     };
 
-    const formLeft = entered
-        ? (isRegister ? '0%' : `${100 - FORM_WIDTH}%`)
-        : (isRegister ? `-${FORM_WIDTH}%` : '100%');
-
-    const formPanelSx = wide
-        ? {
-            position: 'absolute', top: 0, bottom: 0, width: `${FORM_WIDTH}%`, left: formLeft, zIndex: 2,
-            transition: `left 0.9s ${EASE}`,
-            boxShadow: '0 0 60px rgba(0,0,0,0.35)',
-        }
-        : {
-            position: 'relative', mt: -3, borderRadius: '24px 24px 0 0', minHeight: 'calc(100vh - 216px)',
-            opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(40px)',
-            transition: `opacity 0.6s ease, transform 0.6s ${EASE}`,
-        };
-
-    const scenePanelSx = wide
-        ? {
-            position: 'absolute', top: 0, bottom: 0, width: `${100 - FORM_WIDTH}%`,
-            left: isRegister ? `${FORM_WIDTH}%` : '0%', transition: `left 0.9s ${EASE}`,
-        }
-        : { height: 240 };
-
     return (
         <Box sx={{
-            position: 'relative', background: theme.bgGradient, fontFamily: FONT,
-            ...(wide ? { height: '100vh', overflow: 'hidden' } : { minHeight: '100vh' }),
+            minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT,
+            display: 'flex', flexDirection: 'column',
         }}>
-            <Box sx={scenePanelSx}>
-                <AuthScene mode={mode} compact={!wide} />
+            {/* Top bar: logo and theme toggle */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 1040, mx: 'auto', px: { xs: 2.5, sm: 4 }, pt: 2.5 }}>
+                <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
+                    <FitnessCenterIcon sx={{ color: '#e94560' }} />
+                    <Typography sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
+                        FitTracker
+                    </Typography>
+                </Box>
+                <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.6) }} aria-label="Toggle dark mode">
+                    {themeMode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+                </IconButton>
             </Box>
 
-            <Box sx={{ ...formPanelSx, background: theme.bgGradient, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: { xs: 2.5, sm: 4 }, pt: 2.5 }}>
-                    <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
-                        <FitnessCenterIcon sx={{ color: '#e94560' }} />
-                        <Typography sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
-                            FitTracker
-                        </Typography>
-                    </Box>
-                    <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.6) }} aria-label="Toggle dark mode">
-                        {themeMode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
-                    </IconButton>
-                </Box>
+            {/* Marketing card + auth card */}
+            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 3, sm: 5 } }}>
+                <Box sx={{
+                    display: 'grid', gridTemplateColumns: { md: '1.05fr 1fr' }, gap: { xs: 2.5, md: 4 },
+                    width: '100%', maxWidth: 1040,
+                    opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}>
+                    <Card sx={{
+                        height: { xs: 260, md: SCENE_HEIGHT },
+                        borderRadius: { xs: 4, md: 5 },
+                        overflow: 'hidden',
+                        boxShadow: '0 24px 70px rgba(0,0,0,0.35)',
+                    }}>
+                        <AuthScene mode={mode} compact={!wide} />
+                    </Card>
 
-                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2.5, sm: 5 }, py: 4 }}>
-                    <Box key={mode} sx={{ width: '100%', maxWidth: 380 }}>
-                        <Typography component="h1" sx={{ color: theme.mix(1), fontWeight: 800, fontSize: '2rem', fontFamily: FONT, ...appear(0) }}>
+                    <Card key={mode} sx={{
+                        p: { xs: 3, sm: 4 },
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                        borderRadius: { xs: 4, md: 5 },
+                        background: theme.mix(0.05),
+                        border: `1px solid ${theme.mix(0.12)}`,
+                        boxShadow: '0 24px 70px rgba(0,0,0,0.18)',
+                    }}>
+                        <Typography component="h1" sx={{ color: theme.mix(1), fontWeight: 800, fontSize: '1.9rem', fontFamily: FONT, ...appear(0) }}>
                             {isRegister ? 'Create your account' : 'Welcome back'}
                         </Typography>
                         <Typography sx={{ color: theme.mix(0.55), mt: 0.5, fontFamily: FONT, ...appear(1) }}>
@@ -282,7 +277,7 @@ function AuthPage() {
                                 {isRegister ? 'Sign in' : 'Create an account'}
                             </Box>
                         </Typography>
-                    </Box>
+                    </Card>
                 </Box>
             </Box>
         </Box>

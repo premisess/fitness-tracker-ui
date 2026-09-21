@@ -149,45 +149,58 @@ function AuthPage() {
                 </IconButton>
             </Box>
 
-            {/* Two joined cards: animated (left, wider) + form (right) */}
+            {/* Animated card (twisted, dropped down a touch) with the welcome words below it; form card beside */}
             <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 3, sm: 5 } }}>
                 <Box key={mode} sx={{
-                    display: 'flex', flexDirection: { xs: 'column', md: 'row' },
-                    width: '100%', maxWidth: 1150,
-                    borderRadius: { xs: 4, md: 5 },
-                    overflow: 'hidden',
-                    boxShadow: '0 30px 80px rgba(0,0,0,0.35)',
+                    display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center',
+                    width: '100%', maxWidth: 1150, gap: { xs: 4, md: 0 },
                     opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)',
                     transition: 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}>
-                    {/* Left half: the animated card, wider */}
+                    {/* Left: smaller twisted animation card, nudged down, with the words just below it */}
                     <Box sx={{
-                        flex: { md: '7 1 0' },
-                        height: { xs: 240, md: 'auto' },
+                        flex: { md: '7 1 0' }, minWidth: 0, width: '100%',
                         display: 'flex', flexDirection: 'column',
-                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 45%, #0f3460 100%)',
+                        mt: { xs: 0, md: 9 }, pr: { md: 6 },
                     }}>
-                        <AuthScene mode={mode} compact={!wide} />
+                        <Box sx={{
+                            position: 'relative',
+                            height: { xs: 240, md: 400 },
+                            borderRadius: 4, overflow: 'hidden',
+                            boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
+                            transform: { md: 'rotate(-1.6deg) translateY(14px)' },
+                        }}>
+                            <AuthScene mode={mode} compact={!wide} showCopy={false} />
+                        </Box>
+                        <Box sx={{ mt: { md: 12, xs: 4 }, textAlign: { md: 'left', xs: 'center' } }}>
+                            <Typography sx={{
+                                textTransform: 'uppercase', letterSpacing: 3, fontSize: '0.75rem',
+                                fontWeight: 700, color: mode === 'login' ? '#ff8fa3' : '#7ee8e0', fontFamily: FONT,
+                            }}>
+                                {mode === 'login' ? 'Welcome back' : 'Join FitTracker'}
+                            </Typography>
+                            <Typography component="h2" sx={{
+                                color: theme.mix(1), fontWeight: 800, lineHeight: 1.15, mt: 0.5, fontFamily: FONT,
+                                fontSize: { xs: '1.5rem', md: '2.2rem', lg: '2.5rem' },
+                            }}>
+                                {mode === 'login' ? 'Your streak is waiting.' : 'Start strong. Track everything.'}
+                            </Typography>
+                            <Typography sx={{ color: theme.mix(0.6), mt: 1.2, maxWidth: 460, fontSize: '1rem', fontFamily: FONT }}>
+                                {mode === 'login'
+                                    ? "Pick up where you left off: today's plan session, your runs and your records."
+                                    : 'Workouts, GPS runs, meals and training plans in one place, with badges for every milestone.'}
+                            </Typography>
+                        </Box>
                     </Box>
 
                     {/* Right half: the form card */}
                     <Card key={mode} sx={{
-                        flex: { md: '5 1 0' },
-                        minWidth: 0,
+                        flex: { md: '5 1 0' }, minWidth: 0, width: '100%',
                         p: { xs: 3, sm: 4 },
                         display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                        borderRadius: 0,
+                        borderRadius: 4,
                         background: theme.mix(0.02),
-                        borderLeft: { md: `1px solid ${theme.mix(0.12)}` },
-                        borderTop: { xs: `1px solid ${theme.mix(0.12)}`, md: 'none' },
                     }}>
-                        <Typography component="h1" sx={{ color: theme.mix(1), fontWeight: 800, fontSize: '1.9rem', fontFamily: FONT, ...appear(0) }}>
-                            {isRegister ? 'Create your account' : 'Welcome back'}
-                        </Typography>
-                        <Typography sx={{ color: theme.mix(0.55), mt: 0.5, fontFamily: FONT, ...appear(1) }}>
-                            {isRegister ? 'It takes less than a minute.' : 'Sign in to keep your streak going.'}
-                        </Typography>
-
                         {error && <Alert severity="error" sx={{ mt: 2.5 }}>{error}</Alert>}
 
                         <Box sx={{ mt: 3, ...appear(2) }}>

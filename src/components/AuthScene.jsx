@@ -64,7 +64,7 @@ const CENTER_ICONS = [DirectionsRunIcon, FitnessCenterIcon, LocalFireDepartmentI
 const CHIPS = {
     login: [
         { icon: DirectionsRunIcon, label: '5.2 km', sub: 'Morning run', color: '#4ecdc4', pos: { top: '12%', left: '7%' } },
-        { icon: LocalFireDepartmentIcon, label: '12-day streak', sub: 'Keep it going', color: '#ffa726', pos: { top: '17%', right: '7%' } },
+        { icon: LocalFireDepartmentIcon, label: '12 day streak', sub: 'Keep it going', color: '#ffa726', pos: { top: '17%', right: '7%' } },
         { icon: EmojiEventsIcon, label: 'New PR', sub: 'Squat 100 kg', color: '#ffd166', pos: { top: '52%', left: '5%' } },
         { icon: BoltIcon, label: '642 kcal', sub: 'Burned today', color: '#ff6b81', pos: { top: '56%', right: '6%' } },
     ],
@@ -100,7 +100,7 @@ const HEARTBEAT_PATH = Array.from({ length: 4 }, (_, i) => {
 }).join(' ');
 
 /** The animated side of the sign-in / sign-up page. {@code compact} is the short banner used on phones. */
-function AuthScene({ mode, compact = false }) {
+function AuthScene({ mode, compact = false, showCopy = true }) {
     const copy = COPY[mode];
     const ringSize = compact ? 130 : 230;
 
@@ -204,30 +204,32 @@ function AuthScene({ mode, compact = false }) {
             })}
 
             {/* Headline */}
-            <Box key={mode} sx={{
-                position: 'absolute',
-                left: compact ? 20 : 56, right: compact ? 150 : 56, bottom: compact ? 44 : 112,
-                animation: `${fadeUp} 0.7s ease 0.2s both`,
-                ...reducedMotion(),
-            }}>
-                <Typography sx={{
-                    textTransform: 'uppercase', letterSpacing: 3, fontSize: compact ? '0.65rem' : '0.75rem',
-                    fontWeight: 700, color: mode === 'login' ? '#ff8fa3' : '#7ee8e0', fontFamily: 'inherit',
+            {showCopy && (
+                <Box key={mode} sx={{
+                    position: 'absolute',
+                    left: compact ? 20 : 56, right: compact ? 150 : 56, bottom: compact ? 44 : 112,
+                    animation: `${fadeUp} 0.7s ease 0.2s both`,
+                    ...reducedMotion(),
                 }}>
-                    {copy.eyebrow}
-                </Typography>
-                <Typography component="h2" sx={{
-                    color: 'inherit', fontWeight: 800, lineHeight: 1.15, mt: 0.5, fontFamily: 'inherit',
-                    fontSize: compact ? '1.15rem' : { md: '2.2rem', lg: '2.6rem' },
-                }}>
-                    {copy.title}
-                </Typography>
-                {!compact && (
-                    <Typography sx={{ color: 'inherit', mt: 1.5, maxWidth: 460, opacity: 0.8, fontSize: '1rem', fontFamily: 'inherit' }}>
-                        {copy.body}
+                    <Typography sx={{
+                        textTransform: 'uppercase', letterSpacing: 3, fontSize: compact ? '0.65rem' : '0.75rem',
+                        fontWeight: 700, color: mode === 'login' ? '#ff8fa3' : '#7ee8e0', fontFamily: 'inherit',
+                    }}>
+                        {copy.eyebrow}
                     </Typography>
-                )}
-            </Box>
+                    <Typography component="h2" sx={{
+                        color: 'inherit', fontWeight: 800, lineHeight: 1.15, mt: 0.5, fontFamily: 'inherit',
+                        fontSize: compact ? '1.15rem' : { md: '2.2rem', lg: '2.6rem' },
+                    }}>
+                        {copy.title}
+                    </Typography>
+                    {!compact && (
+                        <Typography sx={{ color: 'inherit', mt: 1.5, maxWidth: 460, opacity: 0.8, fontSize: '1rem', fontFamily: 'inherit' }}>
+                            {copy.body}
+                        </Typography>
+                    )}
+                </Box>
+            )}
 
             {/* Heartbeat line */}
             {!compact && (

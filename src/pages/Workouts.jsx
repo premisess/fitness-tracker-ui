@@ -381,7 +381,7 @@ function Workouts() {
                                                     </Typography>
                                                     <Typography sx={{ color: theme.mix(0.4), fontSize: '0.72rem', textAlign: 'center' }}>REPS</Typography>
                                                 </>}
-                                            <Typography sx={{ color: theme.mix(0.4), fontSize: '0.72rem', textAlign: 'center' }}>WARM-UP</Typography>
+                                            <Typography sx={{ color: theme.mix(0.4), fontSize: '0.72rem', textAlign: 'center' }}>WARM UP</Typography>
                                             <span />
                                         </Box>
 

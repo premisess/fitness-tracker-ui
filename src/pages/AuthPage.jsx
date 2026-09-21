@@ -133,24 +133,28 @@ function AuthPage() {
 
     return (
         <Box sx={{
-            minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT,
-            display: 'flex', flexDirection: 'column',
+            height: '100vh', background: theme.bgGradient, fontFamily: FONT,
+            display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
-            {/* Top bar: logo and theme toggle */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 1150, mx: 'auto', px: { xs: 2.5, sm: 4 }, pt: 2.5 }}>
+            {/* Full-width top bar like the landing page */}
+            <Box sx={{
+                position: 'relative', zIndex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                px: { xs: 2, md: 5 }, py: 2.5, flexShrink: 0,
+            }}>
                 <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
-                    <FitnessCenterIcon sx={{ color: '#e94560' }} />
-                    <Typography sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
+                    <FitnessCenterIcon sx={{ color: '#e94560', fontSize: 30 }} />
+                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
                         FitTracker
                     </Typography>
                 </Box>
-                <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.6) }} aria-label="Toggle dark mode">
+                <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }} aria-label="Toggle dark mode">
                     {themeMode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
             </Box>
 
             {/* Animated card (twisted, dropped down a touch) with the welcome words below it; form card beside */}
-            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 3, sm: 5 } }}>
+            <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 3 }, overflow: 'hidden' }}>
                 <Box key={mode} sx={{
                     display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center',
                     width: '100%', maxWidth: 1150, gap: { xs: 4, md: 0 },
@@ -161,18 +165,18 @@ function AuthPage() {
                     <Box sx={{
                         flex: { md: '7 1 0' }, minWidth: 0, width: '100%',
                         display: 'flex', flexDirection: 'column',
-                        mt: { xs: 0, md: 9 }, pr: { md: 6 },
+                        mt: { xs: 0, md: 4 }, pr: { md: 6 },
                     }}>
                         <Box sx={{
                             position: 'relative',
-                            height: { xs: 240, md: 400 },
+                            height: { xs: 240, md: 360 },
                             borderRadius: 4, overflow: 'hidden',
                             boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
                             transform: { md: 'rotate(-1.6deg) translateY(14px)' },
                         }}>
                             <AuthScene mode={mode} compact={!wide} showCopy={false} />
                         </Box>
-                        <Box sx={{ mt: { md: 12, xs: 4 }, textAlign: { md: 'left', xs: 'center' } }}>
+                        <Box sx={{ mt: { md: 6, xs: 4 }, textAlign: { md: 'left', xs: 'center' } }}>
                             <Typography sx={{
                                 textTransform: 'uppercase', letterSpacing: 3, fontSize: '0.75rem',
                                 fontWeight: 700, color: mode === 'login' ? '#ff8fa3' : '#7ee8e0', fontFamily: FONT,

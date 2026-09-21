@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import API, { ACTIVITY_EVENT } from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Alert, Box, Typography, Card, CardContent,
-    Button, AppBar, Toolbar, IconButton, Avatar, LinearProgress
+    Button, AppBar, Toolbar, IconButton, Avatar, LinearProgress, useMediaQuery
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
@@ -18,9 +18,21 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import HistoryIcon from '@mui/icons-material/History';
+import PersonIcon from '@mui/icons-material/Person';
+import SettingsIcon from '@mui/icons-material/Settings';
+import HomeIcon from '@mui/icons-material/Home';
+
+const FONT = "'Poppins', sans-serif";
 
 function Dashboard() {
     const { theme, mode, toggleTheme } = useAppTheme();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const wide = useMediaQuery('(min-width:900px)');
     // The backend aggregates everything this screen shows into one call.
     const [summary, setSummary] = useState(null);
 
@@ -28,24 +40,17 @@ function Dashboard() {
     const [resending, setResending] = useState(false);
 
     const name = summary?.name || localStorage.getItem('name');
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchSummary();
-        // Celebrates any badge earned since the last visit.
-        window.dispatchEvent(new Event(ACTIVITY_EVENT));
-    }, []);
-
-    const fetchSummary = async () => {
+    async function fetchSummary() {
         try {
             const res = await API.get('/dashboard/summary');
             setSummary(res.data);
         } catch (err) {
             console.error('Error fetching dashboard summary', err);
         }
-    };
+    }
 
-    const handleLogout = async () => {
+    async function handleLogout() {
         try {
             await API.post('/auth/logout');
         } catch {
@@ -53,9 +58,9 @@ function Dashboard() {
         }
         localStorage.clear();
         navigate('/login');
-    };
+    }
 
-    const resendVerification = async () => {
+    async function resendVerification() {
         setResending(true);
         try {
             const res = await API.post('/auth/resend-verification');
@@ -65,7 +70,47 @@ function Dashboard() {
         } finally {
             setResending(false);
         }
-    };
+    }
+
+    useEffect(() => {
+        const init = async () => {
+            await fetchSummary();
+            // Celebrates any badge earned since the last visit.
+            window.dispatchEvent(new Event(ACTIVITY_EVENT));
+        };
+        init();
+    }, []);;
+
+    // Sections people reach from the dashboard, grouped into main and account.
+    const navMain = [
+        { label: 'Dashboard', path: '/dashboard', icon: <HomeIcon /> },
+        { label: 'Workout', path: '/workouts', icon: <FitnessCenterIcon /> },
+        { label: 'Exercises', path: '/exercises', icon: <SelfImprovementIcon /> },
+        { label: 'Goals', path: '/goals', icon: <TrackChangesIcon /> },
+        { label: 'Runs', path: '/runs', icon: <DirectionsRunIcon /> },
+        { label: 'Nutrition', path: '/nutrition', icon: <RestaurantIcon /> },
+        { label: 'Analytics', path: '/analytics', icon: <BarChartIcon /> },
+        { label: 'Records', path: '/records', icon: <HistoryIcon /> },
+    ];
+    const navAccount = [
+        { label: 'My Profile', path: '/profile', icon: <PersonIcon /> },
+        { label: 'Settings', path: '/account-settings', icon: <SettingsIcon /> },
+    ];
+    const allNav = [...navMain, ...navAccount];
+
+    const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+
+    const navButtonStyle = (item, desktop) => ({
+        justifyContent: 'flex-start', textTransform: 'none', fontFamily: FONT, fontWeight: 600,
+        fontSize: desktop ? '0.9rem' : '0.8rem', borderRadius: 2,
+        ...(desktop ? { py: 1.1, px: 2, mb: 0.5 } : { px: 1.6, py: 0.9, borderRadius: 999, whiteSpace: 'nowrap' }),
+        color: isActive(item.path) ? '#e94560' : theme.mix(0.7),
+        background: isActive(item.path) ? 'rgba(233,69,96,0.12)' : 'transparent',
+        ...(desktop
+            ? { '&:hover': { background: theme.mix(0.08), color: theme.mix(1) } }
+            : { border: `1px solid ${isActive(item.path) ? 'rgba(233,69,96,0.4)' : theme.mix(0.12)}`,
+                '&:hover': { background: theme.mix(0.06), color: theme.mix(1) } }),
+    });
 
     const statCards = [
         { title: 'Total Workouts', value: summary?.workoutCount ?? 0, icon: <FitnessCenterIcon sx={{ fontSize: 40, color: '#e94560' }} />, unit: 'sessions' },
@@ -119,7 +164,7 @@ function Dashboard() {
         <Box sx={{
             minHeight: '100vh',
             background: theme.bgGradient,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: FONT,
         }}>
             <AppBar position="static" sx={{
                 background: theme.mix(0.05),
@@ -133,7 +178,7 @@ function Dashboard() {
                         color: theme.mix(1),
                         fontWeight: 700,
                         flexGrow: 1,
-                        fontFamily: "'Poppins', sans-serif",
+                        fontFamily: FONT,
                         letterSpacing: 1
                     }}>
                         FitTracker
@@ -158,245 +203,238 @@ function Dashboard() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                py: 6,
-                px: 2,
-            }}>
-                {/* Welcome */}
-                <Typography variant="h4" sx={{
-                    color: theme.mix(1),
-                    fontWeight: 700,
-                    mb: 1,
-                    fontFamily: "'Poppins', sans-serif",
-                    letterSpacing: 1,
-                    textAlign: 'center'
-                }}>
-                    {`Welcome, ${name}`}
-                </Typography>
-                <Typography variant="body1" sx={{
-                    color: theme.mix(0.5),
-                    mb: 5,
-                    fontFamily: "'Poppins', sans-serif",
-                    textAlign: 'center'
-                }}>
-                    {summary?.nextStep || 'Here is your fitness summary'}
-                </Typography>
-
-                {summary && !summary.emailVerified && (
-                    <Alert severity="warning" sx={{ mb: 4, width: '100%', maxWidth: 700 }}
-                           action={(
-                               <Button color="inherit" size="small" disabled={resending} onClick={resendVerification}>
-                                   Resend link
-                               </Button>
-                           )}>
-                        Please confirm your email address — we sent a link to {localStorage.getItem('email')}.
-                        {verifyNotice && <Typography sx={{ fontSize: '0.8rem', mt: 0.5 }}>{verifyNotice}</Typography>}
-                    </Alert>
-                )}
-
-                {summary?.activePlanName && (
-                    <Card onClick={() => navigate('/plans')} sx={{
-                        width: '100%', maxWidth: 700, mb: 4, cursor: 'pointer',
-                        background: 'linear-gradient(135deg, rgba(102,187,106,0.18), rgba(78,205,196,0.12))',
-                        border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3,
-                        transition: 'transform 0.2s',
-                        '&:hover': { transform: 'translateY(-3px)' },
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'stretch', minHeight: 'calc(100vh - 64px)' }}>
+                {/* Desktop glass sidebar */}
+                {wide && (
+                    <Box sx={{
+                        width: 240, flexShrink: 0, display: 'flex', flexDirection: 'column',
+                        px: 2, py: 3, gap: 0.5,
+                        background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)',
+                        borderRight: `1px solid ${theme.mix(0.08)}`,
                     }}>
-                        <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <EventNoteIcon sx={{ fontSize: 40, color: '#66bb6a' }} />
-                            <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
-                                    {summary.activePlanName}
-                                </Typography>
-                                <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem', fontFamily: "'Poppins', sans-serif" }}>
-                                    {summary.nextPlanSession ? `Next up: ${summary.nextPlanSession}` : 'Plan complete — pick a new one'}
-                                </Typography>
-                                <LinearProgress variant="determinate" value={summary.planProgressPercent ?? 0}
-                                                sx={{ mt: 1, height: 6, borderRadius: 3, background: theme.mix(0.12), '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' } }} />
-                            </Box>
-                            <Typography sx={{ color: '#66bb6a', fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
-                                {summary.planProgressPercent ?? 0}%
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                        <Typography sx={{ color: theme.mix(0.4), fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', px: 2, mb: 0.5, fontFamily: FONT }}>
+                            Menu
+                        </Typography>
+                        {navMain.map((item) => (
+                            <Button key={item.path} onClick={() => navigate(item.path)} startIcon={item.icon} sx={navButtonStyle(item, true)}>
+                                {item.label}
+                            </Button>
+                        ))}
+                        <Box sx={{ flex: 1 }} />
+                        <Typography sx={{ color: theme.mix(0.4), fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', px: 2, mb: 0.5, fontFamily: FONT }}>
+                            Account
+                        </Typography>
+                        {navAccount.map((item) => (
+                            <Button key={item.path} onClick={() => navigate(item.path)} startIcon={item.icon} sx={navButtonStyle(item, true)}>
+                                {item.label}
+                            </Button>
+                        ))}
+                    </Box>
                 )}
 
-                {/* Stat Cards */}
-                <Box sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 3,
-                    justifyContent: 'center',
-                    mb: 5,
-                    width: '100%',
-                    maxWidth: 1000,
-                }}>
-                    {statCards.map((card, index) => (
-                        <Box key={index} sx={{ width: 210 }}>
-                            <Card sx={{
-                                background: theme.mix(0.05),
-                                backdropFilter: 'blur(10px)',
-                                border: `1px solid ${theme.mix(0.1)}`,
-                                borderRadius: 3,
-                                transition: 'transform 0.2s',
-                                '&:hover': { transform: 'translateY(-5px)' }
-                            }}>
-                                <CardContent sx={{ textAlign: 'center' }}>
-                                    {card.icon}
-                                    <Typography variant="h4" sx={{
-                                        color: theme.mix(1),
-                                        fontWeight: 700,
-                                        mt: 1,
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.value}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{
-                                        color: theme.mix(0.5),
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.title}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{
-                                        color: theme.mix(0.3),
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.unit}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Box>
-                    ))}
-                </Box>
+                {/* Mobile glass nav row */}
+                {!wide && (
+                    <Box sx={{
+                        display: 'flex', overflowX: 'auto', px: 2, py: 1.5, gap: 1,
+                        background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)',
+                        borderBottom: `1px solid ${theme.mix(0.08)}`,
+                        '&::-webkit-scrollbar': { display: 'none' },
+                    }}>
+                        {allNav.map((item) => (
+                            <Button key={item.path} onClick={() => navigate(item.path)} startIcon={item.icon} sx={navButtonStyle(item, false)}>
+                                {item.label}
+                            </Button>
+                        ))}
+                    </Box>
+                )}
 
-                {/* Quick Actions */}
-                <Typography variant="h6" sx={{
-                    color: theme.mix(1),
-                    fontWeight: 700,
-                    mb: 3,
-                    fontFamily: "'Poppins', sans-serif",
-                    letterSpacing: 1,
-                    textAlign: 'center'
-                }}>
-                    Quick Actions
-                </Typography>
+                {/* Main content */}
                 <Box sx={{
+                    flex: 1, minWidth: 0,
                     display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 1.5,
-                    justifyContent: 'center',
-                    width: '100%',
-                    maxWidth: 900,
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    py: { xs: 4, md: 6 },
+                    px: 2,
                 }}>
-                    {[
-                        { label: 'Log Workout', path: '/workouts', color: '#e94560' },
-                        { label: 'My Goals', path: '/goals', color: '#4ecdc4' },
-                        { label: 'Water Intake', path: '/water-intake', color: '#45b7d1' },
-                        { label: 'BMI Calculator', path: '/bmi', color: '#ff6b35' },
-                        { label: 'Food Diary', path: '/nutrition', color: '#ff6b35' },
-                        { label: 'Workout Plans', path: '/plans', color: '#66bb6a' },
-                        { label: 'Achievements', path: '/achievements', color: '#ffd166' },
-                        { label: 'My Profile', path: '/profile', color: '#a29bfe' },
-                        { label: 'Start Run', path: '/run', color: '#4ecdc4' },
-                        { label: 'Activities', path: '/runs', color: '#45b7d1' },
-                        { label: 'Exercises', path: '/exercises', color: '#e94560' },
-                        { label: 'Records', path: '/records', color: '#ffa726' },
-                        { label: 'Analytics', path: '/analytics', color: '#4ecdc4' },
-                    ].map((action, index) => (
-                        <Button
-                            key={index}
-                            variant="outlined"
-                            onClick={() => navigate(action.path)}
-                            sx={{
-                                px: 1.5,
-                                py: 1.5,
-                                borderRadius: 2,
-                                borderColor: action.color,
-                                color: action.color,
-                                fontWeight: 600,
-                                fontFamily: "'Poppins', sans-serif",
-                                fontSize: '0.75rem',
-                                minWidth: 'auto',
-                                '&:hover': { background: action.color, color: theme.mix(1) }
-                            }}>
-                            {action.label}
-                        </Button>
-                    ))}
-                </Box>
+                    {/* Welcome */}
+                    <Typography variant="h4" sx={{
+                        color: theme.mix(1),
+                        fontWeight: 700,
+                        mb: 1,
+                        fontFamily: FONT,
+                        letterSpacing: 1,
+                        textAlign: 'center'
+                    }}>
+                        {`Welcome, ${name}`}
+                    </Typography>
+                    <Typography variant="body1" sx={{
+                        color: theme.mix(0.5),
+                        mb: 5,
+                        fontFamily: FONT,
+                        textAlign: 'center'
+                    }}>
+                        {summary?.nextStep || 'Here is your fitness summary'}
+                    </Typography>
 
-                {/* Journey Guide */}
-                <Box sx={{ mt: 5, width: '100%', maxWidth: 700 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="h6" sx={{
-                            color: theme.mix(1), fontWeight: 700,
-                            fontFamily: "'Poppins', sans-serif", letterSpacing: 1
+                    {summary && !summary.emailVerified && (
+                        <Alert severity="warning" sx={{ mb: 4, width: '100%', maxWidth: 700 }}
+                               action={(
+                                   <Button color="inherit" size="small" disabled={resending} onClick={resendVerification}>
+                                       Resend link
+                                   </Button>
+                               )}>
+                            Please confirm your email address — we sent a link to {localStorage.getItem('email')}.
+                            {verifyNotice && <Typography sx={{ fontSize: '0.8rem', mt: 0.5 }}>{verifyNotice}</Typography>}
+                        </Alert>
+                    )}
+
+                    {summary?.activePlanName && (
+                        <Card onClick={() => navigate('/plans')} sx={{
+                            width: '100%', maxWidth: 700, mb: 4, cursor: 'pointer',
+                            background: 'linear-gradient(135deg, rgba(102,187,106,0.18), rgba(78,205,196,0.12))',
+                            border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3,
+                            transition: 'transform 0.2s',
+                            '&:hover': { transform: 'translateY(-3px)' },
                         }}>
-                            Your Fitness Journey
-                        </Typography>
-                        <Typography sx={{ color: '#4ecdc4', fontWeight: 700, fontFamily: "'Poppins', sans-serif", fontSize: '0.85rem' }}>
-                            {completedSteps}/{journeySteps.length} completed
-                        </Typography>
-                    </Box>
+                            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <EventNoteIcon sx={{ fontSize: 40, color: '#66bb6a' }} />
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: FONT }}>
+                                        {summary.activePlanName}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem', fontFamily: FONT }}>
+                                        {summary.nextPlanSession ? `Next up: ${summary.nextPlanSession}` : 'Plan complete — pick a new one'}
+                                    </Typography>
+                                    <LinearProgress variant="determinate" value={summary.planProgressPercent ?? 0}
+                                                    sx={{ mt: 1, height: 6, borderRadius: 3, background: theme.mix(0.12), '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' } }} />
+                                </Box>
+                                <Typography sx={{ color: '#66bb6a', fontWeight: 700, fontFamily: FONT }}>
+                                    {summary.planProgressPercent ?? 0}%
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    )}
 
-                    {/* Progress Bar */}
-                    <Box sx={{ width: '100%', height: 6, background: theme.mix(0.1), borderRadius: 3, mb: 3 }}>
-                        <Box sx={{
-                            width: `${(completedSteps / journeySteps.length) * 100}%`,
-                            height: '100%',
-                            background: 'linear-gradient(90deg, #4ecdc4, #45b7d1)',
-                            borderRadius: 3,
-                            transition: 'width 0.5s'
-                        }} />
-                    </Box>
-
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                        {journeySteps.map((item) => (
-                            <Box key={item.step}
-                                 onClick={() => !item.done && navigate(item.path)}
-                                 sx={{
-                                     display: 'flex', alignItems: 'center', gap: 2,
-                                     p: 2, borderRadius: 2,
-                                     cursor: item.done ? 'default' : 'pointer',
-                                     background: item.done ? 'rgba(78,205,196,0.1)' : theme.mix(0.03),
-                                     border: `1px solid ${item.done ? '#4ecdc4' : theme.mix(0.1)}`,
-                                     transition: 'all 0.2s',
-                                     '&:hover': {
-                                         background: item.done ? 'rgba(78,205,196,0.1)' : theme.mix(0.07)
-                                     }
-                                 }}>
-                                <Box sx={{
-                                    width: 36, height: 36, borderRadius: '50%',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    background: item.done ? '#4ecdc4' : item.color,
-                                    flexShrink: 0
+                    {/* Stat Cards */}
+                    <Box sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 3,
+                        justifyContent: 'center',
+                        mb: 5,
+                        width: '100%',
+                        maxWidth: 900,
+                    }}>
+                        {statCards.map((card, index) => (
+                            <Box key={index} sx={{ width: 210 }}>
+                                <Card sx={{
+                                    background: theme.mix(0.05),
+                                    backdropFilter: 'blur(10px)',
+                                    border: `1px solid ${theme.mix(0.1)}`,
+                                    borderRadius: 3,
+                                    transition: 'transform 0.2s',
+                                    '&:hover': { transform: 'translateY(-5px)' }
                                 }}>
-                                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '0.85rem' }}>
-                                        {item.done ? '✓' : item.step}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ flex: 1 }}>
-                                    <Typography sx={{
-                                        color: item.done ? '#4ecdc4' : theme.mix(1),
-                                        fontWeight: 600, fontFamily: "'Poppins', sans-serif",
-                                        fontSize: '0.9rem',
-                                        textDecoration: item.done ? 'line-through' : 'none'
-                                    }}>
-                                        {item.label}
-                                    </Typography>
-                                    <Typography sx={{ color: theme.mix(0.4), fontSize: '0.75rem', fontFamily: "'Poppins', sans-serif" }}>
-                                        {item.description}
-                                    </Typography>
-                                </Box>
-                                {!item.done && (
-                                    <Typography sx={{ color: item.color, fontSize: '0.75rem', fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>
-                                        Go →
-                                    </Typography>
-                                )}
+                                    <CardContent sx={{ textAlign: 'center' }}>
+                                        {card.icon}
+                                        <Typography variant="h4" sx={{
+                                            color: theme.mix(1),
+                                            fontWeight: 700,
+                                            mt: 1,
+                                            fontFamily: FONT
+                                        }}>
+                                            {card.value}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{
+                                            color: theme.mix(0.5),
+                                            fontFamily: FONT
+                                        }}>
+                                            {card.title}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{
+                                            color: theme.mix(0.3),
+                                            fontFamily: FONT
+                                        }}>
+                                            {card.unit}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
                             </Box>
                         ))}
+                    </Box>
+
+                    {/* Journey Guide */}
+                    <Box sx={{ width: '100%', maxWidth: 700 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="h6" sx={{
+                                color: theme.mix(1), fontWeight: 700,
+                                fontFamily: FONT, letterSpacing: 1
+                            }}>
+                                Your Fitness Journey
+                            </Typography>
+                            <Typography sx={{ color: '#4ecdc4', fontWeight: 700, fontFamily: FONT, fontSize: '0.85rem' }}>
+                                {completedSteps}/{journeySteps.length} completed
+                            </Typography>
+                        </Box>
+
+                        {/* Progress Bar */}
+                        <Box sx={{ width: '100%', height: 6, background: theme.mix(0.1), borderRadius: 3, mb: 3 }}>
+                            <Box sx={{
+                                width: `${(completedSteps / journeySteps.length) * 100}%`,
+                                height: '100%',
+                                background: 'linear-gradient(90deg, #4ecdc4, #45b7d1)',
+                                borderRadius: 3,
+                                transition: 'width 0.5s'
+                            }} />
+                        </Box>
+
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                            {journeySteps.map((item) => (
+                                <Box key={item.step}
+                                     onClick={() => !item.done && navigate(item.path)}
+                                     sx={{
+                                         display: 'flex', alignItems: 'center', gap: 2,
+                                         p: 2, borderRadius: 2,
+                                         cursor: item.done ? 'default' : 'pointer',
+                                         background: item.done ? 'rgba(78,205,196,0.1)' : theme.mix(0.03),
+                                         border: `1px solid ${item.done ? '#4ecdc4' : theme.mix(0.1)}`,
+                                         transition: 'all 0.2s',
+                                         '&:hover': {
+                                             background: item.done ? 'rgba(78,205,196,0.1)' : theme.mix(0.07)
+                                         }
+                                     }}>
+                                    <Box sx={{
+                                        width: 36, height: 36, borderRadius: '50%',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        background: item.done ? '#4ecdc4' : item.color,
+                                        flexShrink: 0
+                                    }}>
+                                        <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '0.85rem' }}>
+                                            {item.done ? '✓' : item.step}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ flex: 1 }}>
+                                        <Typography sx={{
+                                            color: item.done ? '#4ecdc4' : theme.mix(1),
+                                            fontWeight: 600, fontFamily: FONT,
+                                            fontSize: '0.9rem',
+                                            textDecoration: item.done ? 'line-through' : 'none'
+                                        }}>
+                                            {item.label}
+                                        </Typography>
+                                        <Typography sx={{ color: theme.mix(0.4), fontSize: '0.75rem', fontFamily: FONT }}>
+                                            {item.description}
+                                        </Typography>
+                                    </Box>
+                                    {!item.done && (
+                                        <Typography sx={{ color: item.color, fontSize: '0.75rem', fontFamily: FONT, fontWeight: 600 }}>
+                                            Go →
+                                        </Typography>
+                                    )}
+                                </Box>
+                            ))}
+                        </Box>
                     </Box>
                 </Box>
             </Box>

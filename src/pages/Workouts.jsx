@@ -202,7 +202,7 @@ function Workouts() {
                 try {
                     const planRes = await API.post('/plans/active/sessions', { workoutId: res.data.id });
                     message = planRes.data.status === 'COMPLETED'
-                        ? `Workout logged — you finished ${planSession.plan.name}! 🎉`
+                        ? `Workout logged, you finished ${planSession.plan.name}! 🎉`
                         : `Workout logged and counted toward ${planSession.plan.name}.`;
                 } catch (planErr) {
                     setError(errorMessage(planErr, 'Workout saved, but it could not be counted toward your plan'));
@@ -539,7 +539,7 @@ function Workouts() {
                                         )}
                                         {hasExercises && workout.exercises.map((ex) => (
                                             <Typography key={ex.id} sx={{ color: theme.mix(0.75), fontSize: '0.82rem', mt: 0.5 }}>
-                                                <strong>{ex.exerciseName}</strong> — {summarizeExercise(ex)}
+                                                <strong>{ex.exerciseName}</strong>, {summarizeExercise(ex)}
                                             </Typography>
                                         ))}
                                         {workout.notes && <Typography sx={{ color: theme.mix(0.4), fontSize: '0.8rem', mt: 0.5 }}>{workout.notes}</Typography>}

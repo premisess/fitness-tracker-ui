@@ -207,7 +207,7 @@ function Dashboard() {
                                    Resend link
                                </Button>
                            )}>
-                        Please confirm your email address — we sent a link to {localStorage.getItem('email')}.
+                        Please confirm your email address. We sent a link to {localStorage.getItem('email')}.
                         {verifyNotice && <Typography sx={{ fontSize: '0.8rem', mt: 0.5 }}>{verifyNotice}</Typography>}
                     </Alert>
                 )}
@@ -227,7 +227,7 @@ function Dashboard() {
                                     {summary.activePlanName}
                                 </Typography>
                                 <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem', fontFamily: "'Poppins', sans-serif" }}>
-                                    {summary.nextPlanSession ? `Next up: ${summary.nextPlanSession}` : 'Plan complete — pick a new one'}
+                                    {summary.nextPlanSession ? `Next up: ${summary.nextPlanSession}` : 'Plan complete, pick a new one'}
                                 </Typography>
                                 <LinearProgress variant="determinate" value={summary.planProgressPercent ?? 0}
                                                 sx={{ mt: 1, height: 6, borderRadius: 3, background: theme.mix(0.12), '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' } }} />

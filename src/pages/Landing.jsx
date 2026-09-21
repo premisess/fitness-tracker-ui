@@ -40,7 +40,7 @@ const features = [
         icon: <BarChartIcon sx={{ fontSize: 32 }} />,
         color: '#a29bfe',
         title: 'Analytics & Charts',
-        text: 'See your progress over time — calories, BMI, workout mix — in clean, exportable charts.',
+        text: 'See your progress in clean, exportable charts, from calories and BMI to your workout mix.',
     },
     {
         icon: <CalendarViewWeekIcon sx={{ fontSize: 32 }} />,
@@ -130,7 +130,7 @@ function Landing() {
                         color: theme.mix(0.6), fontSize: '1.05rem', mb: 4, lineHeight: 1.7,
                         fontFamily: "'Poppins', sans-serif"
                     }}>
-                        Workouts, calories, goals, streaks, and BMI — all in one place, with
+                        Workouts, calories, goals, streaks and BMI, all in one place, with
                         calories calculated automatically so you never have to guess.
                     </Typography>
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -225,11 +225,12 @@ function Landing() {
                             backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                             border: `1px solid ${theme.mix(0.12)}`,
                             boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                            textAlign: 'center',
                             transition: 'transform 0.2s, border-color 0.2s',
                             '&:hover': { transform: 'translateY(-6px)', borderColor: f.color },
                         }}>
                             <Box sx={{
-                                width: 56, height: 56, borderRadius: 2, mb: 2,
+                                width: 56, height: 56, borderRadius: 2, mb: 2, mx: 'auto',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 background: `${f.color}22`, color: f.color,
                             }}>

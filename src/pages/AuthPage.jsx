@@ -165,18 +165,18 @@ function AuthPage() {
                     <Box sx={{
                         flex: { md: '7 1 0' }, minWidth: 0, width: '100%',
                         display: 'flex', flexDirection: 'column',
-                        mt: { xs: 0, md: 4 }, pr: { md: 6 },
+                        mt: { xs: 0, md: 1 }, pr: { md: 6 },
                     }}>
                         <Box sx={{
                             position: 'relative',
                             height: { xs: 240, md: 360 },
                             borderRadius: 4, overflow: 'hidden',
                             boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
-                            transform: { md: 'rotate(-1.6deg) translateY(14px)' },
+                            transform: { md: 'rotate(-1.6deg) translateY(4px)' },
                         }}>
                             <AuthScene mode={mode} compact={!wide} showCopy={false} />
                         </Box>
-                        <Box sx={{ mt: { md: 6, xs: 4 }, textAlign: { md: 'left', xs: 'center' } }}>
+                        <Box sx={{ mt: { md: 4, xs: 4 }, textAlign: { md: 'left', xs: 'center' } }}>
                             <Typography sx={{
                                 textTransform: 'uppercase', letterSpacing: 3, fontSize: '0.75rem',
                                 fontWeight: 700, color: mode === 'login' ? '#ff8fa3' : '#7ee8e0', fontFamily: FONT,

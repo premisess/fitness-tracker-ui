@@ -104,7 +104,7 @@ function PlanDetail() {
                                 )}
                                 {summary.active ? (
                                     <Button onClick={() => navigate('/plans')} variant="contained" sx={{ mt: 2.5, borderRadius: 999, textTransform: 'none', fontWeight: 700, background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' }}>
-                                        You're following this — open it
+                                        You're following this, open it
                                     </Button>
                                 ) : (
                                     <Button onClick={() => start(false)} disabled={starting} variant="contained"

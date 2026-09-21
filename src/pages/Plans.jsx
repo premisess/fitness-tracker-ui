@@ -43,7 +43,7 @@ function Plans() {
         setError('');
         try {
             const res = await API.post('/plans/active/sessions', { skip: true });
-            setMessage(res.data.status === 'COMPLETED' ? 'That was the last session — plan complete!' : 'Session skipped.');
+            setMessage(res.data.status === 'COMPLETED' ? 'That was the last session, plan complete!' : 'Session skipped.');
             setConfirm(null);
             setReloadKey((k) => k + 1);
         } catch (err) {

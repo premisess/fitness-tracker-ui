@@ -42,9 +42,9 @@ function passwordStrength(password) {
 }
 
 /**
- * Sign in (/login) and sign up (/register) share one joined card: the animated scene on the left
- * (a bit wider) and the form on the right. Switching modes swaps both the scene and the form.
- * On phones the card stacks with the scene as a compact banner on top.
+ * Sign in (/login) and sign up (/register): two cards joined together, the animated one wider on the
+ * left and the form on the right. Both halves always share the same height, so switching modes keeps
+ * every card aligned; the animated card swaps its content between the two modes.
  */
 function AuthPage() {
     const location = useLocation();
@@ -64,7 +64,7 @@ function AuthPage() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    // Fade the card in on the next frame.
+    // Fade the cards in on the next frame.
     useEffect(() => {
         const frame = requestAnimationFrame(() => setEntered(true));
         return () => cancelAnimationFrame(frame);
@@ -137,7 +137,7 @@ function AuthPage() {
             display: 'flex', flexDirection: 'column',
         }}>
             {/* Top bar: logo and theme toggle */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 1000, mx: 'auto', px: { xs: 2.5, sm: 4 }, pt: 2.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 1150, mx: 'auto', px: { xs: 2.5, sm: 4 }, pt: 2.5 }}>
                 <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
                     <FitnessCenterIcon sx={{ color: '#e94560' }} />
                     <Typography sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
@@ -149,27 +149,37 @@ function AuthPage() {
                 </IconButton>
             </Box>
 
-            {/* One joined card: animated scene on the left, form on the right */}
+            {/* Two joined cards: animated (left, wider) + form (right) */}
             <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 3, sm: 5 } }}>
-                <Card key={mode} sx={{
-                    display: 'grid', gridTemplateColumns: { md: '7fr 5fr' },
-                    width: '100%', maxWidth: 1000,
+                <Box key={mode} sx={{
+                    display: 'flex', flexDirection: { xs: 'column', md: 'row' },
+                    width: '100%', maxWidth: 1150,
                     borderRadius: { xs: 4, md: 5 },
                     overflow: 'hidden',
                     boxShadow: '0 30px 80px rgba(0,0,0,0.35)',
                     opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)',
                     transition: 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}>
-                    {/* Left: animated scene, wider */}
-                    <Box sx={{ height: { xs: 240, md: 'auto' } }}>
+                    {/* Left half: the animated card, wider */}
+                    <Box sx={{
+                        flex: { md: '7 1 0' },
+                        height: { xs: 240, md: 'auto' },
+                        display: 'flex', flexDirection: 'column',
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 45%, #0f3460 100%)',
+                    }}>
                         <AuthScene mode={mode} compact={!wide} />
                     </Box>
 
-                    {/* Right: the form */}
-                    <Box sx={{
-                        p: { xs: 3, sm: 4 },
+                    {/* Right half: the form card */}
+                    <Card key={mode} sx={{
+                        flex: { md: '5 1 0' },
                         minWidth: 0,
+                        p: { xs: 3, sm: 4 },
                         display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                        borderRadius: 0,
+                        background: theme.mix(0.02),
+                        borderLeft: { md: `1px solid ${theme.mix(0.12)}` },
+                        borderTop: { xs: `1px solid ${theme.mix(0.12)}`, md: 'none' },
                     }}>
                         <Typography component="h1" sx={{ color: theme.mix(1), fontWeight: 800, fontSize: '1.9rem', fontFamily: FONT, ...appear(0) }}>
                             {isRegister ? 'Create your account' : 'Welcome back'}
@@ -273,8 +283,8 @@ function AuthPage() {
                                 {isRegister ? 'Sign in' : 'Create an account'}
                             </Box>
                         </Typography>
-                    </Box>
-                </Card>
+                    </Card>
+                </Box>
             </Box>
         </Box>
     );

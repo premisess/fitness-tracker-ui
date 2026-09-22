@@ -274,8 +274,8 @@ function Dashboard() {
                 {/* Header */}
                 <Box sx={{
                     position: 'sticky', top: 0, zIndex: 1100,
-                    display: 'flex', alignItems: 'center', gap: 1.5,
-                    px: { xs: 2, md: 3 }, minHeight: 64,
+                    display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 },
+                    px: { xs: 1.5, md: 3 }, minHeight: 64,
                     background: theme.mix(0.04), backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                     borderBottom: `1px solid ${theme.mix(0.08)}`,
                 }}>
@@ -298,18 +298,17 @@ function Dashboard() {
 
                     <Tooltip title="My profile">
                         <Avatar
-                            component={Button}
                             onClick={() => go('/profile')}
                             sx={{
                                 bgcolor: '#e94560', cursor: 'pointer', width: 36, height: 36, fontSize: '0.9rem',
-                                ml: 0.5, boxShadow: '0 0 16px rgba(233,69,96,0.45)',
+                                boxShadow: '0 0 16px rgba(233,69,96,0.45)', flexShrink: 0,
                             }}>
                             {name?.charAt(0).toUpperCase()}
                         </Avatar>
                     </Tooltip>
 
                     <Tooltip title="Settings">
-                        <IconButton onClick={() => go('/account-settings')} sx={{ color: theme.mix(0.7), ml: 0.5 }} aria-label="Settings">
+                        <IconButton onClick={() => go('/account-settings')} sx={{ color: theme.mix(0.7) }} aria-label="Settings">
                             <SettingsIcon />
                         </IconButton>
                     </Tooltip>
@@ -328,18 +327,18 @@ function Dashboard() {
                 {/* Content */}
                 <Box component="main" sx={{ width: '100%', maxWidth: 1240, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {/* Welcome */}
-                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.35rem', fontFamily: FONT, textAlign: 'center' }}>
+                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.25rem', fontFamily: FONT, textAlign: 'center' }}>
                         Welcome, {name}
                     </Typography>
-                    <Typography sx={{ color: theme.mix(0.5), fontSize: '0.85rem', mb: 3.5, fontFamily: FONT, textAlign: 'center' }}>
+                    <Typography sx={{ color: theme.mix(0.5), fontSize: '0.82rem', mb: 3, fontFamily: FONT, textAlign: 'center' }}>
                         {summary?.nextStep || 'Here is your fitness summary'}
                     </Typography>
 
                     {/* Statistics */}
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', mb: 5, width: '100%', maxWidth: 1000 }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(auto-fit, minmax(235px, 1fr))' }, gap: 2.5, mb: 5, width: '100%', maxWidth: 1060 }}>
                         {statCards.map((card, index) => (
                             <Card key={index} sx={{
-                                width: 220, borderRadius: 3,
+                                borderRadius: 3,
                                 background: theme.mix(0.04),
                                 backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                                 border: `1px solid ${theme.mix(0.1)}`,
@@ -347,9 +346,9 @@ function Dashboard() {
                                 transition: 'transform 0.2s, box-shadow 0.2s',
                                 '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 12px 30px ${card.color}22` },
                             }}>
-                                <CardContent sx={{ textAlign: 'center', p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                                <CardContent sx={{ textAlign: 'center', height: '100%', p: 2.25, '&:last-child': { pb: 2.25 } }}>
                                     <Box sx={{
-                                        width: 42, height: 42, borderRadius: 2, mx: 'auto', mb: 1.75,
+                                        width: 40, height: 40, borderRadius: 2, mx: 'auto', mb: 1.5,
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         background: `${card.color}1F`, color: card.color,
                                         filter: `drop-shadow(0 0 8px ${card.color}55)`,

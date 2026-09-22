@@ -10,6 +10,8 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SettingsIcon from '@mui/icons-material/Settings';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 function Profile() {
     const { theme } = useAppTheme();
@@ -67,13 +69,7 @@ function Profile() {
         }
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
 
     const getBMI = () => {
         if (!form.weight || !form.height) return null;
@@ -101,7 +97,8 @@ function Profile() {
     const bmi = getBMI();
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -114,10 +111,10 @@ function Profile() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
 
                 {/* Profile Header */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4, textAlign: 'center', p: 3 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4, textAlign: 'center', p: 3 }}>
 
                     {/* Avatar with upload */}
                     <Box sx={{ position: 'relative', width: 80, mx: 'auto', mb: 2 }}>
@@ -154,7 +151,7 @@ function Profile() {
                         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 1 }}>
                             <Box>
                                 <Typography sx={{ color: theme.mix(0.5), fontSize: '0.8rem' }}>BMI</Typography>
-                                <Typography variant="h5" sx={{ color: getBMIColor(bmi), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                                <Typography sx={{ color: getBMIColor(bmi), fontWeight: 700, fontFamily: FONT, fontSize: '1.6rem' }}>
                                     {bmi}
                                 </Typography>
                                 <Typography sx={{ color: getBMIColor(bmi), fontSize: '0.75rem' }}>
@@ -163,20 +160,20 @@ function Profile() {
                             </Box>
                             <Box>
                                 <Typography sx={{ color: theme.mix(0.5), fontSize: '0.8rem' }}>Weight</Typography>
-                                <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700 }}>{form.weight || '-'} kg</Typography>
+                                <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.6rem' }}>{form.weight || '-'} kg</Typography>
                             </Box>
                             <Box>
                                 <Typography sx={{ color: theme.mix(0.5), fontSize: '0.8rem' }}>Height</Typography>
-                                <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700 }}>{form.height || '-'} cm</Typography>
+                                <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.6rem' }}>{form.height || '-'} cm</Typography>
                             </Box>
                         </Box>
                     )}
                 </Card>
 
                 {/* Edit Profile Form */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 }}>
+                <Card sx={glassCard(theme)}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>
                             Edit Profile
                         </Typography>
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}

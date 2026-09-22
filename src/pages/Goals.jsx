@@ -12,6 +12,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 const goalTypes = [
     { value: 'LOSE_WEIGHT', label: 'Lose Weight', icon: '⚖️', color: '#e94560', description: 'Auto-tracks calories burned from workouts' },
@@ -128,13 +130,7 @@ function Goals() {
         return goalTypes.find(g => g.value === goalType) || { label: goalType, icon: '🎯', color: theme.mix(1) };
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
 
     const getStatusColor = (status) => {
         if (status === 'COMPLETED') return '#4ecdc4';
@@ -143,7 +139,8 @@ function Goals() {
     };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -156,10 +153,10 @@ function Goals() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 800, mx: 'auto', py: 4, px: 2 }}>
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+            <Box sx={{ maxWidth: 800, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>
                             {editingId ? 'Edit Goal' : 'Add New Goal'}
                         </Typography>
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}
@@ -248,7 +245,7 @@ function Goals() {
                     </CardContent>
                 </Card>
 
-                <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>
                     My Goals
                 </Typography>
                 {goals.length === 0 ? (
@@ -259,10 +256,7 @@ function Goals() {
                     goals.map((goal) => {
                         const typeInfo = getGoalTypeInfo(goal.goalType);
                         return (
-                            <Card key={goal.id} sx={{
-                                background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`,
-                                borderRadius: 3, mb: 2,
-                            }}>
+                            <Card key={goal.id} sx={{ ...glassCard(theme), mb: 2 }}>
                                 <CardContent sx={{ p: 3 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                                         <Box>
@@ -310,9 +304,7 @@ function Goals() {
                                                        value={progressInputs[goal.id] || ''}
                                                        onChange={(e) => setProgressInputs({ ...progressInputs, [goal.id]: e.target.value })}
                                                        sx={{
-                                                           flex: 1,
-                                                           '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-                                                           '& .MuiInputBase-input': { color: theme.mix(1) },
+                                                           ...fieldStyle(theme), mb: 0, flex: 1,
                                                        }} />
                                             <Button variant="outlined" onClick={() => handleProgressUpdate(goal.id)} sx={{
                                                 borderColor: '#4ecdc4', color: '#4ecdc4', fontFamily: "'Poppins', sans-serif",

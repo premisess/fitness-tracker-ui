@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import API, { ACTIVITY_EVENT } from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
     Alert, Box, Typography, Card, CardContent,
-    Button, AppBar, Toolbar, IconButton, Avatar, LinearProgress
+    Button, IconButton, Avatar, LinearProgress
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
@@ -135,32 +135,41 @@ function Dashboard() {
                     background: 'radial-gradient(circle, rgba(255,209,102,0.2), transparent 70%)', filter: 'blur(55px)' }} />
             </Box>
 
-            <AppBar position="static" sx={{
-                background: theme.mix(0.05),
-                backdropFilter: 'blur(10px)',
-                boxShadow: 'none',
-                borderBottom: `1px solid ${theme.mix(0.1)}`
+            <Box sx={{
+                position: 'sticky', top: 0, zIndex: 10,
+                background: theme.mix(0.04),
+                backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+                borderBottom: `1px solid ${theme.mix(0.08)}`,
             }}>
-                <Toolbar>
-                    <FitnessCenterIcon sx={{ color: '#e94560', mr: 1 }} />
-                    <Typography variant="h6" sx={{
-                        color: theme.mix(1),
-                        fontWeight: 700,
-                        flexGrow: 1,
-                        fontFamily: "'Poppins', sans-serif",
-                        letterSpacing: 1
-                    }}>
-                        FitTracker
-                    </Typography>
+                <Box sx={{
+                    width: '100%', maxWidth: 1200, mx: 'auto',
+                    display: 'flex', alignItems: 'center',
+                    px: { xs: 2, md: 3 }, py: 2,
+                }}>
+                    <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
+                        <FitnessCenterIcon sx={{ color: '#e94560', fontSize: 30 }} />
+                        <Typography variant="h6" sx={{
+                            color: theme.mix(1),
+                            fontWeight: 800,
+                            letterSpacing: 1,
+                            fontFamily: "'Poppins', sans-serif",
+                        }}>
+                            FitTracker
+                        </Typography>
+                    </Box>
+                    <Box sx={{ flexGrow: 1 }} />
                     <Button size="small" startIcon={<WorkspacePremiumIcon />} onClick={() => navigate('/upgrade')}
                             sx={{
-                                mr: 2, borderRadius: 999, px: 1.5, textTransform: 'none', fontWeight: 700,
+                                mr: 1.5, borderRadius: 999, px: 1.5, textTransform: 'none', fontWeight: 700,
                                 color: '#1a1a2e', background: summary?.ultimate ? '#ffd166' : 'linear-gradient(90deg, #ffd166, #e94560)',
                                 '&:hover': { background: '#ffd166' },
                             }}>
                         {summary?.ultimate ? 'Ultimate' : 'Go Ultimate'}
                     </Button>
-                    <Avatar sx={{ bgcolor: '#e94560', mr: 2, width: 35, height: 35, fontSize: '0.9rem' }}>
+                    <Avatar onClick={() => navigate('/profile')} sx={{
+                        bgcolor: '#e94560', mr: 1, width: 35, height: 35, fontSize: '0.9rem',
+                        cursor: 'pointer', boxShadow: '0 0 14px rgba(233,69,96,0.4)',
+                    }}>
                         {name?.charAt(0).toUpperCase()}
                     </Avatar>
                     <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7), mr: 0.5 }}>
@@ -169,8 +178,8 @@ function Dashboard() {
                     <IconButton onClick={handleLogout} sx={{ color: theme.mix(0.7) }}>
                         <LogoutIcon />
                     </IconButton>
-                </Toolbar>
-            </AppBar>
+                </Box>
+            </Box>
 
             <Box sx={{
                 position: 'relative', zIndex: 1,

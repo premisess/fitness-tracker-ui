@@ -15,6 +15,8 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { GOAL_COLORS, GOAL_LABELS } from '../utils/plans';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 
 function PlanDetail() {
     const { theme } = useAppTheme();
@@ -61,7 +63,6 @@ function PlanDetail() {
         }
     };
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
     const summary = plan?.plan;
     // Running plans define one session per week; strength plans repeat the same days every week.
     const weekly = plan?.sessions.some((s) => s.weekNumber != null);
@@ -70,7 +71,8 @@ function PlanDetail() {
         : plan?.sessions ?? [];
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/plans')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to plans">
@@ -81,13 +83,13 @@ function PlanDetail() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {!plan && !error && <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>}
 
                 {plan && (
                     <>
-                        <Card sx={{ ...cardStyle, mb: 3, borderTop: `4px solid ${GOAL_COLORS[summary.goal] || '#e94560'}` }}>
+                        <Card sx={{ ...glassCard(theme), mb: 3, borderTop: `4px solid ${GOAL_COLORS[summary.goal] || '#e94560'}` }}>
                             <CardContent sx={{ p: 3 }}>
                                 <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 800 }}>{summary.name}</Typography>
                                 <Typography sx={{ color: theme.mix(0.6), mt: 0.5 }}>{summary.summary}</Typography>
@@ -133,12 +135,12 @@ function PlanDetail() {
                             </CardContent>
                         </Card>
 
-                        <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 1.5, letterSpacing: 1 }}>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 1.5, letterSpacing: 1 }}>
                             {weekly ? 'Week by week' : 'Your week'}
                         </Typography>
 
                         {sessions.map((session) => (
-                            <Card key={session.id} sx={{ ...cardStyle, mb: 2 }}>
+                            <Card key={session.id} sx={{ ...glassCard(theme), mb: 2 }}>
                                 <CardContent>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                                         {session.activity === 'RUN'

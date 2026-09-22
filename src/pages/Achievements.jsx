@@ -12,6 +12,8 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import BadgeIcon from '../components/BadgeIcon';
 import StreakFreezeCard from '../components/StreakFreezeCard';
+import Blobs from '../components/Glass';
+import { FONT, glassCard } from '../theme/styles';
 
 const flicker = keyframes`
   0%, 100% { transform: scale(1) rotate(-2deg); }
@@ -40,13 +42,14 @@ function Achievements() {
         return () => { ignore = true; };
     }, []);
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
+    const cardStyle = glassCard(theme);
     const categories = board
         ? CATEGORY_ORDER.filter((c) => board.badges.some((b) => b.category === c))
         : [];
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
@@ -57,7 +60,7 @@ function Achievements() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {!board && !error && <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>}
 
@@ -67,26 +70,26 @@ function Achievements() {
                             <Card sx={{ ...cardStyle, background: 'linear-gradient(135deg, rgba(255,167,38,0.25), rgba(233,69,96,0.2))' }}>
                                 <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <LocalFireDepartmentIcon sx={{
-                                        fontSize: 54, color: board.currentStreak > 0 ? '#ffa726' : theme.mix(0.3),
+                                        fontSize: 36, color: board.currentStreak > 0 ? '#ffa726' : theme.mix(0.3),
                                         animation: board.currentStreak > 0 ? `${flicker} 1.6s ease-in-out infinite` : 'none',
                                         '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
                                     }} />
                                     <Box>
-                                        <Typography sx={{ color: theme.mix(1), fontSize: '2rem', fontWeight: 800, lineHeight: 1 }}>{board.currentStreak}</Typography>
+                                        <Typography sx={{ color: theme.mix(1), fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>{board.currentStreak}</Typography>
                                         <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem' }}>day streak</Typography>
                                     </Box>
                                 </CardContent>
                             </Card>
                             <Card sx={cardStyle}>
                                 <CardContent>
-                                    <Typography sx={{ color: theme.mix(1), fontSize: '2rem', fontWeight: 800, lineHeight: 1 }}>{board.longestStreak}</Typography>
+                                    <Typography sx={{ color: theme.mix(1), fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>{board.longestStreak}</Typography>
                                     <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem' }}>longest streak (days)</Typography>
                                 </CardContent>
                             </Card>
                             <Card sx={cardStyle}>
                                 <CardContent>
-                                    <Typography sx={{ color: theme.mix(1), fontSize: '2rem', fontWeight: 800, lineHeight: 1 }}>
-                                        {board.earnedCount}<Typography component="span" sx={{ color: theme.mix(0.4), fontSize: '1rem' }}> / {board.totalCount}</Typography>
+                                    <Typography sx={{ color: theme.mix(1), fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>
+                                        {board.earnedCount}<Typography component="span" sx={{ color: theme.mix(0.4), fontSize: '0.9rem' }}> / {board.totalCount}</Typography>
                                     </Typography>
                                     <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem', mb: 1 }}>badges earned</Typography>
                                     <LinearProgress variant="determinate" value={(board.earnedCount / board.totalCount) * 100}

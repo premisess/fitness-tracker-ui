@@ -15,6 +15,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CloseIcon from '@mui/icons-material/Close';
 import ExerciseDemo from '../components/ExerciseDemo';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 const PAGE_SIZE = 24;
 
@@ -143,17 +145,13 @@ function ExerciseLibrary() {
             : goalRecommendations[activeGoalType];
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-    };
+    const inputStyle = fieldStyle(theme);
 
     const rec = recommendationFor(selected);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -170,7 +168,7 @@ function ExerciseLibrary() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {!activeGoalType && (
                     <Alert severity="info" sx={{ mb: 3 }}>
                         Set a goal to get personalised sets and reps for each exercise.
@@ -218,11 +216,11 @@ function ExerciseLibrary() {
                 </Box>
 
                 {selected && (
-                    <Card sx={{ background: theme.mix(0.06), border: `1px solid ${colorFor(selected.category)}`, borderRadius: 3, mb: 3 }}>
+                    <Card sx={{ ...glassCard(theme), border: `1px solid ${colorFor(selected.category)}`, mb: 3 }}>
                         <CardContent sx={{ p: 3 }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                                 <Box>
-                                    <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                                    <Typography sx={sectionTitle(theme)}>
                                         {selected.name}
                                     </Typography>
                                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
@@ -308,9 +306,9 @@ function ExerciseLibrary() {
                         <Card key={exercise.id}
                               onClick={() => { setSelected(exercise); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                               sx={{
-                                  background: theme.mix(0.05),
+                                  ...glassCard(theme),
                                   border: `1px solid ${selected?.id === exercise.id ? colorFor(exercise.category) : theme.mix(0.1)}`,
-                                  borderRadius: 3, cursor: 'pointer', overflow: 'hidden',
+                                  cursor: 'pointer', overflow: 'hidden',
                                   transition: 'transform 0.2s, border-color 0.2s',
                                   '&:hover': { borderColor: colorFor(exercise.category), transform: 'translateY(-3px)' },
                               }}>

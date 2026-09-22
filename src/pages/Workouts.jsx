@@ -18,6 +18,8 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import ExercisePicker from '../components/ExercisePicker';
 import { formatDuration } from '../utils/geo';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 const today = () => new Date().toISOString().split('T')[0];
 const emptyForm = () => ({ type: '', duration: '', date: today(), notes: '', tags: [] });
@@ -263,13 +265,7 @@ function Workouts() {
         setReloadKey((k) => k + 1);
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
     const dateStyle = (value) => ({
         ...inputStyle,
         '& input[type="date"]::-webkit-datetime-edit': { color: value ? theme.mix(1) : 'transparent' },
@@ -279,11 +275,11 @@ function Workouts() {
         '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
         '& .MuiInputBase-input': { color: theme.mix(1), py: 0.8, textAlign: 'center' },
     };
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
     const menuProps = { MenuProps: { PaperProps: { sx: { background: theme.menuBg, color: theme.mix(1) } } } };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -300,7 +296,7 @@ function Workouts() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
 
                 {newRecords.length > 0 && (
                     <Alert icon={<EmojiEventsIcon />} severity="success" sx={{ mb: 3 }}
@@ -314,9 +310,9 @@ function Workouts() {
                     </Alert>
                 )}
 
-                <Card sx={{ ...cardStyle, mb: 4 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>
+                        <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>
                             Log New Workout
                         </Typography>
                         {planSession?.nextSession && (
@@ -465,9 +461,9 @@ function Workouts() {
                 </Card>
 
                 {/* Search & Filter */}
-                <Card sx={{ ...cardStyle, mb: 3 }}>
+                <Card sx={{ ...glassCard(theme), mb: 3 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>Search & Filter</Typography>
+                        <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>Search & Filter</Typography>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                             <TextField select label="Workout type" value={searchType} onChange={(e) => setSearchType(e.target.value)}
                                        sx={{ ...inputStyle, minWidth: 160 }} SelectProps={menuProps}>
@@ -501,7 +497,7 @@ function Workouts() {
 
                 {/* Workout History */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>
+                    <Typography variant="h6" sx={sectionTitle(theme)}>
                         {filtered ? `Search Results (${workouts.length})` : 'Workout History'}
                     </Typography>
                     {workouts.length > 0 && (
@@ -521,7 +517,7 @@ function Workouts() {
                     const hasExercises = workout.exercises?.length > 0;
                     const expanded = expandedId === workout.id;
                     return (
-                        <Card key={workout.id} sx={{ ...cardStyle, mb: 2, '&:hover': { borderColor: 'rgba(233,69,96,0.5)' } }}>
+                        <Card key={workout.id} sx={{ ...glassCard(theme), mb: 2, '&:hover': { borderColor: 'rgba(233,69,96,0.5)' } }}>
                             <CardContent>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
                                     <Box sx={{ minWidth: 0 }}>

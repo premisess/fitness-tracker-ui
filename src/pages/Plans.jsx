@@ -14,6 +14,8 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { GOAL_COLORS, GOAL_LABELS, sessionPath } from '../utils/plans';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 
 function Plans() {
     const { theme } = useAppTheme();
@@ -68,11 +70,11 @@ function Plans() {
         }
     };
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
     const next = active?.nextSession;
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
@@ -83,13 +85,13 @@ function Plans() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
                 {message && <Alert severity="success" sx={{ mb: 3 }} onClose={() => setMessage('')}>{message}</Alert>}
                 {!plans && !error && <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>}
 
                 {active && (
-                    <Card sx={{ ...cardStyle, mb: 4, background: 'linear-gradient(135deg, rgba(102,187,106,0.18), rgba(78,205,196,0.12))' }}>
+                    <Card sx={{ ...glassCard(theme), mb: 4, background: 'linear-gradient(135deg, rgba(102,187,106,0.18), rgba(78,205,196,0.12))' }}>
                         <CardContent sx={{ p: 3 }}>
                             <Typography sx={{ color: theme.mix(0.6), fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700 }}>
                                 You're following
@@ -145,7 +147,7 @@ function Plans() {
 
                 {plans && (
                     <>
-                        <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 1.5, letterSpacing: 1 }}>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 1.5, letterSpacing: 1 }}>
                             {active ? 'Other plans' : 'Choose a plan'}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: -1, mb: 2 }}>
@@ -159,7 +161,7 @@ function Plans() {
                         </Box>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                             {plans.map((plan) => (
-                                <Card key={plan.slug} sx={{ ...cardStyle, borderTop: `4px solid ${GOAL_COLORS[plan.goal] || '#e94560'}` }}>
+                                <Card key={plan.slug} sx={{ ...glassCard(theme), borderTop: `4px solid ${GOAL_COLORS[plan.goal] || '#e94560'}` }}>
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: 1 }}>
                                             <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.05rem' }}>{plan.name}</Typography>

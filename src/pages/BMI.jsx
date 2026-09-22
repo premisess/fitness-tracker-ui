@@ -9,6 +9,8 @@ import {
 } from '@mui/material';
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 function BMI() {
     const { theme } = useAppTheme();
@@ -52,15 +54,11 @@ function BMI() {
         return '#e94560';
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -73,15 +71,15 @@ function BMI() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
 
                 {/* Latest BMI Result */}
                 {latest && (
-                    <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4, textAlign: 'center', p: 3 }}>
+                    <Card sx={{ ...glassCard(theme), mb: 4, textAlign: 'center', p: 3 }}>
                         <Typography sx={{ color: theme.mix(0.5), mb: 1, fontFamily: "'Poppins', sans-serif" }}>
                             Your Latest BMI
                         </Typography>
-                        <Typography variant="h2" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif", fontSize: '1.6rem' }}>
                             {latest.bmiValue}
                         </Typography>
                         <Chip label={latest.category} sx={{
@@ -102,9 +100,9 @@ function BMI() {
                 )}
 
                 {/* BMI Ranges Info */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4 }}>
                     <CardContent>
-                        <Typography sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>
                             BMI Ranges
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -122,9 +120,9 @@ function BMI() {
                 </Card>
 
                 {/* Calculate Form */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>
                             Calculate BMI
                         </Typography>
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}
@@ -156,7 +154,7 @@ function BMI() {
                 </Card>
 
                 {/* History */}
-                <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>
                     BMI History
                 </Typography>
                 {history.length === 0 ? (
@@ -166,8 +164,7 @@ function BMI() {
                 ) : (
                     history.map((record) => (
                         <Card key={record.id} sx={{
-                            background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`,
-                            borderRadius: 3, mb: 2,
+                            ...glassCard(theme), mb: 2,
                         }}>
                             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box>

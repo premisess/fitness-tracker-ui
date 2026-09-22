@@ -11,6 +11,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import ExerciseDemo from '../components/ExerciseDemo';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 import { formatDuration } from '../utils/geo';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, Filler);
@@ -41,7 +43,7 @@ function ExerciseRecords() {
         return () => { ignore = true; };
     }, [exerciseId]);
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
+    const cardStyle = glassCard(theme);
     const records = data?.records;
     const sessions = data?.sessions || [];
     const series = data ? progressSeries(data.exercise.trackingType, sessions) : null;
@@ -56,7 +58,8 @@ function ExerciseRecords() {
     ].filter(Boolean) : [];
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/records')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to records">
@@ -68,7 +71,7 @@ function ExerciseRecords() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                 {data && (
@@ -77,7 +80,7 @@ function ExerciseRecords() {
                             <CardContent sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '240px 1fr' }, gap: 3, alignItems: 'center' }}>
                                 <ExerciseDemo exercise={data.exercise} height={200} animate="always" />
                                 <Box>
-                                    <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700, mb: 0.5 }}>{data.exercise.name}</Typography>
+                                    <Typography sx={{ ...sectionTitle(theme), mb: 0.5 }}>{data.exercise.name}</Typography>
                                     <Typography sx={{ color: theme.mix(0.5), mb: 2, textTransform: 'capitalize' }}>
                                         {[data.exercise.category, data.exercise.primaryMuscles.join(', '), data.exercise.equipment].filter(Boolean).join(' · ')}
                                     </Typography>
@@ -139,7 +142,7 @@ function ExerciseRecords() {
                                     </Card>
                                 )}
 
-                                <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1.5 }}>History</Typography>
+                                <Typography sx={{ ...sectionTitle(theme), mb: 1.5 }}>History</Typography>
                                 {[...sessions].reverse().map((s) => (
                                     <Card key={s.workoutId} sx={{ ...cardStyle, mb: 1.5 }}>
                                         <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>

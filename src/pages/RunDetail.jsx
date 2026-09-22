@@ -14,6 +14,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import RouteMap from '../components/RouteMap';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 import { decodePolyline, formatDistance, formatDuration, formatPace, paceOrSpeed, usesSpeed } from '../utils/geo';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Filler);
@@ -48,14 +50,15 @@ function RunDetail() {
         }
     };
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
+    const cardStyle = glassCard(theme);
     const s = run?.summary;
     const speedMode = s && usesSpeed(s.type);
     const fastest = run?.splits?.filter((x) => x.distanceM >= 1000).reduce((min, x) => Math.min(min, x.paceSecPerKm), Infinity);
     const slowest = run?.splits?.reduce((max, x) => Math.max(max, x.paceSecPerKm), 0);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/runs')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to activities">
@@ -72,7 +75,7 @@ function RunDetail() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                 {!run && !error && <Box sx={{ textAlign: 'center', mt: 8 }}><CircularProgress /></Box>}
 
@@ -126,7 +129,7 @@ function RunDetail() {
                         {run.splits.length > 0 && (
                             <Card sx={{ ...cardStyle, mb: 2 }}>
                                 <CardContent>
-                                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1.5 }}>Splits</Typography>
+                                    <Typography sx={{ ...sectionTitle(theme), mb: 1.5 }}>Splits</Typography>
                                     {run.splits.map((split) => {
                                         const isFastest = split.distanceM >= 1000 && split.paceSecPerKm === fastest;
                                         const width = slowest ? Math.max(12, (1 - (split.paceSecPerKm - fastest) / (slowest * 1.2)) * 100) : 100;
@@ -156,7 +159,7 @@ function RunDetail() {
                         {run.elevationProfile.length > 2 && (
                             <Card sx={cardStyle}>
                                 <CardContent>
-                                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1.5 }}>Elevation</Typography>
+                                    <Typography sx={{ ...sectionTitle(theme), mb: 1.5 }}>Elevation</Typography>
                                     <Line
                                         data={{
                                             labels: run.elevationProfile.map((p) => (p.distanceM / 1000).toFixed(2)),

@@ -8,6 +8,8 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import Blobs from '../components/Glass';
+import { FONT, glassCard } from '../theme/styles';
 import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import {
     Chart as ChartJS,
@@ -138,14 +140,11 @@ function Analytics() {
         }
     };
 
-    const cardStyle = {
-        background: theme.mix(0.05),
-        border: `1px solid ${theme.mix(0.1)}`,
-        borderRadius: 3, mb: 3
-    };
+    const cardStyle = { ...glassCard(theme), mb: 3 };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -165,14 +164,14 @@ function Analytics() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
 
                 {/* Totals from /analytics/summary */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
                     {summaryTiles.map((tile) => (
                         <Card key={tile.label} sx={{ ...cardStyle, mb: 0, flex: '1 1 130px' }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography sx={{ color: tile.color, fontWeight: 700, fontSize: '1.4rem', fontFamily: "'Poppins', sans-serif" }}>
+                                <Typography sx={{ color: tile.color, fontWeight: 700, fontSize: '1.6rem', fontFamily: FONT }}>
                                     {tile.value}
                                 </Typography>
                                 <Typography sx={{ color: theme.mix(0.5), fontSize: '0.72rem', fontFamily: "'Poppins', sans-serif" }}>

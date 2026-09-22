@@ -15,6 +15,8 @@ import StopIcon from '@mui/icons-material/Stop';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HistoryIcon from '@mui/icons-material/History';
 import RouteMap from '../components/RouteMap';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 import {
     GPS_ACTIVITY_TYPES, MAX_ACCURACY_M, createActivityTracker,
     formatDistance, formatDuration, formatPace, paceOrSpeed, usesSpeed,
@@ -356,8 +358,8 @@ function RunTracker() {
     const averagePace = paceOrSpeed(type, stats.distance, stats.moving);
     const livePace = speedMode ? averagePace : (stats.pace ? formatPace(stats.pace) : averagePace);
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
-    const bigNumber = { color: theme.mix(1), fontWeight: 800, fontSize: { xs: '1.6rem', sm: '2rem' }, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' };
+    const cardStyle = glassCard(theme);
+    const bigNumber = { color: theme.mix(1), fontWeight: 800, fontSize: '1.6rem', lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' };
     const label = { color: theme.mix(0.5), fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 0.5 };
 
     const statGrid = (
@@ -378,7 +380,8 @@ function RunTracker() {
     );
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} disabled={live && phase !== 'paused'}>
@@ -396,7 +399,7 @@ function RunTracker() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 720, mx: 'auto', py: 3, px: 2 }}>
+            <Box sx={{ maxWidth: 720, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
                 {loadError && <Alert severity="error" sx={{ mb: 2 }}>{loadError}</Alert>}
                 {error && <Alert severity={phase === 'recording' ? 'warning' : 'error'} sx={{ mb: 2 }}>{error}</Alert>}
                 {typeof window !== 'undefined' && !window.isSecureContext && (
@@ -412,8 +415,8 @@ function RunTracker() {
                 {settings && !settings.locationConsent && (
                     <Card sx={cardStyle}>
                         <CardContent sx={{ p: 3 }}>
-                            <LocationOnIcon sx={{ fontSize: 48, color: '#4ecdc4' }} />
-                            <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1 }}>
+                            <LocationOnIcon sx={{ fontSize: 38, color: '#4ecdc4' }} />
+                            <Typography sx={{ ...sectionTitle(theme), mb: 1 }}>
                                 Turn on location tracking
                             </Typography>
                             <Typography sx={{ color: theme.mix(0.75), mb: 2 }}>
@@ -535,7 +538,7 @@ function RunTracker() {
                 {phase === 'review' && (
                     <Card sx={cardStyle}>
                         <CardContent sx={{ p: 3 }}>
-                            <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>
+                            <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>
                                 Save your {type.toLowerCase()}?
                             </Typography>
                             {statGrid}
@@ -547,12 +550,7 @@ function RunTracker() {
                             </Typography>
                             <TextField fullWidth multiline rows={2} label="Notes (optional)" value={notes}
                                        onChange={(e) => setNotes(e.target.value)} inputProps={{ maxLength: 255 }}
-                                       sx={{
-                                           mb: 2,
-                                           '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-                                           '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-                                           '& .MuiInputBase-input': { color: theme.mix(1) },
-                                       }} />
+                                       sx={fieldStyle(theme)} />
                             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                                 <Button variant="contained" onClick={save} disabled={saving}
                                         sx={{ borderRadius: 2, fontWeight: 700, px: 4, background: 'linear-gradient(90deg, #4ecdc4, #0f3460)' }}>

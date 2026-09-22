@@ -6,6 +6,8 @@ import { useAppTheme } from '../context/ThemeContext';
 import { Alert, AppBar, Box, Button, Card, CardContent, IconButton, Toolbar, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 import { formatDuration } from '../utils/geo';
 
 /** The headline best for an exercise, chosen by how the exercise is tracked. */
@@ -40,7 +42,8 @@ function Records() {
     }, []);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -51,14 +54,14 @@ function Records() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                 {records && records.length === 0 && (
-                    <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, textAlign: 'center' }}>
+                    <Card sx={{ ...glassCard(theme), textAlign: 'center' }}>
                         <CardContent sx={{ p: 5 }}>
-                            <EmojiEventsIcon sx={{ fontSize: 56, color: '#ffa726', mb: 1 }} />
-                            <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1 }}>No records yet</Typography>
+                            <EmojiEventsIcon sx={{ fontSize: 38, color: '#ffa726', mb: 1 }} />
+                            <Typography sx={{ ...sectionTitle(theme), mb: 1 }}>No records yet</Typography>
                             <Typography sx={{ color: theme.mix(0.6), mb: 3 }}>
                                 Log a workout with sets, reps and weight and your bests will show up here.
                             </Typography>
@@ -82,7 +85,7 @@ function Records() {
                         return (
                             <Card key={r.exerciseId} onClick={() => navigate(`/records/${r.exerciseId}`)}
                                   sx={{
-                                      background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, cursor: 'pointer',
+                                      ...glassCard(theme), cursor: 'pointer',
                                       transition: 'transform 0.2s, border-color 0.2s',
                                       '&:hover': { transform: 'translateY(-3px)', borderColor: '#ffa726' },
                                   }}>

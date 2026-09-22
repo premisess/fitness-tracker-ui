@@ -17,6 +17,8 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import ExercisePicker from '../components/ExercisePicker';
 import { GOAL_LABELS } from '../utils/plans';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 const LEVELS = ['beginner', 'intermediate', 'expert'];
 
@@ -219,18 +221,13 @@ function PlanBuilder() {
         }
     };
 
-    const fieldStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-    };
-    const smallField = { ...fieldStyle, '& .MuiInputBase-input': { color: theme.mix(1), py: 0.9 } };
+    const inputStyle = fieldStyle(theme);
+    const smallField = { ...inputStyle, '& .MuiInputBase-input': { color: theme.mix(1), py: 0.9 } };
     const menuProps = { MenuProps: { PaperProps: { sx: { background: theme.menuBg, color: theme.mix(1) } } } };
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate(-1)} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back">
@@ -243,7 +240,7 @@ function PlanBuilder() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {!ultimate && (
                     <Alert severity="warning" icon={<WorkspacePremiumIcon />} sx={{ mb: 3 }}
                            action={<Button color="inherit" size="small" onClick={() => navigate('/upgrade')}>See Ultimate</Button>}>
@@ -256,51 +253,51 @@ function PlanBuilder() {
                     <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>
                 ) : (
                     <>
-                        <Card sx={{ ...cardStyle, mb: 3 }}>
+                        <Card sx={{ ...glassCard(theme), mb: 3 }}>
                             <CardContent sx={{ p: 3 }}>
-                                <Typography sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>Plan details</Typography>
+                                <Typography sx={{ ...sectionTitle(theme), mb: 2 }}>Plan details</Typography>
                                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-                                    <TextField label="Plan name" value={form.name} required sx={{ ...fieldStyle, gridColumn: { sm: '1 / -1' } }}
+                                    <TextField label="Plan name" value={form.name} required sx={{ ...inputStyle, gridColumn: { sm: '1 / -1' } }}
                                                onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                                    <TextField label="Short summary" value={form.summary} sx={{ ...fieldStyle, gridColumn: { sm: '1 / -1' } }}
+                                    <TextField label="Short summary" value={form.summary} sx={{ ...inputStyle, gridColumn: { sm: '1 / -1' } }}
                                                placeholder="e.g. Upper/lower split to get stronger in 8 weeks"
                                                onChange={(e) => setForm({ ...form, summary: e.target.value })} />
-                                    <TextField select label="Goal" value={form.goal} sx={fieldStyle} SelectProps={menuProps}
+                                    <TextField select label="Goal" value={form.goal} sx={inputStyle} SelectProps={menuProps}
                                                onChange={(e) => setForm({ ...form, goal: e.target.value })}>
                                         {Object.entries(GOAL_LABELS).map(([value, label]) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
                                     </TextField>
-                                    <TextField select label="Level" value={form.level} sx={fieldStyle} SelectProps={menuProps}
+                                    <TextField select label="Level" value={form.level} sx={inputStyle} SelectProps={menuProps}
                                                onChange={(e) => setForm({ ...form, level: e.target.value })}>
                                         {LEVELS.map((level) => <MenuItem key={level} value={level} sx={{ textTransform: 'capitalize' }}>{level}</MenuItem>)}
                                     </TextField>
-                                    <TextField label="Weeks" type="number" value={form.durationWeeks} sx={fieldStyle}
+                                    <TextField label="Weeks" type="number" value={form.durationWeeks} sx={inputStyle}
                                                slotProps={{ htmlInput: { min: 1, max: 52 } }}
                                                onChange={(e) => setForm({ ...form, durationWeeks: e.target.value })} />
-                                    <TextField select label="Training days per week" value={form.daysPerWeek} sx={fieldStyle} SelectProps={menuProps}
+                                    <TextField select label="Training days per week" value={form.daysPerWeek} sx={inputStyle} SelectProps={menuProps}
                                                onChange={(e) => changeDaysPerWeek(e.target.value)}>
                                         {[1, 2, 3, 4, 5, 6, 7].map((n) => <MenuItem key={n} value={n}>{n}</MenuItem>)}
                                     </TextField>
-                                    <TextField label="Equipment" value={form.equipment} sx={{ ...fieldStyle, gridColumn: { sm: '1 / -1' } }}
+                                    <TextField label="Equipment" value={form.equipment} sx={{ ...inputStyle, gridColumn: { sm: '1 / -1' } }}
                                                placeholder="e.g. Dumbbells and a bench"
                                                onChange={(e) => setForm({ ...form, equipment: e.target.value })} />
                                     <TextField label="Notes for yourself (optional)" value={form.description} multiline minRows={2}
-                                               sx={{ ...fieldStyle, gridColumn: { sm: '1 / -1' } }}
+                                               sx={{ ...inputStyle, gridColumn: { sm: '1 / -1' } }}
                                                onChange={(e) => setForm({ ...form, description: e.target.value })} />
                                 </Box>
                             </CardContent>
                         </Card>
 
-                        <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 0.5, letterSpacing: 1 }}>Your week</Typography>
+                        <Typography sx={{ ...sectionTitle(theme), mb: 0.5, letterSpacing: 1 }}>Your week</Typography>
                         <Typography sx={{ color: theme.mix(0.45), fontSize: '0.8rem', mb: 2 }}>
                             These {sessions.length} session{sessions.length === 1 ? '' : 's'} repeat every week for {form.durationWeeks || '?'} weeks.
                         </Typography>
 
                         {sessions.map((session, index) => (
-                            <Card key={session.key} sx={{ ...cardStyle, mb: 2 }}>
+                            <Card key={session.key} sx={{ ...glassCard(theme), mb: 2 }}>
                                 <CardContent sx={{ p: 2.5 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 2 }}>
                                         <Typography sx={{ color: '#66bb6a', fontWeight: 800, minWidth: 50 }}>Day {index + 1}</Typography>
-                                        <TextField label="Session title" value={session.title} size="small" sx={{ ...fieldStyle, flex: 1, minWidth: 180 }}
+                                        <TextField label="Session title" value={session.title} size="small" sx={{ ...inputStyle, flex: 1, minWidth: 180 }}
                                                    onChange={(e) => updateSession(session.key, { title: e.target.value })} />
                                         <ToggleButtonGroup exclusive size="small" value={session.activity}
                                                            onChange={(e, value) => setActivity(session, value)}
@@ -311,24 +308,24 @@ function PlanBuilder() {
                                     </Box>
 
                                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
-                                        <TextField select size="small" label="Workout type" value={session.workoutType} sx={fieldStyle} SelectProps={menuProps}
+                                        <TextField select size="small" label="Workout type" value={session.workoutType} sx={inputStyle} SelectProps={menuProps}
                                                    onChange={(e) => updateSession(session.key, { workoutType: e.target.value })}>
                                             {workoutTypes.map((type) => <MenuItem key={type} value={type}>{type}</MenuItem>)}
                                         </TextField>
-                                        <TextField size="small" label="Minutes" type="number" value={session.targetMinutes} sx={fieldStyle}
+                                        <TextField size="small" label="Minutes" type="number" value={session.targetMinutes} sx={inputStyle}
                                                    onChange={(e) => updateSession(session.key, { targetMinutes: e.target.value })} />
                                         {session.activity === 'RUN' ? (
-                                            <TextField size="small" label="Distance (km, optional)" type="number" value={session.distanceKm} sx={fieldStyle}
+                                            <TextField size="small" label="Distance (km, optional)" type="number" value={session.distanceKm} sx={inputStyle}
                                                        onChange={(e) => updateSession(session.key, { distanceKm: e.target.value })} />
                                         ) : (
-                                            <TextField size="small" label="Focus (optional)" value={session.focus} sx={fieldStyle}
+                                            <TextField size="small" label="Focus (optional)" value={session.focus} sx={inputStyle}
                                                        placeholder="e.g. Chest and triceps"
                                                        onChange={(e) => updateSession(session.key, { focus: e.target.value })} />
                                         )}
                                     </Box>
 
                                     {session.activity === 'RUN' ? (
-                                        <TextField fullWidth multiline minRows={2} size="small" label="How to run it (optional)" value={session.instructions} sx={fieldStyle}
+                                        <TextField fullWidth multiline minRows={2} size="small" label="How to run it (optional)" value={session.instructions} sx={inputStyle}
                                                    placeholder="e.g. 5 min walk, 20 min easy run, 5 min walk"
                                                    onChange={(e) => updateSession(session.key, { instructions: e.target.value })} />
                                     ) : (

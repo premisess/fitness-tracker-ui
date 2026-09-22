@@ -8,13 +8,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MapIcon from '@mui/icons-material/Map';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RouteMap from '../components/RouteMap';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 import { decodePolyline, formatDistance, formatDuration, paceOrSpeed } from '../utils/geo';
 
 function RunCard({ run, theme, onOpen }) {
     const positions = useMemo(() => decodePolyline(run.polyline), [run.polyline]);
     return (
         <Card sx={{
-            background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, overflow: 'hidden',
+            ...glassCard(theme), overflow: 'hidden',
             transition: 'transform 0.2s, border-color 0.2s',
             '&:hover': { transform: 'translateY(-3px)', borderColor: '#4ecdc4' },
         }}>
@@ -60,7 +62,8 @@ function RunHistory() {
     }), { distance: 0, time: 0 }), [runs]);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -75,7 +78,7 @@ function RunHistory() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {!runs && !error && <Box sx={{ textAlign: 'center', mt: 8 }}><CircularProgress /></Box>}
 
@@ -86,10 +89,10 @@ function RunHistory() {
                 )}
 
                 {runs && runs.length === 0 && (
-                    <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, textAlign: 'center' }}>
+                    <Card sx={{ ...glassCard(theme), textAlign: 'center' }}>
                         <CardContent sx={{ p: 5 }}>
-                            <MapIcon sx={{ fontSize: 56, color: '#45b7d1', mb: 1 }} />
-                            <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1 }}>No GPS activities yet</Typography>
+                            <MapIcon sx={{ fontSize: 38, color: '#45b7d1', mb: 1 }} />
+                            <Typography sx={{ ...sectionTitle(theme), mb: 1 }}>No GPS activities yet</Typography>
                             <Typography sx={{ color: theme.mix(0.6), mb: 3 }}>
                                 Track a run, walk, hike or ride and it shows up here with its route on a map.
                             </Typography>

@@ -25,6 +25,8 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import AddFoodDialog from '../components/AddFoodDialog';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
 
 ChartJS.register(BarController, BarElement, CategoryScale, LineController, LineElement, LinearScale, PointElement, Tooltip, Legend);
 
@@ -181,8 +183,6 @@ function FoodDiary({ theme, navigate }) {
         };
     }, [history, theme]);
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
-
     if (!diary) {
         return error
             ? <Alert severity="error">{error}</Alert>
@@ -213,7 +213,7 @@ function FoodDiary({ theme, navigate }) {
                 )}
             </Box>
 
-            <Card sx={{ ...cardStyle, mb: 3 }}>
+            <Card sx={{ ...glassCard(theme), mb: 3 }}>
                 <CardContent sx={{ p: 3, display: 'flex', flexWrap: 'wrap', gap: 3, alignItems: 'center', justifyContent: 'center' }}>
                     <CalorieRing eaten={totals.calories} target={targets.calories} theme={theme} />
                     <Box sx={{ flex: 1, minWidth: 240 }}>
@@ -256,7 +256,7 @@ function FoodDiary({ theme, navigate }) {
                 const mealCalories = entries.reduce((sum, entry) => sum + entry.calories, 0);
                 const Icon = meal.icon;
                 return (
-                    <Card key={meal.key} sx={{ ...cardStyle, mb: 2, border: `1px solid ${meal.color}44` }}>
+                    <Card key={meal.key} sx={{ ...glassCard(theme), mb: 2, border: `1px solid ${meal.color}44` }}>
                         <CardContent sx={{ p: 2.5 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                                 <Icon sx={{ color: meal.color }} />
@@ -294,7 +294,7 @@ function FoodDiary({ theme, navigate }) {
             })}
 
             {chart && (
-                <Card sx={{ ...cardStyle, mt: 3 }}>
+                <Card sx={{ ...glassCard(theme), mt: 3 }}>
                     <CardContent sx={{ p: 3 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
                             <Typography sx={{ color: theme.mix(1), fontWeight: 700, mr: 'auto' }}>
@@ -332,7 +332,7 @@ function FoodDiary({ theme, navigate }) {
 
 function MealSection({ title, icon, items, color, theme }) {
     return (
-        <Card sx={{ background: theme.mix(0.05), border: `1px solid ${color}44`, borderRadius: 3, mb: 2 }}>
+        <Card sx={{ ...glassCard(theme), border: `1px solid ${color}44`, mb: 2 }}>
             <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     {icon}
@@ -402,11 +402,12 @@ function MealIdeas({ theme }) {
             {nutrition && (
                 <>
                     <Card sx={{
+                        ...glassCard(theme),
                         background: `${GOAL_COLORS[selectedGoalType]}22`,
-                        border: `1px solid ${GOAL_COLORS[selectedGoalType]}44`, borderRadius: 3, mb: 3,
+                        border: `1px solid ${GOAL_COLORS[selectedGoalType]}44`, mb: 3,
                     }}>
                         <CardContent sx={{ p: 3 }}>
-                            <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2 }}>Guideline</Typography>
+                            <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>Guideline</Typography>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
                                 {[
                                     { label: 'Daily calories', value: `${nutrition.dailyCalories} kcal`, color: '#e94560' },
@@ -443,7 +444,8 @@ function Nutrition() {
     const [tab, setTab] = useState(0);
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
@@ -454,7 +456,7 @@ function Nutrition() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 <Tabs value={tab} onChange={(e, value) => setTab(value)} sx={{
                     mb: 3,
                     '& .MuiTab-root': { color: theme.mix(0.5), textTransform: 'none', fontWeight: 600 },

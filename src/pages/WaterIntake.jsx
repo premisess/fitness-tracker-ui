@@ -9,6 +9,8 @@ import {
 } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 function WaterIntake() {
     const { theme } = useAppTheme();
@@ -48,17 +50,13 @@ function WaterIntake() {
     const goalMl = 2500;
     const progressPercent = Math.min((todayTotal / goalMl) * 100, 100);
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
 
     const quickAmounts = [250, 500, 750, 1000];
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -71,11 +69,11 @@ function WaterIntake() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 {/* Today's Progress */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4, textAlign: 'center', p: 3 }}>
-                    <WaterDropIcon sx={{ fontSize: 60, color: '#45b7d1' }} />
-                    <Typography variant="h3" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
+                <Card sx={{ ...glassCard(theme), mb: 4, textAlign: 'center', p: 3 }}>
+                    <WaterDropIcon sx={{ fontSize: 36, color: '#45b7d1' }} />
+                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif", fontSize: '1.6rem' }}>
                         {todayTotal} ml
                     </Typography>
                     <Typography sx={{ color: theme.mix(0.5), mb: 2 }}>
@@ -87,9 +85,9 @@ function WaterIntake() {
                 </Card>
 
                 {/* Log Water Form */}
-                <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                <Card sx={{ ...glassCard(theme), mb: 4 }}>
                     <CardContent sx={{ p: 3 }}>
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                        <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>
                             Log Water Intake
                         </Typography>
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}
@@ -132,7 +130,7 @@ function WaterIntake() {
                 </Card>
 
                 {/* History */}
-                <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
+                <Typography variant="h6" sx={{ ...sectionTitle(theme), mb: 2 }}>
                     History
                 </Typography>
                 {intakeHistory.length === 0 ? (
@@ -142,8 +140,7 @@ function WaterIntake() {
                 ) : (
                     intakeHistory.map((entry) => (
                         <Card key={entry.id} sx={{
-                            background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`,
-                            borderRadius: 3, mb: 2,
+                            ...glassCard(theme), mb: 2,
                         }}>
                             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Typography sx={{ color: theme.mix(1), fontFamily: "'Poppins', sans-serif" }}>

@@ -23,7 +23,6 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CheckIcon from '@mui/icons-material/Check';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -33,9 +32,6 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 const FONT = "'Poppins', sans-serif";
 
 const NAV_ITEMS = [
-    { label: 'My Profile', icon: <AccountCircleIcon fontSize="small" />, color: '#a29bfe', to: '/profile' },
-    { label: 'Settings', icon: <SettingsIcon fontSize="small" />, color: '#a29bfe', to: '/account-settings' },
-    { label: 'Go Ultimate', icon: <WorkspacePremiumIcon fontSize="small" />, color: '#ffd166', to: '/upgrade', premium: true },
     { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, color: '#4ecdc4', to: '/dashboard' },
     { label: 'Workouts', icon: <FitnessCenterIcon fontSize="small" />, color: '#e94560', to: '/workouts' },
     { label: 'Exercises', icon: <MenuBookIcon fontSize="small" />, color: '#ffa726', to: '/exercises' },
@@ -60,7 +56,7 @@ function Dashboard() {
     const [collapsed, setCollapsed] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const name = summary?.name || localStorage.getItem('name');
+    const name = summary?.name || localStorage.getItem('name') || 'there';
 
     const fetchSummary = async () => {
         try {
@@ -294,14 +290,11 @@ function Dashboard() {
                             sx={{
                                 borderRadius: 999, px: 1.5, textTransform: 'none', fontWeight: 700, fontFamily: FONT,
                                 color: '#1a1a2e', background: summary?.ultimate ? '#ffd166' : 'linear-gradient(90deg, #ffd166, #e94560)',
+                                boxShadow: '0 0 14px rgba(255,209,102,0.4)',
                                 '&:hover': { background: '#ffd166' },
                             }}>
                         {summary?.ultimate ? 'Ultimate' : 'Go Ultimate'}
                     </Button>
-
-                    <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }} aria-label="Toggle dark mode">
-                        {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
-                    </IconButton>
 
                     <Tooltip title="My profile">
                         <Avatar
@@ -313,6 +306,22 @@ function Dashboard() {
                             }}>
                             {name?.charAt(0).toUpperCase()}
                         </Avatar>
+                    </Tooltip>
+
+                    <Tooltip title="Settings">
+                        <IconButton onClick={() => go('/account-settings')} sx={{ color: theme.mix(0.7), ml: 0.5 }} aria-label="Settings">
+                            <SettingsIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }} aria-label="Toggle dark mode">
+                        {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+                    </IconButton>
+
+                    <Tooltip title="Log out">
+                        <IconButton onClick={handleLogout} sx={{ color: theme.mix(0.7) }} aria-label="Log out">
+                            <LogoutIcon />
+                        </IconButton>
                     </Tooltip>
                 </Box>
 

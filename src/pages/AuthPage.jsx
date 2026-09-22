@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
-import { Alert, Box, Button, Card, CircularProgress, Divider, IconButton, InputAdornment, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import {
+    Alert, Box, Button, Card, CircularProgress, Divider, IconButton, InputAdornment, TextField, Typography, useMediaQuery,
+} from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -13,8 +14,6 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import AuthScene from '../components/AuthScene';
 import GoogleSignInButton from '../components/GoogleSignInButton';
-import { AppleIcon, SamsungIcon } from '../components/SocialBrandIcons';
-import Blobs from '../components/Glass';
 
 const FONT = "'Poppins', sans-serif";
 
@@ -64,7 +63,6 @@ function AuthPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
-    const [socialNote, setSocialNote] = useState('');
 
     // Fade the cards in on the next frame.
     useEffect(() => {
@@ -133,41 +131,24 @@ function AuthPage() {
         '& .MuiIconButton-root': { color: theme.mix(0.5) },
     };
 
-    const socialBtnStyle = {
-        width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
-        background: theme.mix(0.03),
-        border: `1px solid ${theme.mix(0.15)}`,
-        color: theme.mix(0.9),
-        transition: 'all 0.2s',
-        '&:hover': { background: theme.mix(0.08), borderColor: '#e94560', color: '#e94560' },
-    };
-
     return (
         <Box sx={{
             height: '100vh', background: theme.bgGradient, fontFamily: FONT,
-            display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative',
+            display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
-            <Blobs />
             {/* Full-width top bar like the landing page */}
             <Box sx={{
                 position: 'relative', zIndex: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 px: { xs: 2, md: 5 }, py: 2.5, flexShrink: 0,
             }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Tooltip title="Back to home">
-                        <IconButton onClick={() => navigate('/')} sx={{ color: theme.mix(0.7), mr: 0.5 }} aria-label="Back to home">
-                            <ArrowBackIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
-                        <FitnessCenterIcon sx={{ color: '#e94560', fontSize: 30 }} />
-                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
-                            FitTracker
-                        </Typography>
-                    </Box>
+                <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
+                    <FitnessCenterIcon sx={{ color: '#e94560', fontSize: 30 }} />
+                    <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: FONT }}>
+                        FitTracker
+                    </Typography>
                 </Box>
-<IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }} aria-label="Toggle dark mode">
+                <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }} aria-label="Toggle dark mode">
                     {themeMode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
             </Box>
@@ -227,31 +208,11 @@ function AuthPage() {
                         {error && <Alert severity="error" sx={{ mt: 2.5 }}>{error}</Alert>}
 
                         <Box sx={{ mt: 3, ...appear(2) }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
-                                <GoogleSignInButton
-                                    iconOnly
-                                    text={isRegister ? 'signup_with' : 'signin_with'}
-                                    onCredential={handleGoogle}
-                                    busy={googleLoading}
-                                />
-                                <Tooltip title="Sign in with Apple">
-                                    <IconButton onClick={() => setSocialNote('Apple sign-in is coming soon. Use email or Google for now.')}
-                                                aria-label="Sign in with Apple" sx={socialBtnStyle}>
-                                        <AppleIcon sx={{ fontSize: 22 }} />
-                                    </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Sign in with Samsung">
-                                    <IconButton onClick={() => setSocialNote('Samsung sign-in is coming soon. Use email or Google for now.')}
-                                                aria-label="Sign in with Samsung" sx={socialBtnStyle}>
-                                        <SamsungIcon sx={{ fontSize: 22 }} />
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                            {socialNote && (
-                                <Typography sx={{ color: theme.mix(0.55), fontSize: '0.75rem', textAlign: 'center', mt: 1.5, fontFamily: FONT }}>
-                                    {socialNote}
-                                </Typography>
-                            )}
+                            <GoogleSignInButton
+                                text={isRegister ? 'signup_with' : 'signin_with'}
+                                onCredential={handleGoogle}
+                                busy={googleLoading}
+                            />
                         </Box>
 
                         <Divider sx={{

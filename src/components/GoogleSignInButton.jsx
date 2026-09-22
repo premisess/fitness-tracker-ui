@@ -55,7 +55,7 @@ function GoogleLogo() {
  * or when Google sign-in isn't configured, shows a matching placeholder explaining why it can't be used.
  * onCredential receives the ID token to send to POST /api/auth/google.
  */
-function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false, iconOnly = false }) {
+function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false }) {
     const { mode } = useAppTheme();
     const containerRef = useRef(null);
     const callbackRef = useRef(onCredential);
@@ -83,24 +83,15 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                         cancel_on_tap_outside: true,
                     });
                     container.innerHTML = '';
-                    if (iconOnly) {
-                        window.google.accounts.id.renderButton(container, {
-                            type: 'icon',
-                            shape: 'circle',
-                            theme: mode === 'dark' ? 'filled_black' : 'outline',
-                            size: 'large',
-                        });
-                    } else {
-                        window.google.accounts.id.renderButton(container, {
-                            type: 'standard',
-                            theme: mode === 'dark' ? 'filled_black' : 'outline',
-                            size: 'large',
-                            shape: 'pill',
-                            text,
-                            logo_alignment: 'left',
-                            width: Math.round(Math.min(400, Math.max(220, container.offsetWidth))),
-                        });
-                    }
+                    window.google.accounts.id.renderButton(container, {
+                        type: 'standard',
+                        theme: mode === 'dark' ? 'filled_black' : 'outline',
+                        size: 'large',
+                        shape: 'pill',
+                        text,
+                        logo_alignment: 'left',
+                        width: Math.round(Math.min(400, Math.max(220, container.offsetWidth))),
+                    });
                     setStatus('ready');
                 });
             })
@@ -108,30 +99,28 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                 if (!cancelled) setStatus('error');
             });
         return () => { cancelled = true; };
-    }, [mode, text, iconOnly]);
+    }, [mode, text]);
 
+    const label = text === 'signup_with' ? 'Sign up with Google' : 'Continue with Google';
     const reason = status === 'unavailable'
         ? "Google sign-in isn't set up on this server yet"
         : status === 'error' ? "Couldn't reach Google sign-in. Check your connection and reload." : '';
 
-    const placeholder = iconOnly ? null : (status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />);
-
     return (
-        <Box sx={{ position: 'relative', minHeight: 44, width: iconOnly ? 48 : '100%', mx: 'auto' }}>
+        <Box sx={{ position: 'relative', minHeight: 44 }}>
             {/* Google draws its button (an iframe) in here */}
             <Box ref={containerRef} sx={{ display: 'flex', justifyContent: 'center', colorScheme: 'light' }} />
 
             {status !== 'ready' && (
                 <Tooltip title={reason} placement="top" arrow>
                     <span>
-                        <Button fullWidth disabled variant="outlined"
+                        <Button fullWidth disabled variant="outlined" startIcon={status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />}
                                 sx={{
-                                    width: iconOnly ? 48 : 'auto', height: iconOnly ? 48 : 'auto', minWidth: iconOnly ? 48 : 'auto',
-                                    borderRadius: iconOnly ? '50%' : 999, py: 1.1, textTransform: 'none', fontWeight: 600,
+                                    borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 600,
                                     fontFamily: "'Poppins', sans-serif",
                                     '&.Mui-disabled': { color: 'text.secondary', borderColor: 'divider', opacity: 0.8 },
                                 }}>
-                            {placeholder}
+                            {label}
                         </Button>
                     </span>
                 </Tooltip>
@@ -140,7 +129,7 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
             {busy && (
                 <Box sx={{
                     position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(0,0,0,0.25)', borderRadius: iconOnly ? '50%' : 999,
+                    background: 'rgba(0,0,0,0.25)', borderRadius: 999,
                 }}>
                     <CircularProgress size={22} sx={{ color: '#fff' }} />
                 </Box>

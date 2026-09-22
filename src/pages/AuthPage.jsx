@@ -22,12 +22,6 @@ const rise = keyframes`
   to { opacity: 1; transform: none; }
 `;
 
-// Gentle, slightly tilted float for the joined login/signup cards.
-const float = keyframes`
-  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
-  50% { transform: translateY(-8px) rotate(-0.5deg); }
-`;
-
 // Staggers the form's rows in, one after another.
 const appear = (index) => ({
     animation: `${rise} 0.5s ease ${0.2 + index * 0.06}s both`,
@@ -164,10 +158,8 @@ function AuthPage() {
                 <Box key={mode} sx={{
                     display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center',
                     width: '100%', maxWidth: 1150, gap: { xs: 4, md: 0 },
-                    opacity: entered ? 1 : 0,
-                    transition: 'opacity 0.6s ease',
-                    animation: `${float} 6s ease-in-out infinite`,
-                    '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
+                    opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}>
                     {/* Left: smaller twisted animation card, nudged down, with the words just below it */}
                     <Box sx={{
@@ -179,7 +171,8 @@ function AuthPage() {
                             position: 'relative',
                             height: { xs: 240, md: 360 },
                             borderRadius: 4, overflow: 'hidden',
-                            boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
+                            border: `1px solid ${theme.mix(0.12)}`,
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 40px rgba(233,69,96,0.12)',
                             transform: { md: 'rotate(-1.6deg) translateY(4px)' },
                         }}>
                             <AuthScene mode={mode} compact={!wide} showCopy={false} />
@@ -212,6 +205,9 @@ function AuthPage() {
                         display: 'flex', flexDirection: 'column', justifyContent: 'center',
                         borderRadius: 4,
                         background: theme.mix(0.02),
+                        border: `1px solid ${theme.mix(0.12)}`,
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 40px rgba(78,205,196,0.12)',
+                        backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                     }}>
                         {error && <Alert severity="error" sx={{ mt: 2.5 }}>{error}</Alert>}
 

@@ -51,13 +51,13 @@ function GoogleLogo() {
 }
 
 /**
- * "Continue with Google". Renders Google's own button once the server reports a client ID; until then,
- * or when Google sign-in isn't configured, shows a matching placeholder explaining why it can't be used.
- * onCredential receives the ID token to send to POST /api/auth/google.
+ * "Continue with Google". A custom glass button matching the site theme (white text in dark mode),
+ * which opens Google's sign-in popup the same way Google's own button would. onCredential receives
+ * the ID token to send to POST /api/auth/google.
  */
 function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false }) {
-    const { mode } = useAppTheme();
-    const containerRef = useRef(null);
+    const { mode, theme } = useAppTheme();
+    const realRef = useRef(null);
     const callbackRef = useRef(onCredential);
     const [status, setStatus] = useState('loading'); // loading | ready | unavailable | error
 
@@ -74,7 +74,7 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                     return undefined;
                 }
                 return loadGoogleIdentityServices().then(() => {
-                    const container = containerRef.current;
+                    const container = realRef.current;
                     if (cancelled || !container) return;
                     window.google.accounts.id.initialize({
                         client_id: googleClientId,
@@ -83,6 +83,8 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                         cancel_on_tap_outside: true,
                     });
                     container.innerHTML = '';
+                    // Real Google button is kept invisible; clicking our styled button
+                    // re-triggers it so the account chooser popup still opens.
                     window.google.accounts.id.renderButton(container, {
                         type: 'standard',
                         theme: mode === 'dark' ? 'filled_black' : 'outline',
@@ -90,7 +92,7 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                         shape: 'pill',
                         text,
                         logo_alignment: 'left',
-                        width: Math.round(Math.min(400, Math.max(220, container.offsetWidth))),
+                        width: 220,
                     });
                     setStatus('ready');
                 });
@@ -101,37 +103,75 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
         return () => { cancelled = true; };
     }, [mode, text]);
 
+    const handleClick = () => {
+        if (status !== 'ready' || busy) return;
+        const frame = realRef.current?.querySelector('iframe');
+        if (frame) {
+            try {
+                frame.click();
+                return;
+            } catch {
+                // Fall through to the One Tap prompt below.
+            }
+        }
+        window.google?.accounts?.id?.prompt();
+    };
+
     const label = text === 'signup_with' ? 'Sign up with Google' : 'Continue with Google';
     const reason = status === 'unavailable'
         ? "Google sign-in isn't set up on this server yet"
         : status === 'error' ? "Couldn't reach Google sign-in. Check your connection and reload." : '';
 
-    return (
-        <Box sx={{ position: 'relative', minHeight: 44 }}>
-            {/* Google draws its button (an iframe) in here */}
-            <Box ref={containerRef} sx={{ display: 'flex', justifyContent: 'center', colorScheme: 'light' }} />
+    const disabled = status !== 'ready' || busy;
 
-            {status !== 'ready' && (
+    return (
+        <Box sx={{ position: 'relative', minHeight: 48 }}>
+            {/* Google draws its real button here, off-screen, so the popup still works */}
+            <Box ref={realRef} sx={{
+                position: 'absolute', left: -10000, top: 0,
+                width: 220, height: 44, opacity: 0, pointerEvents: 'none', overflow: 'hidden',
+            }} />
+
+            {status !== 'ready' ? (
                 <Tooltip title={reason} placement="top" arrow>
                     <span>
                         <Button fullWidth disabled variant="outlined" startIcon={status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />}
                                 sx={{
-                                    borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 600,
+                                    borderRadius: 999, py: 1.3, textTransform: 'none', fontWeight: 600,
+                                    color: '#fff',
+                                    background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)',
+                                    borderColor: theme.mix(0.15),
                                     fontFamily: "'Poppins', sans-serif",
-                                    '&.Mui-disabled': { color: 'text.secondary', borderColor: 'divider', opacity: 0.8 },
+                                    '&.Mui-disabled': { color: '#ffffffd9', borderColor: theme.mix(0.15), opacity: 0.8 },
                                 }}>
                             {label}
                         </Button>
                     </span>
                 </Tooltip>
+            ) : (
+                <Button fullWidth onClick={handleClick} startIcon={busy ? '' : <GoogleLogo />}
+                        disabled={disabled}
+                        sx={{
+                            borderRadius: 999, py: 1.3, textTransform: 'none', fontWeight: 600, fontSize: '0.95rem',
+                            color: mode === 'dark' ? '#ffffff' : '#0f172a',
+                            background: mode === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.65)',
+                            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+                            border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.15)'}`,
+                            fontFamily: "'Poppins', sans-serif",
+                            '&:hover': {
+                                background: mode === 'dark' ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.85)',
+                            },
+                        }}>
+                    {busy ? <CircularProgress size={18} /> : label}
+                </Button>
             )}
 
             {busy && (
                 <Box sx={{
                     position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(0,0,0,0.25)', borderRadius: 999,
+                    background: mode === 'dark' ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.55)', borderRadius: 999,
                 }}>
-                    <CircularProgress size={22} sx={{ color: '#fff' }} />
+                    <CircularProgress size={22} sx={{ color: mode === 'dark' ? '#fff' : '#0f172a' }} />
                 </Box>
             )}
         </Box>

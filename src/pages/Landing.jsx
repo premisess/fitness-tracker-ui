@@ -251,7 +251,6 @@ function Landing() {
             <Box sx={{
                 position: 'relative', zIndex: 1,
                 textAlign: 'center', py: { xs: 6, md: 9 }, px: 3,
-                background: theme.mix(0.04), borderTop: `1px solid ${theme.mix(0.08)}`,
             }}>
                 <Typography variant="h4" sx={{
                     color: theme.mix(1), fontWeight: 800, mb: 2,

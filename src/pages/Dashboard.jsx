@@ -317,22 +317,20 @@ function Dashboard() {
                 </Box>
 
                 {/* Content */}
-                <Box component="main" sx={{ width: '100%', maxWidth: 1240, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 4 } }}>
+                <Box component="main" sx={{ width: '100%', maxWidth: 1240, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {/* Welcome */}
-                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.35rem', fontFamily: FONT }}>
+                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.35rem', fontFamily: FONT, textAlign: 'center' }}>
                         Welcome, {name}
                     </Typography>
-                    <Typography sx={{ color: theme.mix(0.5), fontSize: '0.85rem', mb: 3, fontFamily: FONT }}>
+                    <Typography sx={{ color: theme.mix(0.5), fontSize: '0.85rem', mb: 3.5, fontFamily: FONT, textAlign: 'center' }}>
                         {summary?.nextStep || 'Here is your fitness summary'}
                     </Typography>
 
                     {/* Statistics */}
-                    <Box sx={{
-                        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 2.25, mb: 4,
-                    }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', mb: 5, width: '100%', maxWidth: 1000 }}>
                         {statCards.map((card, index) => (
                             <Card key={index} sx={{
-                                borderRadius: 3,
+                                width: 220, borderRadius: 3,
                                 background: theme.mix(0.04),
                                 backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                                 border: `1px solid ${theme.mix(0.1)}`,
@@ -340,9 +338,9 @@ function Dashboard() {
                                 transition: 'transform 0.2s, box-shadow 0.2s',
                                 '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 12px 30px ${card.color}22` },
                             }}>
-                                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                                <CardContent sx={{ textAlign: 'center', p: 2.5, '&:last-child': { pb: 2.5 } }}>
                                     <Box sx={{
-                                        width: 42, height: 42, borderRadius: 2, mb: 1.75,
+                                        width: 42, height: 42, borderRadius: 2, mx: 'auto', mb: 1.75,
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         background: `${card.color}1F`, color: card.color,
                                         filter: `drop-shadow(0 0 8px ${card.color}55)`,
@@ -364,7 +362,7 @@ function Dashboard() {
                     </Box>
 
                     {summary && !summary.emailVerified && (
-                        <Alert severity="warning" sx={{ mb: 3, borderRadius: 2 }}
+                        <Alert severity="warning" sx={{ mb: 3, borderRadius: 2, width: '100%', maxWidth: 700 }}
                                action={(
                                    <Button color="inherit" size="small" disabled={resending} onClick={resendVerification}>
                                        Resend link
@@ -377,7 +375,7 @@ function Dashboard() {
 
                     {summary?.activePlanName && (
                         <Card onClick={() => go('/plans')} sx={{
-                            mb: 3, cursor: 'pointer', borderRadius: 3,
+                            mb: 3, cursor: 'pointer', borderRadius: 3, width: '100%', maxWidth: 700,
                             background: 'linear-gradient(135deg, rgba(102,187,106,0.16), rgba(78,205,196,0.1))',
                             border: `1px solid ${theme.mix(0.12)}`,
                             backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
@@ -413,7 +411,7 @@ function Dashboard() {
                     )}
 
                     {/* Journey */}
-                    <Box sx={{ mb: 4 }}>
+                    <Box sx={{ mb: 4, width: '100%', maxWidth: 700 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                             <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1rem', fontFamily: FONT }}>
                                 Your Fitness Journey

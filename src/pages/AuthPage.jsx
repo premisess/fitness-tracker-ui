@@ -22,6 +22,12 @@ const rise = keyframes`
   to { opacity: 1; transform: none; }
 `;
 
+// Gentle, slightly tilted float for the joined login/signup cards.
+const float = keyframes`
+  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+  50% { transform: translateY(-8px) rotate(-0.5deg); }
+`;
+
 // Staggers the form's rows in, one after another.
 const appear = (index) => ({
     animation: `${rise} 0.5s ease ${0.2 + index * 0.06}s both`,
@@ -158,8 +164,10 @@ function AuthPage() {
                 <Box key={mode} sx={{
                     display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center',
                     width: '100%', maxWidth: 1150, gap: { xs: 4, md: 0 },
-                    opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)',
-                    transition: 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+                    opacity: entered ? 1 : 0,
+                    transition: 'opacity 0.6s ease',
+                    animation: `${float} 6s ease-in-out infinite`,
+                    '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
                 }}>
                     {/* Left: smaller twisted animation card, nudged down, with the words just below it */}
                     <Box sx={{

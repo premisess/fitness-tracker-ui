@@ -138,11 +138,15 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                         <Button fullWidth disabled variant="outlined" startIcon={status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />}
                                 sx={{
                                     borderRadius: 999, py: 1.3, textTransform: 'none', fontWeight: 600,
-                                    color: '#fff',
-                                    background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)',
+                                    color: mode === 'dark' ? '#ffffff' : '#0f172a',
+                                    background: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.65)',
+                                    backdropFilter: 'blur(10px)',
                                     borderColor: theme.mix(0.15),
                                     fontFamily: "'Poppins', sans-serif",
-                                    '&.Mui-disabled': { color: '#ffffffd9', borderColor: theme.mix(0.15), opacity: 0.8 },
+                                    '&.Mui-disabled': {
+                                        color: mode === 'dark' ? '#ffffffd9' : '#0f172abb',
+                                        borderColor: theme.mix(0.15), opacity: 0.85,
+                                    },
                                 }}>
                             {label}
                         </Button>

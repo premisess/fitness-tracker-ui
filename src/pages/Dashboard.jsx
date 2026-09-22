@@ -142,7 +142,7 @@ function Dashboard() {
                 borderBottom: `1px solid ${theme.mix(0.08)}`,
             }}>
                 <Box sx={{
-                    width: '100%', maxWidth: 1200, mx: 'auto',
+                    width: '100%',
                     display: 'flex', alignItems: 'center',
                     px: { xs: 2, md: 3 }, py: 2,
                 }}>

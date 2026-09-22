@@ -32,42 +32,20 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 const FONT = "'Poppins', sans-serif";
 
-const SECTIONS = [
-    {
-        heading: 'Overview',
-        items: [
-            { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, color: '#4ecdc4', to: '/dashboard' },
-        ],
-    },
-    {
-        heading: 'Training',
-        items: [
-            { label: 'Workouts', icon: <FitnessCenterIcon fontSize="small" />, color: '#e94560', to: '/workouts' },
-            { label: 'Exercises', icon: <MenuBookIcon fontSize="small" />, color: '#ffa726', to: '/exercises' },
-            { label: 'Plans', icon: <CalendarMonthIcon fontSize="small" />, color: '#66bb6a', to: '/plans' },
-            { label: 'Goals', icon: <TrackChangesIcon fontSize="small" />, color: '#a29bfe', to: '/goals' },
-        ],
-    },
-    {
-        heading: 'Tracking',
-        items: [
-            { label: 'Runs', icon: <DirectionsRunIcon fontSize="small" />, color: '#45b7d1', to: '/runs' },
-            { label: 'Nutrition', icon: <RestaurantIcon fontSize="small" />, color: '#ff6b35', to: '/nutrition' },
-            { label: 'Water', icon: <WaterDropIcon fontSize="small" />, color: '#45b7d1', to: '/water-intake' },
-        ],
-    },
-    {
-        heading: 'Progress',
-        items: [
-            { label: 'Achievements', icon: <EmojiEventsIcon fontSize="small" />, color: '#ffd166', to: '/achievements' },
-            { label: 'Analytics', icon: <BarChartIcon fontSize="small" />, color: '#4ecdc4', to: '/analytics' },
-        ],
-    },
-];
-
-const BOTTOM_ITEMS = [
+const NAV_ITEMS = [
     { label: 'My Profile', icon: <AccountCircleIcon fontSize="small" />, color: '#a29bfe', to: '/profile' },
     { label: 'Settings', icon: <SettingsIcon fontSize="small" />, color: '#a29bfe', to: '/account-settings' },
+    { label: 'Go Ultimate', icon: <WorkspacePremiumIcon fontSize="small" />, color: '#ffd166', to: '/upgrade', premium: true },
+    { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, color: '#4ecdc4', to: '/dashboard' },
+    { label: 'Workouts', icon: <FitnessCenterIcon fontSize="small" />, color: '#e94560', to: '/workouts' },
+    { label: 'Exercises', icon: <MenuBookIcon fontSize="small" />, color: '#ffa726', to: '/exercises' },
+    { label: 'Plans', icon: <CalendarMonthIcon fontSize="small" />, color: '#66bb6a', to: '/plans' },
+    { label: 'Goals', icon: <TrackChangesIcon fontSize="small" />, color: '#a29bfe', to: '/goals' },
+    { label: 'Runs', icon: <DirectionsRunIcon fontSize="small" />, color: '#45b7d1', to: '/runs' },
+    { label: 'Nutrition', icon: <RestaurantIcon fontSize="small" />, color: '#ff6b35', to: '/nutrition' },
+    { label: 'Water', icon: <WaterDropIcon fontSize="small" />, color: '#45b7d1', to: '/water-intake' },
+    { label: 'Achievements', icon: <EmojiEventsIcon fontSize="small" />, color: '#ffd166', to: '/achievements' },
+    { label: 'Analytics', icon: <BarChartIcon fontSize="small" />, color: '#4ecdc4', to: '/analytics' },
 ];
 
 function Dashboard() {
@@ -175,27 +153,33 @@ function Dashboard() {
 
     const renderNavItems = (items, showTooltips) => items.map((item) => {
         const active = isActive(item);
+        const premium = !!item.premium;
         const button = (
             <Box onClick={() => go(item.to)} role="button" tabIndex={0}
                  onKeyDown={(e) => { if (e.key === 'Enter') go(item.to); }}
                  sx={{
                      display: 'flex', alignItems: 'center', gap: 2,
-                     width: '100%', py: 1.25, mb: 0.25,
+                     width: '100%', py: 1.3, mb: 0.35,
                      justifyContent: collapsed && !showTooltips ? 'center' : 'flex-start',
                      px: collapsed && !showTooltips ? 0 : 2,
-                     borderRadius: 2, cursor: 'pointer',
-                     borderLeft: `3px solid ${active ? item.color : 'transparent'}`,
-                     background: active ? `${item.color}1A` : 'transparent',
-                     boxShadow: active ? `0 0 18px ${item.color}30` : 'none',
-                     color: active ? item.color : theme.mix(0.7),
+                     borderRadius: 2.5, cursor: 'pointer',
+                     border: premium && !active ? `1px solid ${theme.mix(0.12)}` : '1px solid transparent',
+                     background: premium
+                         ? (active ? 'rgba(255,209,102,0.2)' : 'rgba(255,209,102,0.08)')
+                         : (active ? `${item.color}1A` : 'transparent'),
+                     boxShadow: active ? `0 0 16px ${item.color}30` : (premium ? '0 0 12px rgba(255,209,102,0.1)' : 'none'),
+                     color: premium ? '#ffd166' : (active ? item.color : theme.mix(0.7)),
                      transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
-                     '&:hover': { background: theme.mix(0.06), color: theme.mix(1) },
+                     '&:hover': {
+                         background: premium ? 'rgba(255,209,102,0.18)' : theme.mix(0.07),
+                         color: premium ? '#ffd166' : theme.mix(1),
+                     },
                  }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, flexShrink: 0 }}>
                     {item.icon}
                 </Box>
                 {(!collapsed || showTooltips) && (
-                    <Typography sx={{ fontWeight: active ? 600 : 500, fontSize: '0.85rem', fontFamily: FONT, whiteSpace: 'nowrap' }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', fontFamily: FONT, whiteSpace: 'nowrap' }}>
                         {item.label}
                     </Typography>
                 )}
@@ -254,55 +238,20 @@ function Dashboard() {
                     )}
                 </Box>
 
-                {/* Nav sections */}
+                {/* Nav */}
                 <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', px: 1.25, py: 1.5 }}>
-                    {SECTIONS.map((section) => (
-                        <Box key={section.heading} sx={{ mb: 1 }}>
-                            {!collapsed && (
-                                <Typography sx={{
-                                    px: 1, mt: 1, mb: 0.75, fontSize: '0.62rem', fontWeight: 700,
-                                    color: theme.mix(0.35), letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: FONT,
-                                }}>
-                                    {section.heading}
-                                </Typography>
-                            )}
-                            {renderNavItems(section.items)}
-                        </Box>
-                    ))}
+                    {renderNavItems(NAV_ITEMS)}
                 </Box>
 
-                {/* Pinned items */}
+                {/* Log out */}
                 <Box sx={{ borderTop: `1px solid ${theme.mix(0.06)}`, px: 1.25, py: 1.25, flexShrink: 0 }}>
-                    {renderNavItems(BOTTOM_ITEMS)}
-                    <Tooltip title={summary?.ultimate ? 'Ultimate plan' : 'Go Ultimate'} placement="right">
-                        <Box onClick={() => go('/upgrade')} role="button" tabIndex={0}
-                             onKeyDown={(e) => { if (e.key === 'Enter') go('/upgrade'); }}
-                             sx={{
-                                 display: 'flex', alignItems: 'center', gap: 2,
-                                 justifyContent: collapsed ? 'center' : 'flex-start',
-                                 width: '100%', py: 1.25, px: collapsed ? 0 : 2, borderRadius: 2, cursor: 'pointer',
-                                 border: `1px solid ${theme.mix(0.12)}`, mb: 0.5,
-                                 background: summary?.ultimate ? 'rgba(255,209,102,0.14)' : 'rgba(255,209,102,0.08)',
-                                 color: '#ffd166', transition: 'background 0.2s',
-                                 '&:hover': { background: 'rgba(255,209,102,0.2)' },
-                             }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, flexShrink: 0 }}>
-                                <WorkspacePremiumIcon fontSize="small" />
-                            </Box>
-                            {!collapsed && (
-                                <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', fontFamily: FONT, whiteSpace: 'nowrap' }}>
-                                    {summary?.ultimate ? 'Ultimate' : 'Go Ultimate'}
-                                </Typography>
-                            )}
-                        </Box>
-                    </Tooltip>
                     <Tooltip title="Log out" placement="right">
                         <Box onClick={handleLogout} role="button" tabIndex={0}
                              onKeyDown={(e) => { if (e.key === 'Enter') handleLogout(); }}
                              sx={{
                                  display: 'flex', alignItems: 'center', gap: 2,
                                  justifyContent: collapsed ? 'center' : 'flex-start',
-                                 width: '100%', py: 1.25, px: collapsed ? 0 : 2, borderRadius: 2, cursor: 'pointer',
+                                 width: '100%', py: 1.25, px: collapsed ? 0 : 2, borderRadius: 2.5, cursor: 'pointer',
                                  color: theme.mix(0.55), transition: 'background 0.2s, color 0.2s',
                                  '&:hover': { background: theme.mix(0.06), color: '#e94560' },
                              }}>
@@ -377,6 +326,43 @@ function Dashboard() {
                         {summary?.nextStep || 'Here is your fitness summary'}
                     </Typography>
 
+                    {/* Statistics */}
+                    <Box sx={{
+                        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 2.25, mb: 4,
+                    }}>
+                        {statCards.map((card, index) => (
+                            <Card key={index} sx={{
+                                borderRadius: 3,
+                                background: theme.mix(0.04),
+                                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+                                border: `1px solid ${theme.mix(0.1)}`,
+                                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                                transition: 'transform 0.2s, box-shadow 0.2s',
+                                '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 12px 30px ${card.color}22` },
+                            }}>
+                                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                                    <Box sx={{
+                                        width: 42, height: 42, borderRadius: 2, mb: 1.75,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        background: `${card.color}1F`, color: card.color,
+                                        filter: `drop-shadow(0 0 8px ${card.color}55)`,
+                                    }}>
+                                        {card.icon}
+                                    </Box>
+                                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.5rem', lineHeight: 1.1, fontFamily: FONT }}>
+                                        {card.value}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.mix(0.55), fontSize: '0.78rem', fontWeight: 500, fontFamily: FONT }}>
+                                        {card.title}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.mix(0.3), fontSize: '0.68rem', fontFamily: FONT }}>
+                                        {card.unit}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+
                     {summary && !summary.emailVerified && (
                         <Alert severity="warning" sx={{ mb: 3, borderRadius: 2 }}
                                action={(
@@ -425,43 +411,6 @@ function Dashboard() {
                             </CardContent>
                         </Card>
                     )}
-
-                    {/* Statistics */}
-                    <Box sx={{
-                        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 2.25, mb: 4,
-                    }}>
-                        {statCards.map((card, index) => (
-                            <Card key={index} sx={{
-                                borderRadius: 3,
-                                background: theme.mix(0.04),
-                                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-                                border: `1px solid ${theme.mix(0.1)}`,
-                                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                                transition: 'transform 0.2s, box-shadow 0.2s',
-                                '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 12px 30px ${card.color}22` },
-                            }}>
-                                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-                                    <Box sx={{
-                                        width: 42, height: 42, borderRadius: 2, mb: 1.75,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        background: `${card.color}1F`, color: card.color,
-                                        filter: `drop-shadow(0 0 8px ${card.color}55)`,
-                                    }}>
-                                        {card.icon}
-                                    </Box>
-                                    <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontSize: '1.5rem', lineHeight: 1.1, fontFamily: FONT }}>
-                                        {card.value}
-                                    </Typography>
-                                    <Typography sx={{ color: theme.mix(0.55), fontSize: '0.78rem', fontWeight: 500, fontFamily: FONT }}>
-                                        {card.title}
-                                    </Typography>
-                                    <Typography sx={{ color: theme.mix(0.3), fontSize: '0.68rem', fontFamily: FONT }}>
-                                        {card.unit}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </Box>
 
                     {/* Journey */}
                     <Box sx={{ mb: 4 }}>

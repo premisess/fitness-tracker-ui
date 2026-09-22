@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle } from '../theme/styles';
 
 const PRIVACY_OPTIONS = [
     { value: 0, label: 'Off' },
@@ -45,15 +47,9 @@ function AccountSettings() {
         return () => { ignore = true; };
     }, []);
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiSelect-icon': { color: theme.mix(0.5) },
-        mb: 2,
-    };
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 };
-    const titleStyle = { color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" };
+    const inputStyle = fieldStyle(theme);
+    const cardStyle = { ...glassCard(theme), mb: 4 };
+    const titleStyle = { color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: FONT };
 
     const handleNameSubmit = async (e) => {
         e.preventDefault();
@@ -147,7 +143,8 @@ function AccountSettings() {
     };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/profile')} sx={{ color: theme.mix(1), mr: 1 }}>
@@ -160,7 +157,7 @@ function AccountSettings() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 600, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 600, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
 
                 {/* Display Name */}
                 <Card sx={cardStyle}>
@@ -274,7 +271,7 @@ function AccountSettings() {
                 </Card>
 
                 {/* Danger Zone */}
-                <Card sx={{ background: theme.mix(0.05), border: '1px solid rgba(233,69,96,0.4)', borderRadius: 3, mt: 4 }}>
+                <Card sx={{ ...glassCard(theme), border: '1px solid rgba(233,69,96,0.4)', mt: 4 }}>
                     <CardContent sx={{ p: 3 }}>
                         <Typography variant="h6" sx={{ color: '#e94560', fontWeight: 700, mb: 1, fontFamily: "'Poppins', sans-serif" }}>
                             Delete Account

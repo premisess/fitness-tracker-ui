@@ -9,6 +9,8 @@ import {
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle } from '../theme/styles';
 
 function ResetPassword() {
     const { theme } = useAppTheme();
@@ -37,27 +39,24 @@ function ResetPassword() {
         }
     };
 
-    const fieldStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiIconButton-root': { color: theme.mix(0.5) },
-    };
+    const inputStyle = fieldStyle(theme);
 
     return (
         <Box sx={{
             minHeight: '100vh',
             background: theme.bgGradient,
+            fontFamily: FONT,
+            position: 'relative',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
+            <Blobs />
             <Paper elevation={10} sx={{
-                p: 5, width: '100%', maxWidth: 420, borderRadius: 4,
-                background: theme.mix(0.05),
-                backdropFilter: 'blur(10px)',
-                border: `1px solid ${theme.mix(0.1)}`,
+                ...glassCard(theme),
+                p: 5, width: '100%', maxWidth: 420,
+                position: 'relative', zIndex: 1,
             }}>
                 <Box sx={{ textAlign: 'center', mb: 3 }}>
-                    <FitnessCenterIcon sx={{ fontSize: 50, color: '#e94560' }} />
+                    <FitnessCenterIcon sx={{ fontSize: 40, color: '#e94560' }} />
                     <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700, mt: 1, fontFamily: "'Poppins', sans-serif" }}>
                         Reset Password
                     </Typography>
@@ -73,7 +72,7 @@ function ResetPassword() {
                     <Box component="form" onSubmit={handleSubmit}>
                         <TextField fullWidth label="New Password" value={newPassword}
                                    onChange={(e) => setNewPassword(e.target.value)}
-                                   required margin="normal" sx={fieldStyle}
+                                   required margin="normal" sx={inputStyle}
                                    type={showPassword ? 'text' : 'password'}
                                    slotProps={{
                                        input: {

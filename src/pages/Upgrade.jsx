@@ -12,6 +12,8 @@ import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 // Only for showing a rough dollar figure; customers always pay the shilling price.
 const TZS_PER_USD = 2650;
@@ -130,22 +132,17 @@ function Upgrade() {
         }
     };
 
-    const cardStyle = { background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3 };
     const prices = Object.fromEntries((status?.prices || []).map((p) => [p.plan, p.amountTzs]));
     const monthly = prices.MONTHLY ?? 0;
     const yearly = prices.YEARLY ?? 0;
     const yearlySaving = monthly > 0 ? Math.round((1 - yearly / (monthly * 12)) * 100) : 0;
     const amount = plan === 'YEARLY' ? yearly : monthly;
 
-    const fieldStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        '& .MuiFormHelperText-root': { color: theme.mix(0.45) },
-    };
+    const inputStyle = { ...fieldStyle(theme), '& .MuiFormHelperText-root': { color: theme.mix(0.45) } };
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <IconButton onClick={() => navigate(-1)} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back">
@@ -156,14 +153,14 @@ function Upgrade() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
                 <Card sx={{
-                    mb: 3, borderRadius: 4, color: '#fff', overflow: 'hidden',
+                    ...glassCard(theme), mb: 3, borderRadius: 4, color: '#fff', overflow: 'hidden',
                     background: 'linear-gradient(135deg, #1a1a2e 0%, #0f3460 55%, #e94560 130%)',
                 }}>
                     <CardContent sx={{ p: { xs: 3, sm: 5 }, textAlign: 'center' }}>
-                        <WorkspacePremiumIcon sx={{ fontSize: 72, color: '#ffd166', animation: `${glow} 2.4s ease-in-out infinite`, ...noMotion }} />
-                        <Typography variant="h4" sx={{ fontWeight: 800, mt: 1, color: 'inherit' }}>Train smarter with Ultimate</Typography>
+                        <WorkspacePremiumIcon sx={{ fontSize: 48, color: '#ffd166', animation: `${glow} 2.4s ease-in-out infinite`, ...noMotion }} />
+                        <Typography sx={{ ...sectionTitle(theme), fontSize: '1.15rem', fontWeight: 800, mt: 1, color: 'inherit' }}>Train smarter with Ultimate</Typography>
                         <Typography sx={{ opacity: 0.8, mt: 1, maxWidth: 520, mx: 'auto', color: 'inherit' }}>
                             Guided plans, deeper nutrition insights and reports. Pay with the mobile money you already use.
                         </Typography>
@@ -181,7 +178,7 @@ function Upgrade() {
                 {status && (
                     <>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mb: 3 }}>
-                            <Card sx={cardStyle}>
+                            <Card sx={glassCard(theme)}>
                                 <CardContent>
                                     <Typography sx={{ color: theme.mix(0.8), fontWeight: 700, mb: 1.5 }}>Free</Typography>
                                     {FREE_FEATURES.map((f) => (
@@ -192,7 +189,7 @@ function Upgrade() {
                                     ))}
                                 </CardContent>
                             </Card>
-                            <Card sx={{ ...cardStyle, border: '1px solid rgba(255,209,102,0.5)', background: 'linear-gradient(135deg, rgba(255,209,102,0.12), rgba(233,69,96,0.08))' }}>
+                            <Card sx={{ ...glassCard(theme), border: '1px solid rgba(255,209,102,0.5)', background: 'linear-gradient(135deg, rgba(255,209,102,0.12), rgba(233,69,96,0.08))' }}>
                                 <CardContent>
                                     <Typography sx={{ color: '#ffd166', fontWeight: 700, mb: 1.5 }}>Everything in Free, plus</Typography>
                                     {ULTIMATE_FEATURES.map((f) => (
@@ -205,11 +202,11 @@ function Upgrade() {
                             </Card>
                         </Box>
 
-                        <Card sx={cardStyle}>
+                        <Card sx={glassCard(theme)}>
                             <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
                                 {payment?.status === 'SUCCESS' ? (
                                     <Box sx={{ textAlign: 'center', py: 3 }}>
-                                        <CheckCircleIcon sx={{ fontSize: 80, color: '#4ecdc4', animation: `${pop} 0.5s ease`, ...noMotion }} />
+                                        <CheckCircleIcon sx={{ fontSize: 56, color: '#4ecdc4', animation: `${pop} 0.5s ease`, ...noMotion }} />
                                         <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 800, mt: 1 }}>Welcome to Ultimate!</Typography>
                                         <Typography sx={{ color: theme.mix(0.6), mt: 1 }}>
                                             Payment received. Your access runs until {formatDate(payment.ultimateUntil)}.
@@ -301,7 +298,7 @@ function Upgrade() {
                                             <TextField label="Mobile money number" placeholder="0712 345 678" value={phone} type="tel"
                                                        onChange={(e) => setPhone(e.target.value)} autoComplete="tel"
                                                        helperText="You'll get a PIN prompt on this phone"
-                                                       sx={{ ...fieldStyle, flex: 1, minWidth: 220 }} />
+                                                       sx={{ ...inputStyle, mb: 0, flex: 1, minWidth: 220 }} />
                                             <Button onClick={pay} disabled={submitting || !phone.trim() || !status.paymentsEnabled} variant="contained"
                                                     sx={{
                                                         py: 1.7, px: 4, borderRadius: 999, textTransform: 'none', fontWeight: 800, fontSize: '1rem',

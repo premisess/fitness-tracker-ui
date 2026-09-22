@@ -21,6 +21,8 @@ import {
     PointElement, ArcElement, Title, Tooltip, Legend
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
+import Blobs from '../components/Glass';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
 
 ChartJS.register(
     CategoryScale, LinearScale, BarElement, LineElement,
@@ -107,12 +109,7 @@ function AdminDashboard() {
         navigate('/login');
     };
 
-    const inputStyle = {
-        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: theme.mix(0.2) } },
-        '& .MuiInputLabel-root': { color: theme.mix(0.5) },
-        '& .MuiInputBase-input': { color: theme.mix(1) },
-        mb: 2,
-    };
+    const inputStyle = fieldStyle(theme);
 
     const statCards = [
         { title: 'Total Users', value: stats.totalUsers, icon: <PeopleIcon sx={{ fontSize: 40, color: '#a29bfe' }} />, unit: 'users' },
@@ -179,7 +176,8 @@ function AdminDashboard() {
     });
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
+            <Blobs />
             <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
                 <Toolbar>
                     <AdminPanelSettingsIcon sx={{ color: '#a29bfe', mr: 1 }} />
@@ -198,10 +196,10 @@ function AdminDashboard() {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, px: 2, minHeight: '100vh', background: theme.bgGradient }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, px: 2, minHeight: '100vh', position: 'relative', zIndex: 1 }}>
 
                 {/* Welcome */}
-                <Typography variant="h4" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1, fontFamily: "'Poppins', sans-serif" }}>
+                <Typography variant="h4" sx={{ ...sectionTitle(theme), fontSize: '1.15rem', mb: 1 }}>
                     Welcome, {name}
                 </Typography>
                 <Typography sx={{ color: theme.mix(0.5), mb: 4, fontFamily: "'Poppins', sans-serif" }}>
@@ -213,13 +211,13 @@ function AdminDashboard() {
                     {statCards.map((card, index) => (
                         <Box key={index} sx={{ width: 220 }}>
                             <Card sx={{
-                                background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`,
-                                borderRadius: 3, transition: 'transform 0.2s',
+                                ...glassCard(theme),
+                                transition: 'transform 0.2s',
                                 '&:hover': { transform: 'translateY(-5px)' }
                             }}>
                                 <CardContent sx={{ textAlign: 'center' }}>
                                     {card.icon}
-                                    <Typography variant="h4" sx={{ color: theme.mix(1), fontWeight: 700, mt: 1, fontFamily: "'Poppins', sans-serif" }}>
+                                    <Typography variant="h4" sx={{ ...sectionTitle(theme), fontSize: '1.15rem', mt: 1 }}>
                                         {card.value}
                                     </Typography>
                                     <Typography variant="body2" sx={{ color: theme.mix(0.5), fontFamily: "'Poppins', sans-serif" }}>
@@ -240,7 +238,7 @@ function AdminDashboard() {
                         Reports
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
-                        <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, flex: '1 1 380px' }}>
+                        <Card sx={{ ...glassCard(theme), flex: '1 1 380px' }}>
                             <CardContent sx={{ p: 3 }}>
                                 {users.length > 0 ? (
                                     <Bar data={overviewData} options={chartOptions('Platform Overview')} />
@@ -249,7 +247,7 @@ function AdminDashboard() {
                                 )}
                             </CardContent>
                         </Card>
-                        <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, flex: '1 1 380px' }}>
+                        <Card sx={{ ...glassCard(theme), flex: '1 1 380px' }}>
                             <CardContent sx={{ p: 3 }}>
                                 {hasReports ? (
                                     <Box sx={{ maxWidth: 320, mx: 'auto' }}>
@@ -266,7 +264,7 @@ function AdminDashboard() {
                                 )}
                             </CardContent>
                         </Card>
-                        <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, flex: '1 1 380px' }}>
+                        <Card sx={{ ...glassCard(theme), flex: '1 1 380px' }}>
                             <CardContent sx={{ p: 3 }}>
                                 {Object.keys(workoutsByType).length > 0 ? (
                                     <>
@@ -282,7 +280,7 @@ function AdminDashboard() {
                                 )}
                             </CardContent>
                         </Card>
-                        <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, flex: '1 1 380px' }}>
+                        <Card sx={{ ...glassCard(theme), flex: '1 1 380px' }}>
                             <CardContent sx={{ p: 3 }}>
                                 {Object.keys(userGrowthByMonth).length > 0 ? (
                                     <Line data={userGrowthData} options={chartOptions('User Growth by Month')} />
@@ -294,7 +292,7 @@ function AdminDashboard() {
                     </Box>
 
                     {/* Create Admin */}
-                    <Card sx={{ background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 3, mb: 4 }}>
+                    <Card sx={{ ...glassCard(theme), mb: 4 }}>
                         <CardContent sx={{ p: 3 }}>
                             <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>
                                 Create New Admin
@@ -327,10 +325,7 @@ function AdminDashboard() {
                         All Users
                     </Typography>
                     {users.map((user) => (
-                        <Card key={user.id} sx={{
-                            background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`,
-                            borderRadius: 3, mb: 2,
-                        }}>
+                        <Card key={user.id} sx={{ ...glassCard(theme), mb: 2 }}>
                             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Avatar sx={{ bgcolor: user.role === 'ADMIN' ? '#a29bfe' : '#e94560', width: 40, height: 40 }}>

@@ -7,6 +7,8 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlined';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
+import Blobs from '../components/Glass';
+import { FONT, glassCard } from '../theme/styles';
 
 const pop = keyframes`
   0% { transform: scale(0); }
@@ -41,12 +43,13 @@ function VerifyEmail() {
     const signedIn = !!localStorage.getItem('email');
 
     return (
-        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2 }}>
-            <Card sx={{ maxWidth: 440, width: '100%', background: theme.mix(0.05), border: `1px solid ${theme.mix(0.1)}`, borderRadius: 4 }}>
-                <CardContent sx={{ p: 5, textAlign: 'center', fontFamily: "'Poppins', sans-serif" }}>
+        <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2 }}>
+            <Blobs />
+            <Card sx={{ ...glassCard(theme), maxWidth: 440, width: '100%', position: 'relative', zIndex: 1 }}>
+                <CardContent sx={{ p: 5, textAlign: 'center', fontFamily: FONT }}>
                     {status === 'verifying' && <CircularProgress sx={{ color: '#e94560', mb: 2 }} />}
-                    {status === 'success' && <CheckCircleIcon sx={{ fontSize: 72, color: '#4ecdc4', mb: 1, animation: `${pop} 0.5s ease` }} />}
-                    {status === 'error' && <ErrorOutlineIcon sx={{ fontSize: 72, color: '#e94560', mb: 1 }} />}
+                    {status === 'success' && <CheckCircleIcon sx={{ fontSize: 40, color: '#4ecdc4', mb: 1, animation: `${pop} 0.5s ease` }} />}
+                    {status === 'error' && <ErrorOutlineIcon sx={{ fontSize: 40, color: '#e94560', mb: 1 }} />}
 
                     <Typography variant="h5" sx={{ color: theme.mix(1), fontWeight: 700, mb: 1 }}>
                         {status === 'verifying' ? 'Confirming your email…' : status === 'success' ? 'Email confirmed!' : "We couldn't confirm your email"}

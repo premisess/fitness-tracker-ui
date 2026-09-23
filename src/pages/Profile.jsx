@@ -23,8 +23,6 @@ function Profile() {
     const email = localStorage.getItem('email');
     const navigate = useNavigate();
 
-    useEffect(() => { fetchProfile(); }, []);
-
     const fetchProfile = async () => {
         try {
             const res = await API.get('/profile');
@@ -40,6 +38,27 @@ function Profile() {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await API.get('/profile');
+                if (cancelled) return;
+                setProfile(res.data);
+                setForm({
+                    age: res.data.age || '',
+                    gender: res.data.gender || '',
+                    weight: res.data.weight || '',
+                    height: res.data.height || '',
+                    profilePic: res.data.profilePic || '',
+                });
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

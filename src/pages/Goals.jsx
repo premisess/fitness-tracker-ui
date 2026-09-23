@@ -44,8 +44,6 @@ function Goals() {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => { fetchGoals(); }, []);
-
     const fetchGoals = async () => {
         try {
             const res = await API.get('/goals');
@@ -54,6 +52,20 @@ function Goals() {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await API.get('/goals');
+                if (cancelled) return;
+                setGoals(res.data);
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     const handleGoalTypeChange = (goalType) => {
         const unit = goalUnits[goalType] || '';

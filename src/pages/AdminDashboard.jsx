@@ -40,12 +40,6 @@ function AdminDashboard() {
     const name = localStorage.getItem('name');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchStats();
-        fetchUsers();
-        fetchReports();
-    }, []);
-
     const fetchStats = async () => {
         try {
             const res = await API.get('/admin/stats');
@@ -73,6 +67,26 @@ function AdminDashboard() {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const [statsRes, usersRes, reportsRes] = await Promise.all([
+                    API.get('/admin/stats'),
+                    API.get('/admin/users'),
+                    API.get('/admin/reports'),
+                ]);
+                if (cancelled) return;
+                setStats(statsRes.data);
+                setUsers(usersRes.data);
+                setReports(reportsRes.data);
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     const handleDeleteUser = async (id) => {
         try {

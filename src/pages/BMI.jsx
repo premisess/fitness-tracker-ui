@@ -21,8 +21,6 @@ function BMI() {
     const [latest, setLatest] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => { fetchHistory(); }, []);
-
     const fetchHistory = async () => {
         try {
             const res = await API.get('/bmi');
@@ -32,6 +30,21 @@ function BMI() {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await API.get('/bmi');
+                if (cancelled) return;
+                setHistory(res.data);
+                if (res.data.length > 0) setLatest(res.data[0]);
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -33,23 +33,24 @@ function Analytics() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchData();
+        let cancelled = false;
+        (async () => {
+            try {
+                const [summaryRes, bmiRes, waterRes] = await Promise.all([
+                    API.get('/analytics/summary'),
+                    API.get('/bmi'),
+                    API.get('/water-intake'),
+                ]);
+                if (cancelled) return;
+                setSummary(summaryRes.data);
+                setBmiHistory(bmiRes.data);
+                setWaterHistory(waterRes.data);
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
     }, []);
-
-    const fetchData = async () => {
-        try {
-            const [summaryRes, bmiRes, waterRes] = await Promise.all([
-                API.get('/analytics/summary'),
-                API.get('/bmi'),
-                API.get('/water-intake'),
-            ]);
-            setSummary(summaryRes.data);
-            setBmiHistory(bmiRes.data);
-            setWaterHistory(waterRes.data);
-        } catch (err) {
-            console.error(err);
-        }
-    };
 
     const byType = summary?.byType || [];
     const caloriesOverTime = summary?.caloriesOverTime || [];

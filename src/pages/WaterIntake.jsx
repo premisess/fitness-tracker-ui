@@ -21,8 +21,6 @@ function WaterIntake() {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => { fetchIntake(); }, []);
-
     const fetchIntake = async () => {
         try {
             const res = await API.get('/water-intake');
@@ -31,6 +29,20 @@ function WaterIntake() {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await API.get('/water-intake');
+                if (cancelled) return;
+                setIntakeHistory(res.data);
+            } catch (err) {
+                if (!cancelled) console.error(err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

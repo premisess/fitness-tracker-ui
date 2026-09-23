@@ -17,5 +17,10 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // ThemeContext exports a context hook next to its provider, which is the
+      // standard React pattern; tell react-refresh it is intentional.
+      'react-refresh/only-export-components': ['error', { allowExportNames: ['useAppTheme'] }],
+    },
   },
 ])

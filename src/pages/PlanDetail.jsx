@@ -16,7 +16,7 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { GOAL_COLORS, GOAL_LABELS } from '../utils/plans';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
 
 function PlanDetail() {
     const { theme } = useAppTheme();
@@ -73,7 +73,7 @@ function PlanDetail() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/plans')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to plans">
                         <ArrowBackIcon />

@@ -10,7 +10,7 @@ import {
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
 
 function BMI() {
     const { theme } = useAppTheme();
@@ -72,7 +72,7 @@ function BMI() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
                         <ArrowBackIcon />

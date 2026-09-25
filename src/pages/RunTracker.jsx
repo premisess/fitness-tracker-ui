@@ -16,7 +16,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HistoryIcon from '@mui/icons-material/History';
 import RouteMap from '../components/RouteMap';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
 import {
     GPS_ACTIVITY_TYPES, MAX_ACCURACY_M, createActivityTracker,
     formatDistance, formatDuration, formatPace, paceOrSpeed, usesSpeed,
@@ -382,7 +382,7 @@ function RunTracker() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} disabled={live && phase !== 'paused'}>
                         <ArrowBackIcon />

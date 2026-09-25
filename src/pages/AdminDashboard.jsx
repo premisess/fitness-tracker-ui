@@ -22,7 +22,7 @@ import {
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
 
 ChartJS.register(
     CategoryScale, LinearScale, BarElement, LineElement,
@@ -192,7 +192,7 @@ function AdminDashboard() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <AdminPanelSettingsIcon sx={{ color: '#a29bfe', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, flexGrow: 1, fontFamily: "'Poppins', sans-serif" }}>

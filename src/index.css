@@ -94,7 +94,14 @@ code {
   box-sizing: border-box;
 }
 
-html, body, #root {
+html, body {
   height: 100%;
+  width: 100%;
+}
+
+/* min-height, not height: a fixed height squeezes long pages to one screen, and their pinned
+   headers then scroll away once the page passes that height. */
+#root {
+  min-height: 100%;
   width: 100%;
 }

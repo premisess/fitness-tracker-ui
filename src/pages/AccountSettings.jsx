@@ -11,7 +11,7 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, stickyHeader } from '../theme/styles';
 
 const PRIVACY_OPTIONS = [
     { value: 0, label: 'Off' },
@@ -145,7 +145,7 @@ function AccountSettings() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/profile')} sx={{ color: theme.mix(1), mr: 1 }}>
                         <ArrowBackIcon />

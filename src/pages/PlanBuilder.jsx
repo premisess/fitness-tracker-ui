@@ -17,7 +17,7 @@ import { useAppTheme } from '../context/ThemeContext';
 import ExercisePicker from '../components/ExercisePicker';
 import { GOAL_LABELS } from '../utils/plans';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
 
 const LEVELS = ['beginner', 'intermediate', 'expert'];
 
@@ -221,7 +221,7 @@ function PlanBuilder() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate(-1)} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back">
                         <ArrowBackIcon />

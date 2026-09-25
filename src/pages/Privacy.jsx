@@ -4,7 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import { useAppTheme } from '../context/ThemeContext';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
 import { CONTACT_EMAIL, CONTACT_PHONE, formatPhone } from '../config/contact';
 
 const LAST_UPDATED = '25 September 2026';
@@ -84,7 +84,7 @@ function Privacy() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
                                 sx={{ color: theme.mix(1), mr: 1 }} aria-label="Go back">

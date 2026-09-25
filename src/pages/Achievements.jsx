@@ -13,7 +13,7 @@ import { useAppTheme } from '../context/ThemeContext';
 import BadgeIcon from '../components/BadgeIcon';
 import StreakFreezeCard from '../components/StreakFreezeCard';
 import Blobs from '../components/Glass';
-import { FONT, glassCard } from '../theme/styles';
+import { FONT, glassCard, stickyHeader } from '../theme/styles';
 
 const flicker = keyframes`
   0%, 100% { transform: scale(1) rotate(-2deg); }
@@ -50,7 +50,7 @@ function Achievements() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
                         <ArrowBackIcon />

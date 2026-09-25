@@ -9,7 +9,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Blobs from '../components/Glass';
-import { FONT, glassCard } from '../theme/styles';
+import { FONT, glassCard, stickyHeader } from '../theme/styles';
 import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import {
     Chart as ChartJS,
@@ -146,7 +146,7 @@ function Analytics() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
                         <ArrowBackIcon />

@@ -19,7 +19,7 @@ import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import ExercisePicker from '../components/ExercisePicker';
 import { formatDuration } from '../utils/geo';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
 
 const today = () => new Date().toISOString().split('T')[0];
 const emptyForm = () => ({ type: '', duration: '', date: today(), notes: '', tags: [] });
@@ -280,7 +280,7 @@ function Workouts() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
                         <ArrowBackIcon />

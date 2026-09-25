@@ -7,7 +7,7 @@ import { Alert, AppBar, Box, Button, Card, CardContent, IconButton, Toolbar, Typ
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
 import { formatDuration } from '../utils/geo';
 
 /** The headline best for an exercise, chosen by how the exercise is tracked. */
@@ -44,7 +44,7 @@ function Records() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="static" sx={{ background: theme.mix(0.05), backdropFilter: 'blur(10px)', boxShadow: 'none', borderBottom: `1px solid ${theme.mix(0.1)}` }}>
+            <AppBar position="sticky" sx={stickyHeader(theme)}>
                 <Toolbar>
                     <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
                         <ArrowBackIcon />

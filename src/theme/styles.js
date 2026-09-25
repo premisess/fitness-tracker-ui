@@ -11,6 +11,18 @@ export const glassCard = (theme) => ({
     boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
 });
 
+// Page top bar: stays pinned while the page scrolls underneath the frosted glass, like the dashboard's.
+// Use with <AppBar position="sticky" sx={stickyHeader(theme)}>.
+export const stickyHeader = (theme) => ({
+    top: 0,
+    zIndex: 10,
+    background: theme.mix(0.04),
+    backdropFilter: 'blur(14px)',
+    WebkitBackdropFilter: 'blur(14px)',
+    boxShadow: 'none',
+    borderBottom: `1px solid ${theme.mix(0.08)}`,
+});
+
 // Rounded, translucent form fields matching the auth screens.
 export const fieldStyle = (theme) => ({
     '& .MuiOutlinedInput-root': {

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
-import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Typography } from '@mui/material';
+import { Alert, Box, Card, CardContent, Chip, CircularProgress, Typography } from '@mui/material';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 
@@ -14,9 +12,8 @@ const sparkle = keyframes`
 
 const dayLabel = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
 
-/** Lets Ultimate users protect a missed day so their streak survives. */
+/** Lets users protect a missed day so their streak survives. */
 function StreakFreezeCard({ theme, onChange }) {
-    const navigate = useNavigate();
     const [status, setStatus] = useState(null);
     const [busyDate, setBusyDate] = useState(null);
     const [notice, setNotice] = useState('');
@@ -40,15 +37,14 @@ function StreakFreezeCard({ theme, onChange }) {
             setNotice(`${dayLabel(date)} is frozen. Your streak is safe at ${res.data.currentStreak} day${res.data.currentStreak === 1 ? '' : 's'}.`);
             onChange?.(res.data);
         } catch (err) {
-            // 402 opens the upgrade dialog on its own.
-            if (err.response?.status !== 402) setError(errorMessage(err, 'Could not freeze that day'));
+            setError(errorMessage(err, 'Could not freeze that day'));
         } finally {
             setBusyDate(null);
         }
     };
 
     if (!status) return null;
-    const outOfFreezes = status.ultimate && status.freezesLeft === 0;
+    const outOfFreezes = status.freezesLeft === 0;
 
     return (
         <Card sx={{
@@ -64,17 +60,9 @@ function StreakFreezeCard({ theme, onChange }) {
                     <Box sx={{ flex: 1, minWidth: 200 }}>
                         <Typography sx={{ color: theme.mix(1), fontWeight: 700 }}>Streak freezes</Typography>
                         <Typography sx={{ color: theme.mix(0.6), fontSize: '0.85rem' }}>
-                            {status.ultimate
-                                ? `${status.freezesLeft} of ${status.freezesPerMonth} left this month. A frozen day keeps your streak going.`
-                                : `Missed a day? Ultimate gives you ${status.freezesPerMonth} freezes every month to protect your streak.`}
+                            {`${status.freezesLeft} of ${status.freezesPerMonth} left this month. A frozen day keeps your streak going.`}
                         </Typography>
                     </Box>
-                    {!status.ultimate && (
-                        <Button size="small" startIcon={<WorkspacePremiumIcon />} onClick={() => navigate('/upgrade')}
-                                sx={{ borderRadius: 999, px: 2, textTransform: 'none', fontWeight: 700, color: '#1a1a2e', background: 'linear-gradient(90deg, #ffd166, #e94560)' }}>
-                            Get Ultimate
-                        </Button>
-                    )}
                 </Box>
 
                 {notice && <Alert severity="success" sx={{ mt: 2 }} onClose={() => setNotice('')}>{notice}</Alert>}

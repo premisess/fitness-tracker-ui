@@ -11,9 +11,6 @@ const API = axios.create({
 // Saves that can earn a badge. BadgeCelebration listens for this and asks the server what was earned.
 export const ACTIVITY_EVENT = 'fittracker:activity';
 
-// The server answers 402 when a free user tries an Ultimate feature; UpgradeDialog listens for this.
-export const UPGRADE_EVENT = 'fittracker:upgrade-required';
-
 const ACTIVITY_PATHS = /^\/?(workouts|runs|nutrition\/diary|plans\/active\/sessions|water-intake|goals|bmi|auth\/verify-email)(\/|$|\?)/;
 
 API.interceptors.response.use((response) => {
@@ -22,12 +19,6 @@ API.interceptors.response.use((response) => {
         window.dispatchEvent(new Event(ACTIVITY_EVENT));
     }
     return response;
-}, (error) => {
-    if (error.response?.status === 402) {
-        const message = typeof error.response.data?.message === 'string' ? error.response.data.message : null;
-        window.dispatchEvent(new CustomEvent(UPGRADE_EVENT, { detail: message }));
-    }
-    return Promise.reject(error);
-});
+}, (error) => Promise.reject(error));
 
 export default API;

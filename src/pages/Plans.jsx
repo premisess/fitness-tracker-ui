@@ -152,7 +152,7 @@ function Plans() {
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: -1, mb: 2 }}>
                             <Typography sx={{ color: theme.mix(0.45), fontSize: '0.8rem', flex: 1, minWidth: 220 }}>
-                                Browse any plan for free. Following one, or building your own, is part of FitTracker Ultimate.
+                                Follow any plan, or build your own.
                             </Typography>
                             <Button startIcon={<AddIcon />} onClick={() => navigate('/plans/new')} variant="contained"
                                     sx={{ borderRadius: 999, textTransform: 'none', fontWeight: 700, background: 'linear-gradient(90deg, #66bb6a, #4ecdc4)' }}>

@@ -116,7 +116,6 @@ function FoodDiary({ theme, navigate }) {
     const [dialogMeal, setDialogMeal] = useState(null);
     const [error, setError] = useState('');
     const [reloadKey, setReloadKey] = useState(0);
-    // 7 days is free; longer ranges are Ultimate (the server answers 402 and the upgrade dialog opens).
     const [historyDays, setHistoryDays] = useState(7);
 
     useEffect(() => {
@@ -131,7 +130,7 @@ function FoodDiary({ theme, navigate }) {
         let ignore = false;
         API.get('/nutrition/history', { params: { days: historyDays } })
             .then((res) => { if (!ignore) setHistory(res.data); })
-            .catch((err) => { if (!ignore && err.response?.status === 402) setHistoryDays(7); });
+            .catch(() => {});
         return () => { ignore = true; };
     }, [reloadKey, historyDays]);
 

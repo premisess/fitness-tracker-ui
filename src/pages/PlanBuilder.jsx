@@ -11,7 +11,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
@@ -94,7 +93,6 @@ function PlanBuilder() {
     });
     const [sessions, setSessions] = useState(() => [0, 1, 2].map(blankSession));
     const [workoutTypes, setWorkoutTypes] = useState(['Weightlifting', 'Running', 'HIIT']);
-    const [ultimate, setUltimate] = useState(true);
     const [loading, setLoading] = useState(!!source);
     const [error, setError] = useState('');
     const [saving, setSaving] = useState(false);
@@ -103,9 +101,6 @@ function PlanBuilder() {
         let ignore = false;
         API.get('/workouts/types')
             .then((res) => { if (!ignore) setWorkoutTypes(res.data.map((t) => t.label)); })
-            .catch(() => {});
-        API.get('/billing/status')
-            .then((res) => { if (!ignore) setUltimate(res.data.ultimate); })
             .catch(() => {});
         return () => { ignore = true; };
     }, []);
@@ -214,9 +209,7 @@ function PlanBuilder() {
                 : await API.post('/plans/custom', body);
             navigate(`/plans/${res.data.plan.slug}`);
         } catch (err) {
-            if (err.response?.status !== 402) {
-                setError(errorMessage(err, 'Could not save your plan'));
-            }
+            setError(errorMessage(err, 'Could not save your plan'));
             setSaving(false);
         }
     };
@@ -241,12 +234,6 @@ function PlanBuilder() {
             </AppBar>
 
             <Box sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
-                {!ultimate && (
-                    <Alert severity="warning" icon={<WorkspacePremiumIcon />} sx={{ mb: 3 }}
-                           action={<Button color="inherit" size="small" onClick={() => navigate('/upgrade')}>See Ultimate</Button>}>
-                        Building your own plans is part of FitTracker Ultimate. You can design one now and save it after upgrading.
-                    </Alert>
-                )}
                 {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
 
                 {loading ? (

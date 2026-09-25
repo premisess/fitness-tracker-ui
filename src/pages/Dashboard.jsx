@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import API, { ACTIVITY_EVENT } from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
+import { glassCard } from '../theme/styles';
 import {
     Alert, Box, Typography, Card, CardContent,
     Button, IconButton, Avatar, LinearProgress
@@ -11,13 +12,12 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 function Dashboard() {
     const { theme, mode, toggleTheme } = useAppTheme();
@@ -70,15 +70,16 @@ function Dashboard() {
         }
     };
 
+    // Each card opens the page where that number comes from.
     const statCards = [
-        { title: 'Total Workouts', value: summary?.workoutCount ?? 0, icon: <FitnessCenterIcon sx={{ fontSize: 40, color: '#e94560' }} />, unit: 'sessions' },
-        { title: 'Calories Burned', value: summary?.totalCaloriesBurned ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#ff6b35' }} />, unit: 'kcal' },
-        { title: 'Active Goals', value: summary?.activeGoalCount ?? 0, icon: <TrackChangesIcon sx={{ fontSize: 40, color: '#4ecdc4' }} />, unit: 'goals' },
-        { title: 'Water Today', value: summary?.waterTodayMl ?? 0, icon: <WaterDropIcon sx={{ fontSize: 40, color: '#45b7d1' }} />, unit: 'ml' },
-        { title: 'Current Streak', value: summary?.currentStreak ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#ffa726' }} />, unit: 'days' },
-        { title: 'Longest Streak', value: summary?.longestStreak ?? 0, icon: <LocalFireDepartmentIcon sx={{ fontSize: 40, color: '#a29bfe' }} />, unit: 'days' },
-        { title: 'Eaten Today', value: summary?.caloriesEatenToday ?? 0, icon: <RestaurantIcon sx={{ fontSize: 40, color: '#ff6b35' }} />, unit: `of ${summary?.calorieTarget ?? 2000} kcal` },
-        { title: 'Badges', value: summary?.badgesEarned ?? 0, icon: <EmojiEventsIcon sx={{ fontSize: 40, color: '#ffd166' }} />, unit: 'earned' },
+        { title: 'Total Workouts', value: summary?.workoutCount ?? 0, Icon: FitnessCenterIcon, color: '#e94560', unit: 'sessions', path: '/workouts' },
+        { title: 'Calories Burned', value: summary?.totalCaloriesBurned ?? 0, Icon: LocalFireDepartmentIcon, color: '#ff6b35', unit: 'kcal', path: '/analytics' },
+        { title: 'Active Goals', value: summary?.activeGoalCount ?? 0, Icon: TrackChangesIcon, color: '#4ecdc4', unit: 'goals', path: '/goals' },
+        { title: 'Water Today', value: summary?.waterTodayMl ?? 0, Icon: WaterDropIcon, color: '#45b7d1', unit: 'ml', path: '/water-intake' },
+        { title: 'Current Streak', value: summary?.currentStreak ?? 0, Icon: LocalFireDepartmentIcon, color: '#ffa726', unit: 'days', path: '/achievements' },
+        { title: 'Longest Streak', value: summary?.longestStreak ?? 0, Icon: LocalFireDepartmentIcon, color: '#a29bfe', unit: 'days', path: '/achievements' },
+        { title: 'Eaten Today', value: summary?.caloriesEatenToday ?? 0, Icon: RestaurantIcon, color: '#ff6b35', unit: `of ${summary?.calorieTarget ?? 2000} kcal`, path: '/nutrition' },
+        { title: 'Badges', value: summary?.badgesEarned ?? 0, Icon: EmojiEventsIcon, color: '#ffd166', unit: 'earned', path: '/achievements' },
     ];
 
     const journeySteps = [
@@ -146,26 +147,12 @@ function Dashboard() {
                     display: 'flex', alignItems: 'center',
                     px: { xs: 2, md: 3 }, py: 2,
                 }}>
-                    <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
-                        <FitnessCenterIcon sx={{ color: '#e94560', fontSize: 30 }} />
-                        <Typography variant="h6" sx={{
-                            color: theme.mix(1),
-                            fontWeight: 800,
-                            letterSpacing: 1,
-                            fontFamily: "'Poppins', sans-serif",
-                        }}>
+                    <Box component={Link} to="/" sx={{ textDecoration: 'none' }}>
+                        <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 800, letterSpacing: 1, fontFamily: "'Poppins', sans-serif" }}>
                             FitTracker
                         </Typography>
                     </Box>
                     <Box sx={{ flexGrow: 1 }} />
-                    <Button size="small" startIcon={<WorkspacePremiumIcon />} onClick={() => navigate('/upgrade')}
-                            sx={{
-                                mr: 1.5, borderRadius: 999, px: 1.5, textTransform: 'none', fontWeight: 700,
-                                color: '#1a1a2e', background: summary?.ultimate ? '#ffd166' : 'linear-gradient(90deg, #ffd166, #e94560)',
-                                '&:hover': { background: '#ffd166' },
-                            }}>
-                        {summary?.ultimate ? 'Ultimate' : 'Go Ultimate'}
-                    </Button>
                     <Avatar onClick={() => navigate('/profile')} sx={{
                         bgcolor: '#e94560', mr: 1, width: 35, height: 35, fontSize: '0.9rem',
                         cursor: 'pointer', boxShadow: '0 0 14px rgba(233,69,96,0.4)',
@@ -248,106 +235,34 @@ function Dashboard() {
                     </Card>
                 )}
 
-                {/* Stat Cards */}
+                {/* Stat Cards: click one to open its page */}
                 <Box sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 3,
-                    justifyContent: 'center',
-                    mb: 5,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+                    gap: 2,
                     width: '100%',
-                    maxWidth: 1000,
+                    maxWidth: 800,
                 }}>
-                    {statCards.map((card, index) => (
-                        <Box key={index} sx={{ width: 210 }}>
-                            <Card sx={{
-                                background: theme.mix(0.05),
-                                backdropFilter: 'blur(10px)',
-                                border: `1px solid ${theme.mix(0.1)}`,
-                                borderRadius: 3,
-                                transition: 'transform 0.2s',
-                                '&:hover': { transform: 'translateY(-5px)' }
-                            }}>
-                                <CardContent sx={{ textAlign: 'center' }}>
-                                    {card.icon}
-                                    <Typography variant="h4" sx={{
-                                        color: theme.mix(1),
-                                        fontWeight: 700,
-                                        mt: 1,
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.value}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{
-                                        color: theme.mix(0.5),
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.title}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{
-                                        color: theme.mix(0.3),
-                                        fontFamily: "'Poppins', sans-serif"
-                                    }}>
-                                        {card.unit}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Box>
-                    ))}
-                </Box>
-
-                {/* Quick Actions */}
-                <Typography variant="h6" sx={{
-                    color: theme.mix(1),
-                    fontWeight: 700,
-                    mb: 3,
-                    fontFamily: "'Poppins', sans-serif",
-                    letterSpacing: 1,
-                    textAlign: 'center'
-                }}>
-                    Quick Actions
-                </Typography>
-                <Box sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 1.5,
-                    justifyContent: 'center',
-                    width: '100%',
-                    maxWidth: 900,
-                }}>
-                    {[
-                        { label: 'Log Workout', path: '/workouts', color: '#e94560' },
-                        { label: 'My Goals', path: '/goals', color: '#4ecdc4' },
-                        { label: 'Water Intake', path: '/water-intake', color: '#45b7d1' },
-                        { label: 'BMI Calculator', path: '/bmi', color: '#ff6b35' },
-                        { label: 'Food Diary', path: '/nutrition', color: '#ff6b35' },
-                        { label: 'Workout Plans', path: '/plans', color: '#66bb6a' },
-                        { label: 'Achievements', path: '/achievements', color: '#ffd166' },
-                        { label: 'My Profile', path: '/profile', color: '#a29bfe' },
-                        { label: 'Start Run', path: '/run', color: '#4ecdc4' },
-                        { label: 'Activities', path: '/runs', color: '#45b7d1' },
-                        { label: 'Exercises', path: '/exercises', color: '#e94560' },
-                        { label: 'Records', path: '/records', color: '#ffa726' },
-                        { label: 'Analytics', path: '/analytics', color: '#4ecdc4' },
-                    ].map((action, index) => (
-                        <Button
-                            key={index}
-                            variant="outlined"
-                            onClick={() => navigate(action.path)}
-                            sx={{
-                                px: 1.5,
-                                py: 1.5,
-                                borderRadius: 2,
-                                borderColor: action.color,
-                                color: action.color,
-                                fontWeight: 600,
-                                fontFamily: "'Poppins', sans-serif",
-                                fontSize: '0.75rem',
-                                minWidth: 'auto',
-                                '&:hover': { background: action.color, color: theme.mix(1) }
-                            }}>
-                            {action.label}
-                        </Button>
+                    {statCards.map((card) => (
+                        <Card key={card.title} component={Link} to={card.path} sx={{
+                            ...glassCard(theme),
+                            display: 'block', textDecoration: 'none',
+                            transition: 'transform 0.2s, border-color 0.2s',
+                            '&:hover': { transform: 'translateY(-4px)', borderColor: card.color },
+                        }}>
+                            <CardContent sx={{ textAlign: 'center', py: 2.5 }}>
+                                <card.Icon sx={{ fontSize: 36, color: card.color }} />
+                                <Typography variant="h4" sx={{ color: theme.mix(1), fontWeight: 700, mt: 1, fontFamily: "'Poppins', sans-serif" }}>
+                                    {card.value}
+                                </Typography>
+                                <Typography sx={{ color: theme.mix(0.8), fontWeight: 600, fontSize: '0.85rem', fontFamily: "'Poppins', sans-serif" }}>
+                                    {card.title}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: theme.mix(0.4), fontFamily: "'Poppins', sans-serif" }}>
+                                    {card.unit}
+                                </Typography>
+                            </CardContent>
+                        </Card>
                     ))}
                 </Box>
 
@@ -379,17 +294,17 @@ function Dashboard() {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                         {journeySteps.map((item) => (
                             <Box key={item.step}
-                                 onClick={() => !item.done && navigate(item.path)}
+                                 onClick={() => navigate(item.path)}
                                  sx={{
                                      display: 'flex', alignItems: 'center', gap: 2,
                                      p: 2, borderRadius: 2,
-                                     cursor: item.done ? 'default' : 'pointer',
+                                     cursor: 'pointer',
                                      background: item.done ? 'rgba(78,205,196,0.12)' : theme.mix(0.04),
                                      backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
                                      border: `1px solid ${item.done ? '#4ecdc4' : theme.mix(0.1)}`,
                                      transition: 'all 0.2s',
                                      '&:hover': {
-                                         background: item.done ? 'rgba(78,205,196,0.12)' : theme.mix(0.07)
+                                         background: item.done ? 'rgba(78,205,196,0.18)' : theme.mix(0.07)
                                      }
                                  }}>
                                 <Box sx={{
@@ -415,11 +330,9 @@ function Dashboard() {
                                         {item.description}
                                     </Typography>
                                 </Box>
-                                {!item.done && (
-                                    <Typography sx={{ color: item.color, fontSize: '0.75rem', fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>
-                                        Go →
-                                    </Typography>
-                                )}
+                                <Typography sx={{ color: item.done ? '#4ecdc4' : item.color, fontSize: '0.75rem', fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>
+                                    {item.done ? 'Open →' : 'Go →'}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

@@ -10,6 +10,9 @@ import CalendarViewWeekIcon from '@mui/icons-material/CalendarViewWeek';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import { CONTACT_EMAIL, CONTACT_PHONE, formatPhone } from '../config/contact';
 
 const FLOAT_KEYFRAMES = `
 @keyframes ft-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -82,6 +85,14 @@ function Landing() {
                 </Box>
 
                 <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                    <Button href="#about" sx={{
+                        display: { xs: 'none', sm: 'inline-flex' },
+                        color: theme.mix(0.85), fontWeight: 600, fontFamily: "'Poppins', sans-serif",
+                        textTransform: 'none', px: 2,
+                        '&:hover': { color: theme.mix(1) }
+                    }}>
+                        About
+                    </Button>
                     <IconButton onClick={toggleTheme} sx={{ color: theme.mix(0.7) }}>
                         {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
                     </IconButton>
@@ -244,6 +255,62 @@ function Landing() {
                             </Typography>
                         </Box>
                     ))}
+                </Box>
+            </Box>
+
+            {/* About & contact */}
+            <Box id="about" sx={{
+                position: 'relative', zIndex: 1, maxWidth: 1000, mx: 'auto',
+                px: { xs: 3, md: 6 }, pt: { xs: 4, md: 6 }, scrollMarginTop: 24,
+            }}>
+                <Box sx={{
+                    p: { xs: 3, md: 5 }, borderRadius: 4,
+                    background: theme.mix(0.06),
+                    backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+                    border: `1px solid ${theme.mix(0.12)}`,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                    display: 'flex', flexWrap: 'wrap', gap: { xs: 3, md: 5 }, textAlign: 'left',
+                }}>
+                    <Box sx={{ flex: '1 1 320px' }}>
+                        <Typography variant="h4" sx={{
+                            color: theme.mix(1), fontWeight: 800, mb: 1.5,
+                            fontFamily: "'Poppins', sans-serif", fontSize: { xs: '1.5rem', md: '1.8rem' }
+                        }}>
+                            About FitTracker
+                        </Typography>
+                        <Typography sx={{ color: theme.mix(0.6), lineHeight: 1.7, fontFamily: "'Poppins', sans-serif" }}>
+                            FitTracker brings your workouts, runs, meals, water and goals together in one free app,
+                            so you can see your progress and keep your streak going. Every feature is free for everyone.
+                        </Typography>
+                    </Box>
+
+                    <Box sx={{ flex: '1 1 260px' }}>
+                        <Typography sx={{ color: theme.mix(1), fontWeight: 700, mb: 1.5, fontFamily: "'Poppins', sans-serif" }}>
+                            Get in touch
+                        </Typography>
+                        {[
+                            { icon: <EmailOutlinedIcon />, label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, color: '#e94560' },
+                            { icon: <PhoneOutlinedIcon />, label: formatPhone(CONTACT_PHONE), href: `tel:${CONTACT_PHONE}`, color: '#4ecdc4' },
+                        ].map((c) => (
+                            <Box key={c.href} component="a" href={c.href}
+                                 sx={{
+                                     display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, p: 1.25, borderRadius: 2,
+                                     textDecoration: 'none', color: theme.mix(0.85), fontFamily: "'Poppins', sans-serif",
+                                     fontSize: '0.92rem', wordBreak: 'break-all',
+                                     transition: 'background 0.15s',
+                                     '&:hover': { background: theme.mix(0.07), color: theme.mix(1) },
+                                 }}>
+                                <Box sx={{
+                                    width: 36, height: 36, borderRadius: 2, flexShrink: 0,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    background: `${c.color}22`, color: c.color,
+                                }}>
+                                    {c.icon}
+                                </Box>
+                                {c.label}
+                            </Box>
+                        ))}
+                    </Box>
                 </Box>
             </Box>
 

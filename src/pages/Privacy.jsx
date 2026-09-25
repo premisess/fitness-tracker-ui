@@ -5,10 +5,9 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import { useAppTheme } from '../context/ThemeContext';
 import Blobs from '../components/Glass';
 import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import { CONTACT_EMAIL, CONTACT_PHONE, formatPhone } from '../config/contact';
 
 const LAST_UPDATED = '25 September 2026';
-// Set per deployment (see .env.example). Without it, people are told where to find Account Settings.
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL;
 
 const SECTIONS = [
     {
@@ -126,16 +125,14 @@ function Privacy() {
                         <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
                             <Typography component="h2" sx={{ ...sectionTitle(theme), mb: 1 }}>Contact</Typography>
                             <Typography sx={text}>
-                                {CONTACT_EMAIL ? (
-                                    <>
-                                        Questions or requests about your data? Email{' '}
-                                        <Box component="a" href={`mailto:${CONTACT_EMAIL}`} sx={{ color: '#e94560', fontWeight: 600 }}>
-                                            {CONTACT_EMAIL}
-                                        </Box>.
-                                    </>
-                                ) : (
-                                    'Once signed in, you can manage or delete your data yourself in Account Settings.'
-                                )}
+                                Questions or requests about your data? Email{' '}
+                                <Box component="a" href={`mailto:${CONTACT_EMAIL}`} sx={{ color: '#e94560', fontWeight: 600 }}>
+                                    {CONTACT_EMAIL}
+                                </Box>
+                                {' '}or call{' '}
+                                <Box component="a" href={`tel:${CONTACT_PHONE}`} sx={{ color: '#e94560', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                    {formatPhone(CONTACT_PHONE)}
+                                </Box>. Signed-in users can also manage or delete their data in Account Settings.
                             </Typography>
                         </CardContent>
                     </Card>

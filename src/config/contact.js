@@ -1,5 +1,5 @@
 // How people reach FitTracker. Each deployment can override these (see .env.example).
-export const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'joglows97@gmail.com';
+export const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'fittrackers2026@gmail.com';
 // International format without spaces, for tel: links.
 export const CONTACT_PHONE = import.meta.env.VITE_CONTACT_PHONE || '+255623413993';
 

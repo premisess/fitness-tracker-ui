@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import ExerciseAnimation from './ExerciseAnimation';
 
-const FRAME_MS = 900;
+// Roughly one rep per second: half a second in each position.
+const FRAME_MS = 500;
 
 /**
  * Real demo of an exercise: the catalog's start and end photos cross-faded in a loop.
@@ -53,7 +54,7 @@ function ExerciseDemo({ exercise, height = 180, animate = 'always', color = '#4e
                     sx={{
                         position: 'absolute', inset: 0, width: '100%', height: '100%',
                         objectFit: 'contain', opacity: shown === i ? 1 : 0,
-                        transition: 'opacity 250ms ease',
+                        transition: 'opacity 120ms linear',
                     }}
                 />
             ))}

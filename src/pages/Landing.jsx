@@ -31,13 +31,13 @@ const features = [
         icon: <LocalFireDepartmentIcon sx={{ fontSize: 32 }} />,
         color: '#e94560',
         title: 'Auto Calorie Tracking',
-        text: 'Log a workout and calories burn are calculated automatically from your profile and the science-backed MET formula.',
+        text: 'Log a workout and the calories you burn are worked out automatically from your profile using the proven MET formula.',
     },
     {
         icon: <TrackChangesIcon sx={{ fontSize: 32 }} />,
         color: '#4ecdc4',
         title: 'Goals & Streaks',
-        text: 'Set a goal, watch it auto-update as you train, and keep your daily streak alive.',
+        text: 'Set a goal, watch it update itself as you train, and keep your daily streak alive.',
     },
     {
         icon: <BarChartIcon sx={{ fontSize: 32 }} />,
@@ -49,7 +49,7 @@ const features = [
         icon: <CalendarViewWeekIcon sx={{ fontSize: 32 }} />,
         color: '#ffa726',
         title: 'Guided Exercise Library',
-        text: 'Browse exercises with animated movement previews and goal-matched rep/duration recommendations.',
+        text: 'Browse exercises with animated movement previews and reps or durations matched to your goal.',
     },
 ];
 
@@ -279,8 +279,9 @@ function Landing() {
                             About FitTracker
                         </Typography>
                         <Typography sx={{ color: theme.mix(0.6), lineHeight: 1.7, fontFamily: "'Poppins', sans-serif" }}>
-                            FitTracker brings your workouts, runs, meals, water and goals together in one free app,
-                            so you can see your progress and keep your streak going. Every feature is free for everyone.
+                            FitTracker helps you build better health, grow stronger and get into good shape.
+                            Your workouts, runs, meals, water and goals live together in one app, so you can see
+                            your progress every day and keep your streak going. Every feature is free for everyone.
                         </Typography>
                     </Box>
 

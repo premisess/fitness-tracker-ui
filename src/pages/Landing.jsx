@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppTheme } from '../context/ThemeContext';
 import ExerciseAnimation from '../components/ExerciseAnimation';
 import { Box, Typography, Button, IconButton, Stack } from '@mui/material';
@@ -274,6 +274,10 @@ function Landing() {
 
                 <Typography sx={{ color: theme.mix(0.3), fontSize: '0.8rem', mt: 6, fontFamily: "'Poppins', sans-serif" }}>
                     © {new Date().getFullYear()} FitTracker. Built to keep you moving.
+                    {' · '}
+                    <Box component={Link} to="/privacy" sx={{ color: 'inherit', '&:hover': { color: theme.mix(0.7) } }}>
+                        Privacy
+                    </Box>
                 </Typography>
             </Box>
         </Box>

@@ -25,6 +25,7 @@ import Plans from './pages/Plans';
 import PlanDetail from './pages/PlanDetail';
 import PlanBuilder from './pages/PlanBuilder';
 import Achievements from './pages/Achievements';
+import Privacy from './pages/Privacy';
 import AppLayout from './components/AppLayout';
 import BadgeCelebration from './components/BadgeCelebration';
 import { ThemeProvider } from './context/ThemeContext';
@@ -42,6 +43,7 @@ function App() {
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/privacy" element={<Privacy />} />
                     {/* Signed-in pages share the sidebar layout. */}
                     <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
                         <Route path="/dashboard" element={<Dashboard />} />

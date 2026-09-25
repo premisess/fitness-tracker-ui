@@ -7,8 +7,10 @@ COPY . .
 # The site calls /api on its own domain; Caddy forwards those requests to the backend.
 ARG VITE_API_URL=/api
 ARG VITE_MAP_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+ARG VITE_CONTACT_EMAIL=
 ENV VITE_API_URL=$VITE_API_URL \
-    VITE_MAP_TILE_URL=$VITE_MAP_TILE_URL
+    VITE_MAP_TILE_URL=$VITE_MAP_TILE_URL \
+    VITE_CONTACT_EMAIL=$VITE_CONTACT_EMAIL
 RUN npm run build
 
 # ---- Serve ----

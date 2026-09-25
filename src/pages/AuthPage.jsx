@@ -304,6 +304,12 @@ function AuthPage() {
                                 {isRegister ? 'Sign in' : 'Create an account'}
                             </Box>
                         </Typography>
+                        {isRegister && (
+                            <Typography sx={{ textAlign: 'center', mt: 1.5, color: theme.mix(0.4), fontSize: '0.78rem', fontFamily: FONT }}>
+                                By creating an account you agree to how we handle your data in our{' '}
+                                <Box component={Link} to="/privacy" sx={{ color: '#e94560', fontWeight: 600 }}>Privacy Policy</Box>.
+                            </Typography>
+                        )}
                     </Card>
                 </Box>
             </Box>

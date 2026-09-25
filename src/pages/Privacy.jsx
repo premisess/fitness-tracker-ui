@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AppBar, Box, Card, CardContent, IconButton, Toolbar, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
@@ -7,7 +7,7 @@ import Blobs from '../components/Glass';
 import { FONT, glassCard, sectionTitle } from '../theme/styles';
 
 const LAST_UPDATED = '25 September 2026';
-// Set per deployment (see .env.example). Without it, people are pointed to Account Settings instead.
+// Set per deployment (see .env.example). Without it, people are told where to find Account Settings.
 const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL;
 
 const SECTIONS = [
@@ -134,12 +134,7 @@ function Privacy() {
                                         </Box>.
                                     </>
                                 ) : (
-                                    <>
-                                        You can manage or delete your data yourself in{' '}
-                                        <Box component={Link} to="/account-settings" sx={{ color: '#e94560', fontWeight: 600 }}>
-                                            Account Settings
-                                        </Box>.
-                                    </>
+                                    'Once signed in, you can manage or delete your data yourself in Account Settings.'
                                 )}
                             </Typography>
                         </CardContent>

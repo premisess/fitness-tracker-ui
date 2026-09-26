@@ -17,8 +17,13 @@ function ExerciseDemo({ exercise, height = 180, animate = 'always', color = '#4e
     const [hovering, setHovering] = useState(false);
     const [failedId, setFailedId] = useState(null);
     const failed = failedId === exercise?.id;
+    // Photos come from an image CDN and can take a few seconds; until they arrive the stick figure
+    // plays in their place, so a card never sits empty.
+    const [loadedUrls, setLoadedUrls] = useState(() => new Set());
+    const loaded = urls.length > 0 && urls.every((u) => loadedUrls.has(u));
+    const markLoaded = (url) => setLoadedUrls((prev) => (prev.has(url) ? prev : new Set(prev).add(url)));
 
-    const playing = urls.length > 1 && !failed
+    const playing = loaded && urls.length > 1 && !failed
         && (animate === 'always' || (animate === 'hover' && hovering));
 
     useEffect(() => {
@@ -41,8 +46,16 @@ function ExerciseDemo({ exercise, height = 180, animate = 'always', color = '#4e
         <Box
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
-            sx={{ position: 'relative', height, borderRadius: radius, overflow: 'hidden', background: '#ffffff' }}
+            sx={{
+                position: 'relative', height, borderRadius: radius, overflow: 'hidden',
+                background: loaded ? '#ffffff' : 'rgba(128,128,128,0.08)', transition: 'background 200ms',
+            }}
         >
+            {!loaded && (
+                <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ExerciseAnimation exercise={exercise} color={color} size={Math.round(height * 0.7)} />
+                </Box>
+            )}
             {urls.map((url, i) => (
                 <Box
                     key={url}
@@ -50,11 +63,12 @@ function ExerciseDemo({ exercise, height = 180, animate = 'always', color = '#4e
                     src={url}
                     alt={`${exercise.name} – ${i === 0 ? 'start' : 'end'} position`}
                     loading="lazy"
+                    onLoad={() => markLoaded(url)}
                     onError={() => setFailedId(exercise.id)}
                     sx={{
                         position: 'absolute', inset: 0, width: '100%', height: '100%',
-                        objectFit: 'contain', opacity: shown === i ? 1 : 0,
-                        transition: 'opacity 120ms linear',
+                        objectFit: 'contain', opacity: loaded && shown === i ? 1 : 0,
+                        transition: loaded ? 'opacity 120ms linear' : 'none',
                     }}
                 />
             ))}

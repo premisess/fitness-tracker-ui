@@ -5,7 +5,8 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import { useAppTheme } from '../context/ThemeContext';
 import Blobs from '../components/Glass';
 import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
-import { CONTACT_EMAIL, CONTACT_PHONE, formatPhone } from '../config/contact';
+import { CONTACT_EMAIL } from '../config/contact';
+import PhoneContact from '../components/PhoneContact';
 
 const LAST_UPDATED = '25 September 2026';
 
@@ -130,9 +131,7 @@ function Privacy() {
                                     {CONTACT_EMAIL}
                                 </Box>
                                 {' '}or call{' '}
-                                <Box component="a" href={`tel:${CONTACT_PHONE}`} sx={{ color: '#e94560', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                                    {formatPhone(CONTACT_PHONE)}
-                                </Box>. Signed-in users can also manage or delete their data in Account Settings.
+                                <PhoneContact sx={{ color: '#e94560', fontWeight: 600, whiteSpace: 'nowrap', textDecoration: 'underline' }} />. Signed-in users can also manage or delete their data in Account Settings.
                             </Typography>
                         </CardContent>
                     </Card>

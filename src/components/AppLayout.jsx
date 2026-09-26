@@ -9,6 +9,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import InsightsIcon from '@mui/icons-material/Insights';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAppTheme } from '../context/ThemeContext';
 import { FONT } from '../theme/styles';
@@ -23,7 +24,6 @@ const SECTIONS = [
             { label: 'Log Workout', path: '/workouts' },
             { label: 'Plans', path: '/plans' },
             { label: 'Exercises', path: '/exercises' },
-            { label: 'Records', path: '/records' },
         ],
     },
     {
@@ -42,7 +42,12 @@ const SECTIONS = [
         label: 'Progress', icon: TrendingUpIcon, pages: [
             { label: 'Goals', path: '/goals' },
             { label: 'Achievements', path: '/achievements' },
-            { label: 'Analytics', path: '/analytics' },
+        ],
+    },
+    {
+        label: 'Analytics', icon: InsightsIcon, pages: [
+            { label: 'Overview', path: '/analytics' },
+            { label: 'Records', path: '/records' },
             { label: 'BMI', path: '/bmi' },
         ],
     },

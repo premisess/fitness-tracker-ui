@@ -13,6 +13,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { CONTACT_EMAIL, CONTACT_PHONE, formatPhone } from '../config/contact';
+import PhoneContact from '../components/PhoneContact';
 
 const FLOAT_KEYFRAMES = `
 @keyframes ft-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -56,6 +57,19 @@ const features = [
 function Landing() {
     const { theme, mode, toggleTheme } = useAppTheme();
     const navigate = useNavigate();
+
+    const contactRow = {
+        display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, p: 1.25, borderRadius: 2, width: '100%',
+        textDecoration: 'none', textAlign: 'left', color: theme.mix(0.85), fontFamily: "'Poppins', sans-serif",
+        fontSize: '0.92rem', wordBreak: 'break-all',
+        transition: 'background 0.15s',
+        '&:hover': { background: theme.mix(0.07), color: theme.mix(1) },
+    };
+    const contactIcon = (color) => ({
+        width: 36, height: 36, borderRadius: 2, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: `${color}22`, color,
+    });
 
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: "'Poppins', sans-serif", overflowX: 'hidden', position: 'relative' }}>
@@ -289,28 +303,15 @@ function Landing() {
                         <Typography sx={{ color: theme.mix(1), fontWeight: 700, mb: 1.5, fontFamily: "'Poppins', sans-serif" }}>
                             Get in touch
                         </Typography>
-                        {[
-                            { icon: <EmailOutlinedIcon />, label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, color: '#e94560' },
-                            { icon: <PhoneOutlinedIcon />, label: formatPhone(CONTACT_PHONE), href: `tel:${CONTACT_PHONE}`, color: '#4ecdc4' },
-                        ].map((c) => (
-                            <Box key={c.href} component="a" href={c.href}
-                                 sx={{
-                                     display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, p: 1.25, borderRadius: 2,
-                                     textDecoration: 'none', color: theme.mix(0.85), fontFamily: "'Poppins', sans-serif",
-                                     fontSize: '0.92rem', wordBreak: 'break-all',
-                                     transition: 'background 0.15s',
-                                     '&:hover': { background: theme.mix(0.07), color: theme.mix(1) },
-                                 }}>
-                                <Box sx={{
-                                    width: 36, height: 36, borderRadius: 2, flexShrink: 0,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    background: `${c.color}22`, color: c.color,
-                                }}>
-                                    {c.icon}
-                                </Box>
-                                {c.label}
-                            </Box>
-                        ))}
+                        <Box component="a" href={`mailto:${CONTACT_EMAIL}`} sx={contactRow}>
+                            <Box sx={contactIcon('#e94560')}><EmailOutlinedIcon /></Box>
+                            {CONTACT_EMAIL}
+                        </Box>
+                        {/* Offers a phone call or WhatsApp */}
+                        <PhoneContact sx={contactRow}>
+                            <Box sx={contactIcon('#4ecdc4')}><PhoneOutlinedIcon /></Box>
+                            {formatPhone(CONTACT_PHONE)}
+                        </PhoneContact>
                     </Box>
                 </Box>
             </Box>

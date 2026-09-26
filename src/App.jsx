@@ -30,6 +30,7 @@ import Sleep from './pages/Sleep';
 import Friends from './pages/Friends';
 import FindPeople from './pages/FindPeople';
 import Messages from './pages/Messages';
+import Feedback from './pages/Feedback';
 import AppLayout from './components/AppLayout';
 import BadgeCelebration from './components/BadgeCelebration';
 import { ThemeProvider } from './context/ThemeContext';
@@ -75,6 +76,7 @@ function App() {
                         <Route path="/friends/find" element={<FindPeople />} />
                         <Route path="/friends/messages" element={<Messages />} />
                         <Route path="/friends/messages/:userId" element={<Messages />} />
+                        <Route path="/feedback" element={<Feedback />} />
                     </Route>
                 </Routes>
                 {/* Watches for saved workouts, runs and meals, and celebrates any badge they earn. */}

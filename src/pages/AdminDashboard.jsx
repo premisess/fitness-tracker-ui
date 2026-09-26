@@ -23,6 +23,7 @@ import {
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import Blobs from '../components/Glass';
 import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import AdminFeedback from '../components/AdminFeedback';
 
 ChartJS.register(
     CategoryScale, LinearScale, BarElement, LineElement,
@@ -333,6 +334,8 @@ function AdminDashboard() {
                             </Box>
                         </CardContent>
                     </Card>
+
+                    <AdminFeedback />
 
                     {/* Users List */}
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, mb: 2, fontFamily: "'Poppins', sans-serif" }}>

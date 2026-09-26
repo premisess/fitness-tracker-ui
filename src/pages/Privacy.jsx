@@ -18,6 +18,7 @@ const SECTIONS = [
             ['Your profile', 'Age, gender, weight and height, and a profile photo if you upload one. These are used to work out your BMI, calorie target and calories burned.'],
             ['Your activity', 'Workouts, exercises, sets and personal records, goals, workout plans, streaks and badges, your food diary, water intake, BMI history and the sleep you log.'],
             ['Your runs', 'When you record a run, your GPS location is collected while the run is being tracked, and only after you allow location access. Nothing is tracked in the background.'],
+            ['Feedback', 'Feedback, recommendations and problem reports you send us, with your star rating if you give one. The team sees your name and email with them so we can reply.'],
             ['Friends and messages', 'The people you add as friends, friend requests, and the messages, challenges and invitations you send them. If you invite someone by email, we use their address only to send that one invitation.'],
         ],
     },
@@ -60,7 +61,7 @@ const SECTIONS = [
         items: [
             ['See and download', 'Everything you record is visible in the app, and you can download a PDF report of your workouts.'],
             ['Correct', 'Edit your profile, name, email and password at any time.'],
-            ['Delete', 'Deleting your account in Account Settings permanently removes your account and everything linked to it, including routes, food logs, sleep logs, friendships, messages and your profile photo.'],
+            ['Delete', 'Deleting your account in Account Settings permanently removes your account and everything linked to it, including routes, food logs, sleep logs, friendships, messages, feedback and your profile photo.'],
         ],
     },
     {

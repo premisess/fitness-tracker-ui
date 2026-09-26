@@ -14,6 +14,8 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -68,6 +70,7 @@ const SECTIONS = [
             { label: 'Messages', path: '/friends/messages', alert: 'unreadMessages' },
         ],
     },
+    { label: 'Feedback', icon: RateReviewIcon, bottom: true, pages: [{ label: 'Feedback', path: '/feedback' }] },
     {
         // Shown as Profile and Settings links at the bottom of the sidebar, and as tabs on those pages.
         label: 'Profile', icon: PersonIcon, bottom: true, pages: [
@@ -79,6 +82,7 @@ const SECTIONS = [
 
 // Pinned to the bottom of the sidebar.
 const BOTTOM_LINKS = [
+    { label: 'Feedback', icon: RateReviewIcon, path: '/feedback' },
     { label: 'Profile', icon: PersonIcon, path: '/profile' },
     { label: 'Settings', icon: SettingsIcon, path: '/account-settings' },
 ];
@@ -137,6 +141,8 @@ function SidebarContent({ collapsed, onToggle, onNavigate, alerts }) {
     const { theme } = useAppTheme();
     const { pathname } = useLocation();
     const current = sectionFor(pathname);
+    // Set by ProtectedRoute from the server's answer; the admin pages check the role again server side.
+    const isAdmin = localStorage.getItem('role') === 'ADMIN';
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', px: 1.25, py: 2, fontFamily: FONT, textAlign: 'left' }}>
@@ -173,6 +179,10 @@ function SidebarContent({ collapsed, onToggle, onNavigate, alerts }) {
                 display: 'flex', flexDirection: 'column', gap: 0.25,
                 mt: 'auto', pt: 1.5, borderTop: `1px solid ${theme.mix(0.08)}`,
             }}>
+                {isAdmin && (
+                    <NavLink to="/admin/dashboard" label="Admin" Icon={AdminPanelSettingsIcon} active={false}
+                             collapsed={collapsed} onNavigate={onNavigate} />
+                )}
                 {BOTTOM_LINKS.map((link) => (
                     <NavLink key={link.path} to={link.path} label={link.label} Icon={link.icon}
                              active={matches(pathname, link)} collapsed={collapsed} onNavigate={onNavigate} />

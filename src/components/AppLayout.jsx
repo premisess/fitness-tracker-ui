@@ -139,7 +139,7 @@ function SidebarContent({ collapsed, onToggle, onNavigate, alerts }) {
     const current = sectionFor(pathname);
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', px: 1.25, py: 2, fontFamily: FONT }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', px: 1.25, py: 2, fontFamily: FONT, textAlign: 'left' }}>
             <Box sx={{
                 display: 'flex', alignItems: 'center', mb: 3,
                 justifyContent: collapsed ? 'center' : 'space-between', px: collapsed ? 0 : 0.75,

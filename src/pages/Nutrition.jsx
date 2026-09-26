@@ -6,10 +6,9 @@ import {
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import {
-    Alert, AppBar, Box, Button, Card, CardContent, Chip, CircularProgress, IconButton, LinearProgress, Tab, Tabs,
-    Toolbar, Typography,
+    Alert, Box, Button, Card, CardContent, Chip, CircularProgress, IconButton, LinearProgress, Tab, Tabs,
+    Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import BreakfastDiningIcon from '@mui/icons-material/BreakfastDining';
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
@@ -26,7 +25,8 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import AddFoodDialog from '../components/AddFoodDialog';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 ChartJS.register(BarController, BarElement, CategoryScale, LineController, LineElement, LinearScale, PointElement, Tooltip, Legend);
 
@@ -445,17 +445,12 @@ function Nutrition() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 820, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <RestaurantIcon sx={{ color: '#ff6b35', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>Nutrition</Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 <Tabs value={tab} onChange={(e, value) => setTab(value)} sx={{
                     mb: 3,
                     '& .MuiTab-root': { color: theme.mix(0.5), textTransform: 'none', fontWeight: 600 },

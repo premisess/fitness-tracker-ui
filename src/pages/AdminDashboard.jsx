@@ -323,8 +323,8 @@ function AdminDashboard() {
                                 <TextField fullWidth label="Password" type="password" value={newAdmin.password}
                                            onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
                                            required sx={inputStyle} />
-                                <Button fullWidth type="submit" variant="contained" sx={{
-                                    py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                                <Button type="submit" variant="contained" sx={{
+                                    py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                     background: 'linear-gradient(90deg, #a29bfe, #0f3460)',
                                     '&:hover': { background: 'linear-gradient(90deg, #8176d4, #0a2540)' }
                                 }}>

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import {
-    Alert, AppBar, Box, Card, CardContent, CircularProgress, IconButton, LinearProgress, Toolbar, Typography,
+    Alert, Box, Card, CardContent, CircularProgress, LinearProgress, Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import API from '../services/api';
@@ -13,7 +11,8 @@ import { useAppTheme } from '../context/ThemeContext';
 import BadgeIcon from '../components/BadgeIcon';
 import StreakFreezeCard from '../components/StreakFreezeCard';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, stickyHeader } from '../theme/styles';
+import { FONT, glassCard } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 const flicker = keyframes`
   0%, 100% { transform: scale(1) rotate(-2deg); }
@@ -30,7 +29,6 @@ const progressText = (badge) => (isDistance(badge)
 
 function Achievements() {
     const { theme } = useAppTheme();
-    const navigate = useNavigate();
     const [board, setBoard] = useState(null);
     const [error, setError] = useState('');
 
@@ -50,17 +48,12 @@ function Achievements() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 960, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <EmojiEventsIcon sx={{ color: '#ffa726', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>Achievements</Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {!board && !error && <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>}
 

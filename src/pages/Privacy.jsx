@@ -8,7 +8,7 @@ import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
 import { CONTACT_EMAIL } from '../config/contact';
 import PhoneContact from '../components/PhoneContact';
 
-const LAST_UPDATED = '25 September 2026';
+const LAST_UPDATED = '26 September 2026';
 
 const SECTIONS = [
     {
@@ -16,8 +16,9 @@ const SECTIONS = [
         items: [
             ['Your account', 'Your name and email address. If you sign up with a password, we store only a one-way hash of it, never the password itself. If you use Google sign-in, we receive your name, email and Google account ID from Google.'],
             ['Your profile', 'Age, gender, weight and height, and a profile photo if you upload one. These are used to work out your BMI, calorie target and calories burned.'],
-            ['Your activity', 'Workouts, exercises, sets and personal records; goals, workout plans, streaks and badges; your food diary, water intake and BMI history.'],
+            ['Your activity', 'Workouts, exercises, sets and personal records, goals, workout plans, streaks and badges, your food diary, water intake, BMI history and the sleep you log.'],
             ['Your runs', 'When you record a run, your GPS location is collected while the run is being tracked, and only after you allow location access. Nothing is tracked in the background.'],
+            ['Friends and messages', 'The people you add as friends, friend requests, and the messages, challenges and invitations you send them. If you invite someone by email, we use their address only to send that one invitation.'],
         ],
     },
     {
@@ -38,6 +39,7 @@ const SECTIONS = [
         items: [
             ['Google', 'Account emails are sent through Gmail. If you use Google sign-in, Google handles that sign-in.'],
             ['Map tiles', 'Maps load their tiles from a map provider, which sees your IP address and the map area being viewed, but none of your account details.'],
+            ['Other members', 'People can find you by your name, or by your exact email address, to send a friend request. They see only your name and profile photo, never your email. Only your friends can message you, and your workouts and health data are never shown to them.'],
             ['Administrators', 'FitTracker administrators can see the list of accounts (name, email and role) and totals across all users, in order to run and support the service.'],
         ],
     },
@@ -58,7 +60,7 @@ const SECTIONS = [
         items: [
             ['See and download', 'Everything you record is visible in the app, and you can download a PDF report of your workouts.'],
             ['Correct', 'Edit your profile, name, email and password at any time.'],
-            ['Delete', 'Deleting your account in Account Settings permanently removes your account and everything linked to it, including routes, food logs and your profile photo.'],
+            ['Delete', 'Deleting your account in Account Settings permanently removes your account and everything linked to it, including routes, food logs, sleep logs, friendships, messages and your profile photo.'],
         ],
     },
     {

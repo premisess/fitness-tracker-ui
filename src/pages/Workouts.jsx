@@ -4,11 +4,10 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, AppBar, Toolbar, Alert, Checkbox, Tooltip,
+    Box, Typography, Button, Alert, Checkbox, Tooltip,
     IconButton, TextField, Card, CardContent, MenuItem, Chip, Collapse
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,7 +18,8 @@ import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import ExercisePicker from '../components/ExercisePicker';
 import { formatDuration } from '../utils/geo';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 const today = () => new Date().toISOString().split('T')[0];
 const emptyForm = () => ({ type: '', duration: '', date: today(), notes: '', tags: [] });
@@ -280,11 +280,9 @@ function Workouts() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 820, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <FitnessCenterIcon sx={{ color: '#e94560', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, flexGrow: 1 }}>
                         My Workouts
@@ -293,10 +291,7 @@ function Workouts() {
                             sx={{ color: '#ffa726', fontWeight: 600 }}>
                         Records
                     </Button>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 820, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
 
                 {newRecords.length > 0 && (
                     <Alert icon={<EmojiEventsIcon />} severity="success" sx={{ mb: 3 }}

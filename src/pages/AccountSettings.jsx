@@ -4,14 +4,13 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, AppBar, Toolbar,
-    IconButton, TextField, Card, CardContent, Divider, MenuItem, Switch, FormControlLabel,
+    Box, Typography, Button, TextField, Card, CardContent, Divider, MenuItem, Switch, FormControlLabel,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 const PRIVACY_OPTIONS = [
     { value: 0, label: 'Off' },
@@ -145,19 +144,14 @@ function AccountSettings() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/profile')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 600, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <SettingsIcon sx={{ color: '#a29bfe', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
                         Account Settings
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 600, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
 
                 {/* Display Name */}
                 <Card sx={cardStyle}>
@@ -169,8 +163,8 @@ function AccountSettings() {
                             <TextField fullWidth label="Name" value={nameForm}
                                        onChange={(e) => setNameForm(e.target.value)}
                                        required sx={inputStyle} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #4ecdc4, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #3aa89f, #0a2540)' }
                             }}>
@@ -231,8 +225,8 @@ function AccountSettings() {
                             <TextField fullWidth label="Current Password" type="password" value={emailForm.currentPassword}
                                        onChange={(e) => setEmailForm({ ...emailForm, currentPassword: e.target.value })}
                                        required sx={inputStyle} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #a29bfe, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #8176d4, #0a2540)' }
                             }}>
@@ -259,8 +253,8 @@ function AccountSettings() {
                             <TextField fullWidth label="Confirm New Password" type="password" value={passwordForm.confirmPassword}
                                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                                        required sx={inputStyle} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #e94560, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #c73652, #0a2540)' }
                             }}>

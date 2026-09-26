@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, AppBar, Toolbar,
-    IconButton, TextField, Card, CardContent, Avatar, MenuItem
+    Box, Typography, Button, TextField, Card, CardContent, Avatar, MenuItem
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SettingsIcon from '@mui/icons-material/Settings';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
+import { pictureUrl } from '../utils/people';
 
 function Profile() {
     const { theme } = useAppTheme();
@@ -21,7 +19,6 @@ function Profile() {
     const [success, setSuccess] = useState('');
     const name = localStorage.getItem('name');
     const email = localStorage.getItem('email');
-    const navigate = useNavigate();
 
     const fetchProfile = async () => {
         try {
@@ -118,19 +115,14 @@ function Profile() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <PersonIcon sx={{ color: '#a29bfe', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
                         My Profile
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
 
                 {/* Profile Header */}
                 <Card sx={{ ...glassCard(theme), mb: 4, textAlign: 'center', p: 3 }}>
@@ -138,7 +130,7 @@ function Profile() {
                     {/* Avatar with upload */}
                     <Box sx={{ position: 'relative', width: 80, mx: 'auto', mb: 2 }}>
                         <Avatar
-                            src={profile?.profilePic ? `http://localhost:8080/api/profile/picture/${profile.profilePic}` : ''}
+                            src={pictureUrl(profile?.profilePic)}
                             sx={{ width: 80, height: 80, bgcolor: '#e94560', fontSize: '2rem', mx: 'auto' }}>
                             {name?.charAt(0).toUpperCase()}
                         </Avatar>
@@ -198,32 +190,34 @@ function Profile() {
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}
                         {success && <Typography sx={{ color: '#4ecdc4', mb: 2 }}>{success}</Typography>}
                         <Box component="form" onSubmit={handleSubmit}>
-                            <TextField fullWidth label="Age" type="number" value={form.age}
-                                       onChange={(e) => setForm({ ...form, age: e.target.value })}
-                                       sx={inputStyle} />
-                            <TextField select fullWidth label="Gender" value={form.gender}
-                                       onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                                       sx={inputStyle}
-                                       SelectProps={{ MenuProps: { PaperProps: { sx: { background: theme.menuBg, color: theme.mix(1) } } } }}>
-                                {['Male', 'Female', 'Other'].map((g) => (
-                                    <MenuItem key={g} value={g} sx={{
-                                        color: theme.mix(1), backgroundColor: theme.menuBg,
-                                        '&:hover': { backgroundColor: theme.mix(0.15) },
-                                        '&.Mui-selected': { backgroundColor: '#0f3460' },
-                                        '&.Mui-selected:hover': { backgroundColor: '#0f3460' }
-                                    }}>
-                                        {g}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField fullWidth label="Weight (kg)" type="number" value={form.weight}
-                                       onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                                       sx={inputStyle} />
-                            <TextField fullWidth label="Height (cm)" type="number" value={form.height}
-                                       onChange={(e) => setForm({ ...form, height: e.target.value })}
-                                       sx={inputStyle} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, columnGap: 1.5 }}>
+                                <TextField fullWidth label="Age" type="number" value={form.age}
+                                           onChange={(e) => setForm({ ...form, age: e.target.value })}
+                                           sx={inputStyle} />
+                                <TextField select fullWidth label="Gender" value={form.gender}
+                                           onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                                           sx={inputStyle}
+                                           SelectProps={{ MenuProps: { PaperProps: { sx: { background: theme.menuBg, color: theme.mix(1) } } } }}>
+                                    {['Male', 'Female', 'Other'].map((g) => (
+                                        <MenuItem key={g} value={g} sx={{
+                                            color: theme.mix(1), backgroundColor: theme.menuBg,
+                                            '&:hover': { backgroundColor: theme.mix(0.15) },
+                                            '&.Mui-selected': { backgroundColor: '#0f3460' },
+                                            '&.Mui-selected:hover': { backgroundColor: '#0f3460' }
+                                        }}>
+                                            {g}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <TextField fullWidth label="Weight (kg)" type="number" value={form.weight}
+                                           onChange={(e) => setForm({ ...form, weight: e.target.value })}
+                                           sx={inputStyle} />
+                                <TextField fullWidth label="Height (cm)" type="number" value={form.height}
+                                           onChange={(e) => setForm({ ...form, height: e.target.value })}
+                                           sx={inputStyle} />
+                            </Box>
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #a29bfe, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #8176d4, #0a2540)' }
                             }}>
@@ -232,14 +226,6 @@ function Profile() {
                         </Box>
                     </CardContent>
                 </Card>
-
-                <Button fullWidth startIcon={<SettingsIcon />} onClick={() => navigate('/account-settings')} sx={{
-                    mt: 3, py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 600,
-                    color: theme.mix(0.7), border: `1px solid ${theme.mix(0.15)}`,
-                    '&:hover': { border: `1px solid ${theme.mix(0.3)}`, color: theme.mix(1) }
-                }}>
-                    Account Settings
-                </Button>
             </Box>
         </Box>
     );

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
-import { Alert, AppBar, Box, Button, Card, CardContent, IconButton, Toolbar, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, IconButton, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import {
@@ -12,7 +12,8 @@ import {
 import { Line } from 'react-chartjs-2';
 import ExerciseDemo from '../components/ExerciseDemo';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import { formatDuration } from '../utils/geo';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, Filler);
@@ -60,18 +61,16 @@ function ExerciseRecords() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
+
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <IconButton onClick={() => navigate('/records')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to records">
                         <ArrowBackIcon />
                     </IconButton>
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }} noWrap>
                         {data?.exercise.name || 'Exercise'}
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                 {data && (

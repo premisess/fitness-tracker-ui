@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
-import { Alert, AppBar, Box, Button, Card, CardContent, CircularProgress, IconButton, Toolbar, Typography } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RouteMap from '../components/RouteMap';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import { decodePolyline, formatDistance, formatDuration, paceOrSpeed } from '../utils/geo';
 
 function RunCard({ run, theme, onOpen }) {
@@ -64,21 +64,16 @@ function RunHistory() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <MapIcon sx={{ color: '#45b7d1', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, flexGrow: 1 }}>Activities</Typography>
                     <Button variant="contained" startIcon={<PlayArrowIcon />} onClick={() => navigate('/run')}
                             sx={{ borderRadius: 2, fontWeight: 700, background: 'linear-gradient(90deg, #4ecdc4, #0f3460)' }}>
                         Start
                     </Button>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
                 {!runs && !error && <Box sx={{ textAlign: 'center', mt: 8 }}><CircularProgress /></Box>}
 

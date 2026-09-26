@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
-import { Alert, AppBar, Box, Button, Card, CardContent, IconButton, Toolbar, Typography } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Alert, Box, Button, Card, CardContent, Typography } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import { formatDuration } from '../utils/geo';
 
 /** The headline best for an exercise, chosen by how the exercise is tracked. */
@@ -44,17 +44,12 @@ function Records() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 960, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <EmojiEventsIcon sx={{ color: '#ffa726', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>Personal Records</Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 960, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                 {records && records.length === 0 && (

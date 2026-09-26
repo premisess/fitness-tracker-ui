@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-    Alert, AppBar, Box, Button, Card, CardContent, CircularProgress, IconButton, MenuItem, TextField,
-    ToggleButton, ToggleButtonGroup, Toolbar, Typography,
+    Alert, Box, Button, Card, CardContent, CircularProgress, IconButton, MenuItem, TextField,
+    ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -17,7 +17,8 @@ import { useAppTheme } from '../context/ThemeContext';
 import ExercisePicker from '../components/ExercisePicker';
 import { GOAL_LABELS } from '../utils/plans';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 const LEVELS = ['beginner', 'intermediate', 'expert'];
 
@@ -221,8 +222,9 @@ function PlanBuilder() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
+
+            <Box sx={{ maxWidth: 860, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <IconButton onClick={() => navigate(-1)} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back">
                         <ArrowBackIcon />
                     </IconButton>
@@ -230,10 +232,7 @@ function PlanBuilder() {
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>
                         {editing ? 'Edit your plan' : 'Build your own plan'}
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
 
                 {loading ? (

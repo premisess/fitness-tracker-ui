@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Alert, AppBar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle, IconButton, LinearProgress, Toolbar, Typography,
+    Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions, DialogContent,
+    DialogContentText, DialogTitle, LinearProgress, Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
@@ -15,7 +14,8 @@ import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { GOAL_COLORS, GOAL_LABELS, sessionPath } from '../utils/plans';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 function Plans() {
     const { theme } = useAppTheme();
@@ -75,17 +75,12 @@ function Plans() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to dashboard">
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <EventNoteIcon sx={{ color: '#66bb6a', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700 }}>Workout Plans</Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
                 {message && <Alert severity="success" sx={{ mb: 3 }} onClose={() => setMessage('')}>{message}</Alert>}
                 {!plans && !error && <Box sx={{ textAlign: 'center', py: 8 }}><CircularProgress sx={{ color: '#e94560' }} /></Box>}

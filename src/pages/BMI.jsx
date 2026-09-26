@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, AppBar, Toolbar,
-    IconButton, TextField, Card, CardContent, Chip
+    Box, Typography, Button, TextField, Card, CardContent, Chip
 } from '@mui/material';
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 function BMI() {
     const { theme } = useAppTheme();
@@ -19,7 +17,6 @@ function BMI() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [latest, setLatest] = useState(null);
-    const navigate = useNavigate();
 
     const fetchHistory = async () => {
         try {
@@ -72,19 +69,14 @@ function BMI() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <MonitorWeightIcon sx={{ color: '#ff6b35', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
                         BMI Calculator
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
 
                 {/* Latest BMI Result */}
                 {latest && (
@@ -141,22 +133,24 @@ function BMI() {
                         {error && <Typography sx={{ color: '#e94560', mb: 2 }}>{error}</Typography>}
                         {success && <Typography sx={{ color: '#4ecdc4', mb: 2 }}>{success}</Typography>}
                         <Box component="form" onSubmit={handleSubmit}>
-                            <TextField fullWidth label="Weight (kg)" type="number" value={form.weight}
-                                       onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                                       required sx={inputStyle} />
-                            <TextField fullWidth label="Height (cm)" type="number" value={form.height}
-                                       onChange={(e) => setForm({ ...form, height: e.target.value })}
-                                       required sx={inputStyle} />
-                            <TextField fullWidth label="Date" type="date" value={form.date}
-                                       onChange={(e) => setForm({ ...form, date: e.target.value })}
-                                       required InputLabelProps={{ shrink: true }}
-                                       sx={{
-                                           ...inputStyle,
-                                           '& input[type="date"]::-webkit-datetime-edit': { color: theme.mix(1) },
-                                           '& input[type="date"]::-webkit-calendar-picker-indicator': { filter: 'invert(1)' },
-                                       }} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, columnGap: 1.5 }}>
+                                <TextField fullWidth label="Weight (kg)" type="number" value={form.weight}
+                                           onChange={(e) => setForm({ ...form, weight: e.target.value })}
+                                           required sx={inputStyle} />
+                                <TextField fullWidth label="Height (cm)" type="number" value={form.height}
+                                           onChange={(e) => setForm({ ...form, height: e.target.value })}
+                                           required sx={inputStyle} />
+                                <TextField fullWidth label="Date" type="date" value={form.date}
+                                           onChange={(e) => setForm({ ...form, date: e.target.value })}
+                                           required InputLabelProps={{ shrink: true }}
+                                           sx={{
+                                               ...inputStyle,
+                                               '& input[type="date"]::-webkit-datetime-edit': { color: theme.mix(1) },
+                                               '& input[type="date"]::-webkit-calendar-picker-indicator': { filter: 'invert(1)' },
+                                           }} />
+                            </Box>
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #ff6b35, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #d4551f, #0a2540)' }
                             }}>

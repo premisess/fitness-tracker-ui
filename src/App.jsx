@@ -26,6 +26,10 @@ import PlanDetail from './pages/PlanDetail';
 import PlanBuilder from './pages/PlanBuilder';
 import Achievements from './pages/Achievements';
 import Privacy from './pages/Privacy';
+import Sleep from './pages/Sleep';
+import Friends from './pages/Friends';
+import FindPeople from './pages/FindPeople';
+import Messages from './pages/Messages';
 import AppLayout from './components/AppLayout';
 import BadgeCelebration from './components/BadgeCelebration';
 import { ThemeProvider } from './context/ThemeContext';
@@ -66,6 +70,11 @@ function App() {
                         <Route path="/plans/:slug/edit" element={<PlanBuilder />} />
                         <Route path="/plans/:slug" element={<PlanDetail />} />
                         <Route path="/achievements" element={<Achievements />} />
+                        <Route path="/sleep" element={<Sleep />} />
+                        <Route path="/friends" element={<Friends />} />
+                        <Route path="/friends/find" element={<FindPeople />} />
+                        <Route path="/friends/messages" element={<Messages />} />
+                        <Route path="/friends/messages/:userId" element={<Messages />} />
                     </Route>
                 </Routes>
                 {/* Watches for saved workouts, runs and meals, and celebrates any badge they earn. */}

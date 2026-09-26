@@ -11,6 +11,9 @@ const API = axios.create({
 // Saves that can earn a badge. BadgeCelebration listens for this and asks the server what was earned.
 export const ACTIVITY_EVENT = 'fittracker:activity';
 
+// Fired by the Friends pages after reading messages or answering a request, so the sidebar badge refreshes.
+export const FRIENDS_EVENT = 'fittracker:friends';
+
 const ACTIVITY_PATHS = /^\/?(workouts|runs|nutrition\/diary|plans\/active\/sessions|water-intake|goals|bmi|auth\/verify-email)(\/|$|\?)/;
 
 API.interceptors.response.use((response) => {

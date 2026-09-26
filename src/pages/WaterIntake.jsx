@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, AppBar, Toolbar,
-    IconButton, TextField, Card, CardContent
+    Box, Typography, Button, TextField, Card, CardContent
 } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 function WaterIntake() {
     const { theme } = useAppTheme();
@@ -19,7 +17,6 @@ function WaterIntake() {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
 
     const fetchIntake = async () => {
         try {
@@ -69,19 +66,14 @@ function WaterIntake() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 700, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <WaterDropIcon sx={{ color: '#45b7d1', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
                         Water Intake
                     </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 700, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {/* Today's Progress */}
                 <Card sx={{ ...glassCard(theme), mb: 4, textAlign: 'center', p: 3 }}>
                     <WaterDropIcon sx={{ fontSize: 36, color: '#45b7d1' }} />
@@ -119,19 +111,21 @@ function WaterIntake() {
                         </Box>
 
                         <Box component="form" onSubmit={handleSubmit}>
-                            <TextField fullWidth label="Amount (ml)" type="number" value={amount}
-                                       onChange={(e) => setAmount(e.target.value)}
-                                       required sx={inputStyle} />
-                            <TextField fullWidth label="Date" type="date" value={date}
-                                       onChange={(e) => setDate(e.target.value)}
-                                       required InputLabelProps={{ shrink: true }}
-                                       sx={{
-                                           ...inputStyle,
-                                           '& input[type="date"]::-webkit-datetime-edit': { color: theme.mix(1) },
-                                           '& input[type="date"]::-webkit-calendar-picker-indicator': { filter: 'invert(1)' },
-                                       }} />
-                            <Button fullWidth type="submit" variant="contained" sx={{
-                                py: 1.5, borderRadius: 2, fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, columnGap: 1.5 }}>
+                                <TextField fullWidth label="Amount (ml)" type="number" value={amount}
+                                           onChange={(e) => setAmount(e.target.value)}
+                                           required sx={inputStyle} />
+                                <TextField fullWidth label="Date" type="date" value={date}
+                                           onChange={(e) => setDate(e.target.value)}
+                                           required InputLabelProps={{ shrink: true }}
+                                           sx={{
+                                               ...inputStyle,
+                                               '& input[type="date"]::-webkit-datetime-edit': { color: theme.mix(1) },
+                                               '& input[type="date"]::-webkit-calendar-picker-indicator': { filter: 'invert(1)' },
+                                           }} />
+                            </Box>
+                            <Button type="submit" variant="contained" sx={{
+                                py: 1.1, px: 4, borderRadius: 999, textTransform: 'none', fontFamily: "'Poppins', sans-serif", fontWeight: 700,
                                 background: 'linear-gradient(90deg, #45b7d1, #0f3460)',
                                 '&:hover': { background: 'linear-gradient(90deg, #3593a8, #0a2540)' }
                             }}>

@@ -4,8 +4,8 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Alert, AppBar, Box, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle, FormControlLabel, IconButton, Switch, Toolbar, Typography,
+    Alert, Box, Button, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent,
+    DialogContentText, DialogTitle, FormControlLabel, IconButton, Switch, Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,7 +15,8 @@ import {
 import { Line } from 'react-chartjs-2';
 import RouteMap from '../components/RouteMap';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import { decodePolyline, formatDistance, formatDuration, formatPace, paceOrSpeed, usesSpeed } from '../utils/geo';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Filler);
@@ -59,8 +60,9 @@ function RunDetail() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
+
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <IconButton onClick={() => navigate('/runs')} sx={{ color: theme.mix(1), mr: 1 }} aria-label="Back to activities">
                         <ArrowBackIcon />
                     </IconButton>
@@ -72,10 +74,7 @@ function RunDetail() {
                             <DeleteIcon />
                         </IconButton>
                     )}
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                 {!run && !error && <Box sx={{ textAlign: 'center', mt: 8 }}><CircularProgress /></Box>}
 

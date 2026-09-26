@@ -4,10 +4,9 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Alert, AppBar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
-    DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Toolbar, Typography,
+    Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
+    DialogContent, DialogContentText, DialogTitle, TextField, Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -16,7 +15,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HistoryIcon from '@mui/icons-material/History';
 import RouteMap from '../components/RouteMap';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import {
     GPS_ACTIVITY_TYPES, MAX_ACCURACY_M, createActivityTracker,
     formatDistance, formatDuration, formatPace, paceOrSpeed, usesSpeed,
@@ -382,11 +382,9 @@ function RunTracker() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }} disabled={live && phase !== 'paused'}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 720, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <DirectionsRunIcon sx={{ color: '#4ecdc4', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, flexGrow: 1 }}>
                         Track Activity
@@ -396,10 +394,7 @@ function RunTracker() {
                             History
                         </Button>
                     )}
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 720, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {loadError && <Alert severity="error" sx={{ mb: 2 }}>{loadError}</Alert>}
                 {error && <Alert severity={phase === 'recording' ? 'warning' : 'error'} sx={{ mb: 2 }}>{error}</Alert>}
                 {typeof window !== 'undefined' && !window.isSecureContext && (

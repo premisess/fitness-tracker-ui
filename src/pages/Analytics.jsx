@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, AppBar, Toolbar, IconButton, Card, CardContent, Button
+    Box, Typography, Card, CardContent, Button
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
+import { Link } from 'react-router-dom';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, stickyHeader } from '../theme/styles';
+import { FONT, glassCard } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 import exportWorkoutsPdf from '../services/exportWorkoutsPdf';
 import {
     Chart as ChartJS,
@@ -30,7 +33,6 @@ function Analytics() {
     const [summary, setSummary] = useState(null);
     const [bmiHistory, setBmiHistory] = useState([]);
     const [waterHistory, setWaterHistory] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         let cancelled = false;
@@ -141,16 +143,20 @@ function Analytics() {
         }
     };
 
-    const cardStyle = { ...glassCard(theme), mb: 3 };
+    // Charts that have nothing to show yet, each with a shortcut to start tracking it.
+    const missing = [
+        !hasWorkouts && { label: 'Log a workout', to: '/workouts', Icon: FitnessCenterIcon, color: '#e94560' },
+        waterHistory.length === 0 && { label: 'Log water', to: '/water-intake', Icon: WaterDropIcon, color: '#45b7d1' },
+        bmiHistory.length === 0 && { label: 'Check your BMI', to: '/bmi', Icon: MonitorWeightIcon, color: '#ff6b35' },
+    ].filter(Boolean);
+    const hasAnyChart = missing.length < 3;
 
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 900, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <BarChartIcon sx={{ color: '#4ecdc4', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, flexGrow: 1, fontFamily: "'Poppins', sans-serif" }}>
                         Analytics & Charts
@@ -162,81 +168,77 @@ function Analytics() {
                     }}>
                         Export PDF
                     </Button>
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
 
                 {/* Totals from /analytics/summary */}
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' }, gap: 1.5, mb: 2.5 }}>
                     {summaryTiles.map((tile) => (
-                        <Card key={tile.label} sx={{ ...cardStyle, mb: 0, flex: '1 1 130px' }}>
-                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography sx={{ color: tile.color, fontWeight: 700, fontSize: '1.6rem', fontFamily: FONT }}>
-                                    {tile.value}
-                                </Typography>
-                                <Typography sx={{ color: theme.mix(0.5), fontSize: '0.72rem', fontFamily: "'Poppins', sans-serif" }}>
+                        <Card key={tile.label} sx={glassCard(theme)}>
+                            <CardContent sx={{ py: 1.75, px: 2, '&:last-child': { pb: 1.75 } }}>
+                                <Typography sx={{ color: theme.mix(0.5), fontSize: '0.75rem', fontWeight: 600, fontFamily: FONT }}>
                                     {tile.label}
+                                </Typography>
+                                <Typography sx={{ color: tile.color, fontWeight: 800, fontSize: '1.5rem', fontFamily: FONT, lineHeight: 1.3 }}>
+                                    {tile.value}
                                 </Typography>
                             </CardContent>
                         </Card>
                     ))}
                 </Box>
 
-                {/* Calories Chart */}
-                <Card sx={cardStyle}>
-                    <CardContent sx={{ p: 3 }}>
-                        {hasWorkouts ? (
-                            <Line data={caloriesData} options={chartOptions('Calories Burned Over Time')} />
-                        ) : (
-                            <Typography sx={{ color: theme.mix(0.5), textAlign: 'center' }}>
-                                No workout data yet. Log some workouts to see your calorie chart!
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
+                {/* Charts with data, two per row on wide screens */}
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2.5, mb: 2.5 }}>
+                    {hasWorkouts && (
+                        <Card sx={{ ...glassCard(theme), gridColumn: { md: '1 / -1' } }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Line data={caloriesData} options={chartOptions('Calories Burned Over Time')} />
+                            </CardContent>
+                        </Card>
+                    )}
+                    {hasWorkouts && (
+                        <Card sx={glassCard(theme)}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Box sx={{ maxWidth: 340, mx: 'auto' }}>
+                                    <Pie data={workoutTypeData} options={pieOptions} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {waterHistory.length > 0 && (
+                        <Card sx={glassCard(theme)}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Bar data={waterData} options={chartOptions('Water Intake (Last 7 Days)')} />
+                            </CardContent>
+                        </Card>
+                    )}
+                    {bmiHistory.length > 0 && (
+                        <Card sx={glassCard(theme)}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Line data={bmiData} options={chartOptions('BMI History')} />
+                            </CardContent>
+                        </Card>
+                    )}
+                </Box>
 
-                {/* Workout Distribution */}
-                <Card sx={cardStyle}>
-                    <CardContent sx={{ p: 3 }}>
-                        {hasWorkouts ? (
-                            <Box sx={{ maxWidth: 400, mx: 'auto' }}>
-                                <Pie data={workoutTypeData} options={pieOptions} />
+                {/* One invitation for whatever isn't tracked yet */}
+                {missing.length > 0 && (
+                    <Card sx={glassCard(theme)}>
+                        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                            <Typography sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: FONT }}>More charts appear as you track</Typography>
+                            <Typography sx={{ color: theme.mix(0.55), fontSize: '0.88rem', mt: 0.5, mb: 2, fontFamily: FONT }}>
+                                {hasAnyChart ? 'Add these to see the rest of your progress.' : 'Log a workout, a BMI check or some water and your charts show up here.'}
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {missing.map((m) => (
+                                    <Button key={m.to} component={Link} to={m.to} startIcon={<m.Icon />} variant="outlined"
+                                            sx={{ borderRadius: 999, textTransform: 'none', fontWeight: 700, fontFamily: FONT, borderColor: `${m.color}88`, color: m.color, '&:hover': { borderColor: m.color, background: `${m.color}14` } }}>
+                                        {m.label}
+                                    </Button>
+                                ))}
                             </Box>
-                        ) : (
-                            <Typography sx={{ color: theme.mix(0.5), textAlign: 'center' }}>
-                                No workout data yet.
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* BMI Chart */}
-                <Card sx={cardStyle}>
-                    <CardContent sx={{ p: 3 }}>
-                        {bmiHistory.length > 0 ? (
-                            <Line data={bmiData} options={chartOptions('BMI History')} />
-                        ) : (
-                            <Typography sx={{ color: theme.mix(0.5), textAlign: 'center' }}>
-                                No BMI records yet. Calculate your BMI to see the trend!
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Water Intake Chart */}
-                <Card sx={cardStyle}>
-                    <CardContent sx={{ p: 3 }}>
-                        {waterHistory.length > 0 ? (
-                            <Bar data={waterData} options={chartOptions('Water Intake (Last 7 Days)')} />
-                        ) : (
-                            <Typography sx={{ color: theme.mix(0.5), textAlign: 'center' }}>
-                                No water intake data yet.
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
-
+                        </CardContent>
+                    </Card>
+                )}
             </Box>
         </Box>
     );

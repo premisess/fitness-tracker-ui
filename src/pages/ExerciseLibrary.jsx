@@ -4,19 +4,19 @@ import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, AppBar, Toolbar, IconButton,
+    Box, Typography, IconButton,
     Card, CardContent, TextField, Chip, MenuItem,
     InputAdornment, Button, Alert, CircularProgress
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CloseIcon from '@mui/icons-material/Close';
 import ExerciseDemo from '../components/ExerciseDemo';
 import Blobs from '../components/Glass';
-import { FONT, glassCard, fieldStyle, sectionTitle, stickyHeader } from '../theme/styles';
+import { FONT, glassCard, fieldStyle, sectionTitle } from '../theme/styles';
+import PageHeader from '../components/PageHeader';
 
 const PAGE_SIZE = 24;
 
@@ -152,23 +152,18 @@ function ExerciseLibrary() {
     return (
         <Box sx={{ minHeight: '100vh', background: theme.bgGradient, fontFamily: FONT, position: 'relative' }}>
             <Blobs />
-            <AppBar position="sticky" sx={stickyHeader(theme)}>
-                <Toolbar>
-                    <IconButton onClick={() => navigate('/dashboard')} sx={{ color: theme.mix(1), mr: 1 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
+
+            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 3, px: 2, position: 'relative', zIndex: 1 }}>
+                <PageHeader>
                     <FitnessCenterIcon sx={{ color: '#e94560', mr: 1 }} />
                     <Typography variant="h6" sx={{ color: theme.mix(1), fontWeight: 700, fontFamily: "'Poppins', sans-serif", flexGrow: 1 }}>
                         Exercise Library
                     </Typography>
                     {activeGoalType && (
-                        <Chip label={`Goal: ${activeGoalType.replaceAll('_', ' ')}`} size="small"
+                        <Chip label={`${activeGoalType.charAt(0)}${activeGoalType.slice(1).toLowerCase().replaceAll('_', ' ')} goal`} size="small"
                               sx={{ background: '#e94560', color: '#fff', fontFamily: "'Poppins', sans-serif" }} />
                     )}
-                </Toolbar>
-            </AppBar>
-
-            <Box sx={{ maxWidth: 1000, mx: 'auto', py: 4, px: 2, position: 'relative', zIndex: 1 }}>
+                </PageHeader>
                 {!activeGoalType && (
                     <Alert severity="info" sx={{ mb: 3 }}>
                         Set a goal to get personalised sets and reps for each exercise.

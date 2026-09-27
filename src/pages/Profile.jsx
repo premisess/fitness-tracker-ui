@@ -144,7 +144,7 @@ function Profile() {
                                 border: '2px solid #1a1a2e'
                             }}>
                             <Typography sx={{ color: theme.mix(1), fontSize: '0.7rem', lineHeight: 1 }}>+</Typography>
-                            <input type="file" accept="image/*" hidden onChange={handlePictureUpload} />
+                            <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" hidden onChange={handlePictureUpload} />
                         </Box>
                     </Box>
 

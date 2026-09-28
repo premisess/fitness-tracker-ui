@@ -168,8 +168,8 @@ function AuthPage() {
 
     return (
         <Box sx={{
-            height: '100vh', background: theme.bgGradient, fontFamily: FONT,
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
+            minHeight: '100vh', height: { xs: 'auto', md: '100vh' }, background: theme.bgGradient, fontFamily: FONT,
+            display: 'flex', flexDirection: 'column', overflowY: { xs: 'auto', md: 'hidden' },
         }}>
             {/* Full-width top bar like the landing page */}
             <Box sx={{
@@ -189,7 +189,7 @@ function AuthPage() {
             </Box>
 
             {/* Animated card (twisted, dropped down a touch) with the welcome words below it; form card beside */}
-            <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 3 }, overflow: 'hidden' }}>
+            <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', px: { xs: 2, sm: 4 }, pt: { xs: 3, sm: 4 }, pb: { xs: 8, md: 4 }, overflow: { xs: 'visible', md: 'hidden' } }}>
                 <Box key={mode} sx={{
                     display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center',
                     width: '100%', maxWidth: 1150, gap: { xs: 4, md: 0 },

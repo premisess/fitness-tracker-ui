@@ -172,31 +172,36 @@ function AuthScene({ mode, compact = false, showCopy = true }) {
                 ))}
             </Box>
 
-            {/* Floating stat chips; keyed by mode so they pop in again on every switch */}
-            {!compact && CHIPS[mode].map((chip, i) => {
+            {/* Floating stat chips; keyed by mode so they pop in again on every switch.
+                Phones stack them down the left side in a single column beside the ring. */}
+            {CHIPS[mode].map((chip, i) => {
                 const Icon = chip.icon;
                 return (
                     <Box key={`${mode}-${chip.label}`} sx={{
-                        position: 'absolute', ...chip.pos,
+                        position: 'absolute',
+                        ...(compact
+                            ? { top: `${8 + i * 24}%`, left: '4%' }
+                            : chip.pos),
                         animation: `${popIn} 0.6s ease ${0.35 + i * 0.12}s both`,
                         ...reducedMotion(),
                     }}>
                         <Box sx={{
-                            display: 'flex', alignItems: 'center', gap: 1.2, px: 1.6, py: 1, borderRadius: '16px',
+                            display: 'flex', alignItems: 'center', gap: { xs: 1, md: 1.2 },
+                            px: { xs: 1.2, md: 1.6 }, py: { xs: 0.7, md: 1 }, borderRadius: { xs: '14px', md: '16px' },
                             background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)',
                             border: '1px solid rgba(255,255,255,0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
                             animation: `${bob} ${4 + i * 0.6}s ease-in-out ${i * 0.7}s infinite`,
                             ...reducedMotion(),
                         }}>
                             <Box sx={{
-                                width: 34, height: 34, borderRadius: '50%', background: chip.color,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                width: { xs: 28, md: 34 }, height: { xs: 28, md: 34 }, borderRadius: '50%',
+                                background: chip.color, display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
-                                <Icon sx={{ fontSize: 20, color: '#1a1a2e' }} />
+                                <Icon sx={{ fontSize: { xs: 16, md: 20 }, color: '#1a1a2e' }} />
                             </Box>
                             <Box>
-                                <Typography sx={{ color: 'inherit', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2, fontFamily: 'inherit' }}>{chip.label}</Typography>
-                                <Typography sx={{ color: 'inherit', fontSize: '0.72rem', opacity: 0.75, fontFamily: 'inherit' }}>{chip.sub}</Typography>
+                                <Typography sx={{ color: 'inherit', fontWeight: 700, fontSize: { xs: '0.78rem', md: '0.9rem' }, lineHeight: 1.2, fontFamily: 'inherit' }}>{chip.label}</Typography>
+                                <Typography sx={{ color: 'inherit', fontSize: { xs: '0.62rem', md: '0.72rem' }, opacity: 0.75, fontFamily: 'inherit' }}>{chip.sub}</Typography>
                             </Box>
                         </Box>
                     </Box>

@@ -121,7 +121,7 @@ function AdminDashboard() {
             // Session may already be gone server-side — clear local state anyway.
         }
         localStorage.clear();
-        navigate('/login');
+        navigate('/login', { replace: true });
     };
 
     const inputStyle = fieldStyle(theme);

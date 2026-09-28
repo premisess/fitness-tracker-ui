@@ -4,6 +4,9 @@ import API from '../services/api';
 import { useAppTheme } from '../context/ThemeContext';
 
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
+// Google draws its button between 200 and 400 pixels wide.
+const MIN_WIDTH = 200;
+const MAX_WIDTH = 400;
 
 // Both are loaded once per page and shared by every button.
 let gisPromise = null;
@@ -51,13 +54,13 @@ function GoogleLogo() {
 }
 
 /**
- * "Continue with Google". A custom glass button matching the site theme (white text in dark mode),
- * which opens Google's sign-in popup the same way Google's own button would. onCredential receives
- * the ID token to send to POST /api/auth/google.
+ * "Continue with Google": Google's own button, drawn by Google so a click always opens its sign-in
+ * popup (a site can't click Google's button for the user). It follows the site theme: outlined in
+ * light mode, black in dark mode. onCredential receives the ID token to send to POST /api/auth/google.
  */
 function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false }) {
     const { mode, theme } = useAppTheme();
-    const realRef = useRef(null);
+    const buttonRef = useRef(null);
     const callbackRef = useRef(onCredential);
     const [status, setStatus] = useState('loading'); // loading | ready | unavailable | error
 
@@ -74,25 +77,23 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
                     return undefined;
                 }
                 return loadGoogleIdentityServices().then(() => {
-                    const container = realRef.current;
+                    const container = buttonRef.current;
                     if (cancelled || !container) return;
                     window.google.accounts.id.initialize({
                         client_id: googleClientId,
                         callback: (response) => callbackRef.current?.(response.credential),
                         ux_mode: 'popup',
-                        cancel_on_tap_outside: true,
                     });
+                    const width = Math.round(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, container.offsetWidth || MAX_WIDTH)));
                     container.innerHTML = '';
-                    // Real Google button is kept invisible; clicking our styled button
-                    // re-triggers it so the account chooser popup still opens.
                     window.google.accounts.id.renderButton(container, {
                         type: 'standard',
                         theme: mode === 'dark' ? 'filled_black' : 'outline',
                         size: 'large',
                         shape: 'pill',
                         text,
-                        logo_alignment: 'left',
-                        width: 220,
+                        logo_alignment: 'center',
+                        width,
                     });
                     setStatus('ready');
                 });
@@ -103,77 +104,45 @@ function GoogleSignInButton({ onCredential, text = 'continue_with', busy = false
         return () => { cancelled = true; };
     }, [mode, text]);
 
-    const handleClick = () => {
-        if (status !== 'ready' || busy) return;
-        const frame = realRef.current?.querySelector('iframe');
-        if (frame) {
-            try {
-                frame.click();
-                return;
-            } catch {
-                // Fall through to the One Tap prompt below.
-            }
-        }
-        window.google?.accounts?.id?.prompt();
-    };
-
     const label = text === 'signup_with' ? 'Sign up with Google' : 'Continue with Google';
     const reason = status === 'unavailable'
         ? "Google sign-in isn't set up on this server yet"
         : status === 'error' ? "Couldn't reach Google sign-in. Check your connection and reload." : '';
 
-    const disabled = status !== 'ready' || busy;
-
     return (
-        <Box sx={{ position: 'relative', minHeight: 48 }}>
-            {/* Google draws its real button here, off-screen, so the popup still works */}
-            <Box ref={realRef} sx={{
-                position: 'absolute', left: -10000, top: 0,
-                width: 220, height: 44, opacity: 0, pointerEvents: 'none', overflow: 'hidden',
+        <Box sx={{ position: 'relative', minHeight: 44 }}>
+            {/* Google draws its real, clickable button here. */}
+            <Box ref={buttonRef} sx={{
+                width: '100%', display: 'flex', justifyContent: 'center',
+                visibility: status === 'ready' ? 'visible' : 'hidden',
+                pointerEvents: busy ? 'none' : 'auto',
             }} />
 
-            {status !== 'ready' ? (
-                <Tooltip title={reason} placement="top" arrow>
-                    <span>
-                        <Button fullWidth disabled variant="outlined" startIcon={status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />}
-                                sx={{
-                                    borderRadius: 999, py: 1.3, textTransform: 'none', fontWeight: 600,
-                                    color: mode === 'dark' ? '#ffffff' : '#0f172a',
-                                    background: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.65)',
-                                    backdropFilter: 'blur(10px)',
-                                    borderColor: theme.mix(0.15),
-                                    fontFamily: "'Poppins', sans-serif",
-                                    '&.Mui-disabled': {
-                                        color: mode === 'dark' ? '#ffffffd9' : '#0f172abb',
-                                        borderColor: theme.mix(0.15), opacity: 0.85,
-                                    },
-                                }}>
-                            {label}
-                        </Button>
-                    </span>
-                </Tooltip>
-            ) : (
-                <Button fullWidth onClick={handleClick} startIcon={busy ? '' : <GoogleLogo />}
-                        disabled={disabled}
-                        sx={{
-                            borderRadius: 999, py: 1.3, textTransform: 'none', fontWeight: 600, fontSize: '0.95rem',
-                            color: mode === 'dark' ? '#ffffff' : '#0f172a',
-                            background: mode === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.65)',
-                            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-                            border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.15)'}`,
-                            fontFamily: "'Poppins', sans-serif",
-                            '&:hover': {
-                                background: mode === 'dark' ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.85)',
-                            },
-                        }}>
-                    {busy ? <CircularProgress size={18} /> : label}
-                </Button>
+            {status !== 'ready' && (
+                <Box sx={{ position: 'absolute', inset: 0 }}>
+                    <Tooltip title={reason} placement="top" arrow>
+                        <span>
+                            <Button fullWidth disabled variant="outlined"
+                                    startIcon={status === 'loading' ? <CircularProgress size={16} /> : <GoogleLogo />}
+                                    sx={{
+                                        borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 600,
+                                        fontFamily: "'Poppins', sans-serif",
+                                        '&.Mui-disabled': {
+                                            color: mode === 'dark' ? '#ffffffd9' : '#0f172abb',
+                                            borderColor: theme.mix(0.15), opacity: 0.85,
+                                        },
+                                    }}>
+                                {label}
+                            </Button>
+                        </span>
+                    </Tooltip>
+                </Box>
             )}
 
             {busy && (
                 <Box sx={{
                     position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: mode === 'dark' ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.55)', borderRadius: 999,
+                    background: mode === 'dark' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.6)', borderRadius: 999,
                 }}>
                     <CircularProgress size={22} sx={{ color: mode === 'dark' ? '#fff' : '#0f172a' }} />
                 </Box>

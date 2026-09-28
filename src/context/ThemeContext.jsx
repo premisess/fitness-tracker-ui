@@ -11,7 +11,8 @@ const SEVERITY_COLORS = { success: '#4ecdc4', info: '#45b7d1', warning: '#ffa726
 const POPUP_BLUR = 'blur(20px) saturate(140%)';
 
 export function ThemeProvider({ children }) {
-    const [mode, setMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
+    // New visitors start in light mode; after that, the site remembers their choice.
+    const [mode, setMode] = useState(() => localStorage.getItem('themeMode') || 'light');
 
     useEffect(() => {
         localStorage.setItem('themeMode', mode);

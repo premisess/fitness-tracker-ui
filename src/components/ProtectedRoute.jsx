@@ -40,8 +40,9 @@ function ProtectedRoute({ children, adminOnly = false }) {
         );
     }
 
+    // Replace rather than push, so the Back arrow doesn't bounce between this page and the login page.
     if (status === 'unauthorized') {
-        return <Navigate to="/login" />;
+        return <Navigate to="/login" replace />;
     }
 
     if (status === 'unconfirmed') {
@@ -49,7 +50,7 @@ function ProtectedRoute({ children, adminOnly = false }) {
     }
 
     if (status === 'forbidden') {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     return children;

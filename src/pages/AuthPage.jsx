@@ -6,6 +6,8 @@ import {
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Visibility from '@mui/icons-material/Visibility';
+import KeyIcon from '@mui/icons-material/Key';
+import { generateStrongPassword } from '../utils/password';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -60,6 +62,20 @@ function AuthPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    // null, or 'copied' / 'shown' after a password was suggested.
+    const [suggested, setSuggested] = useState(null);
+
+    const suggestPassword = async () => {
+        const generated = generateStrongPassword();
+        setPassword(generated);
+        setShowPassword(true);
+        try {
+            await navigator.clipboard.writeText(generated);
+            setSuggested('copied');
+        } catch {
+            setSuggested('shown');
+        }
+    };
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
@@ -83,12 +99,27 @@ function AuthPage() {
         localStorage.setItem('name', data.name);
         localStorage.setItem('email', data.email);
         if (isNewAccount) localStorage.setItem('hasLoggedInBefore', 'false');
+        // Replace, so the Back arrow from inside the app never returns to this sign-in page.
         if (data.verificationRequired) {
-            navigate('/confirm-email');
+            navigate('/confirm-email', { replace: true });
             return;
         }
-        navigate(data.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard');
+        navigate(data.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', { replace: true });
     };
+
+    // Already signed in (for example, arrived here with the Back arrow): go straight into the app.
+    useEffect(() => {
+        let ignore = false;
+        API.get('/auth/me')
+            .then((res) => {
+                if (ignore) return;
+                const data = res.data;
+                if (data.verificationRequired) navigate('/confirm-email', { replace: true });
+                else navigate(data.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', { replace: true });
+            })
+            .catch(() => {});
+        return () => { ignore = true; };
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -243,7 +274,7 @@ function AuthPage() {
                             <TextField fullWidth label="Password" value={password}
                                        type={showPassword ? 'text' : 'password'}
                                        autoComplete={isRegister ? 'new-password' : 'current-password'}
-                                       onChange={(e) => setPassword(e.target.value)} required
+                                       onChange={(e) => { setPassword(e.target.value); setSuggested(null); }} required
                                        sx={{ ...fieldStyle, ...appear(isRegister ? 6 : 5) }}
                                        slotProps={{
                                            input: {
@@ -259,7 +290,20 @@ function AuthPage() {
                                        }} />
 
                             {isRegister && (
-                                <Box sx={{ mt: 1, minHeight: 22 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.75, flexWrap: 'wrap' }}>
+                                    <Button size="small" startIcon={<KeyIcon />} onClick={suggestPassword}
+                                            sx={{ textTransform: 'none', fontWeight: 600, fontFamily: FONT, color: '#4ecdc4', px: 0.5, minWidth: 0 }}>
+                                        Suggest a strong password
+                                    </Button>
+                                    {suggested && (
+                                        <Typography sx={{ color: theme.mix(0.5), fontSize: '0.72rem', fontFamily: FONT }}>
+                                            {suggested === 'copied' ? 'Copied. Save it in your password manager.' : 'Save it somewhere safe.'}
+                                        </Typography>
+                                    )}
+                                </Box>
+                            )}
+                            {isRegister && (
+                                <Box sx={{ mt: 0.5, minHeight: 22 }}>
                                     {strength ? (
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <Box sx={{ flex: 1, height: 4, background: theme.mix(0.1), borderRadius: 2 }}>

@@ -207,7 +207,8 @@ function TopBar({ onOpenMenu, alerts }) {
             // Session may already be gone server-side, so clear local state anyway.
         }
         localStorage.clear();
-        navigate('/login');
+        // Replace, so the browser's Forward arrow can't return into the app after logging out.
+        navigate('/login', { replace: true });
     };
 
     return (

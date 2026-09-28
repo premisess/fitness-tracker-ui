@@ -9,6 +9,8 @@ import {
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import KeyIcon from '@mui/icons-material/Key';
+import { generateStrongPassword } from '../utils/password';
 import Blobs from '../components/Glass';
 import { FONT, glassCard, fieldStyle } from '../theme/styles';
 
@@ -16,6 +18,19 @@ function ResetPassword() {
     const { theme } = useAppTheme();
     const [newPassword, setNewPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [suggested, setSuggested] = useState(null);
+
+    const suggestPassword = async () => {
+        const generated = generateStrongPassword();
+        setNewPassword(generated);
+        setShowPassword(true);
+        try {
+            await navigator.clipboard.writeText(generated);
+            setSuggested('copied');
+        } catch {
+            setSuggested('shown');
+        }
+    };
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
@@ -71,7 +86,7 @@ function ResetPassword() {
                 {!success && (
                     <Box component="form" onSubmit={handleSubmit}>
                         <TextField fullWidth label="New Password" value={newPassword}
-                                   onChange={(e) => setNewPassword(e.target.value)}
+                                   onChange={(e) => { setNewPassword(e.target.value); setSuggested(null); }}
                                    required margin="normal" sx={inputStyle}
                                    type={showPassword ? 'text' : 'password'}
                                    slotProps={{
@@ -85,6 +100,17 @@ function ResetPassword() {
                                            )
                                        }
                                    }} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                            <Button size="small" startIcon={<KeyIcon />} onClick={suggestPassword}
+                                    sx={{ textTransform: 'none', fontWeight: 600, fontFamily: FONT, color: '#4ecdc4', px: 0.5, minWidth: 0 }}>
+                                Suggest a strong password
+                            </Button>
+                            {suggested && (
+                                <Typography sx={{ color: theme.mix(0.5), fontSize: '0.72rem', fontFamily: FONT }}>
+                                    {suggested === 'copied' ? 'Copied. Save it in your password manager.' : 'Save it somewhere safe.'}
+                                </Typography>
+                            )}
+                        </Box>
                         <Button fullWidth type="submit" variant="contained" disabled={loading}
                                 sx={{
                                     mt: 2, py: 1.5, borderRadius: 2,

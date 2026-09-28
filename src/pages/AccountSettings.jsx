@@ -67,7 +67,7 @@ function AccountSettings() {
         try {
             await API.delete('/account');
             localStorage.clear();
-            navigate('/login');
+            navigate('/login', { replace: true });
         } catch (err) {
             setConfirmDelete(false);
             setDeleteError(errorMessage(err, 'Failed to delete account.'));

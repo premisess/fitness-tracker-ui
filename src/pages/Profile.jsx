@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import {
-    Box, Typography, Button, TextField, Card, CardContent, Avatar, MenuItem
+    Box, Typography, Button, TextField, Card, CardContent, Avatar, MenuItem, Alert, Snackbar
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import Blobs from '../components/Glass';
@@ -13,6 +14,9 @@ import { pictureUrl } from '../utils/people';
 
 function Profile() {
     const { theme } = useAppTheme();
+    const navigate = useNavigate();
+    const [toast, setToast] = useState(false);
+    const returnTimer = useRef(null);
     const [profile, setProfile] = useState(null);
     const [form, setForm] = useState({ age: '', gender: '', weight: '', height: '', profilePic: '' });
     const [error, setError] = useState('');
@@ -57,13 +61,17 @@ function Profile() {
         return () => { cancelled = true; };
     }, []);
 
+    // Clear the return timer if the user leaves before it fires.
+    useEffect(() => () => { if (returnTimer.current) clearTimeout(returnTimer.current); }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(''); setSuccess('');
         try {
             await API.put('/profile', form);
-            setSuccess('Profile updated successfully!');
-            fetchProfile();
+            setToast(true);
+            if (returnTimer.current) clearTimeout(returnTimer.current);
+            returnTimer.current = setTimeout(() => navigate('/dashboard'), 1200);
         } catch (err) {
             setError(errorMessage(err, 'Failed to update profile'));
         }
@@ -227,6 +235,14 @@ function Profile() {
                     </CardContent>
                 </Card>
             </Box>
+
+            <Snackbar open={toast} autoHideDuration={3000} onClose={() => setToast(false)}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert severity="success" onClose={() => setToast(false)}
+                       sx={{ borderRadius: 2.5, fontWeight: 600, fontFamily: FONT }}>
+                    Profile updated
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

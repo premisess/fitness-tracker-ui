@@ -140,11 +140,12 @@ function AuthPage() {
         }
     };
 
-    const handleGoogle = async (credential) => {
+    // body is { accessToken } from Google's sign-in popup.
+    const handleGoogle = async (body) => {
         setError('');
         setGoogleLoading(true);
         try {
-            const res = await API.post('/auth/google', { credential });
+            const res = await API.post('/auth/google', body);
             finishSignIn(res.data, false);
         } catch (err) {
             setError(errorMessage(err, 'Google sign-in failed. Please try again.'));
@@ -249,7 +250,8 @@ function AuthPage() {
                         <Box sx={{ mt: 3, ...appear(2) }}>
                             <GoogleSignInButton
                                 text={isRegister ? 'signup_with' : 'signin_with'}
-                                onCredential={handleGoogle}
+                                onGoogle={handleGoogle}
+                                onError={setError}
                                 busy={googleLoading}
                             />
                         </Box>

@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API, { ACTIVITY_EVENT } from '../services/api';
-import { errorMessage } from '../services/errors';
 import { useAppTheme } from '../context/ThemeContext';
 import { FONT, glassCard } from '../theme/styles';
 import Blobs from '../components/Glass';
 import {
-    Alert, Box, Typography, Card, CardContent, Button, LinearProgress, Tooltip,
+    Box, Typography, Card, CardContent, LinearProgress, Tooltip,
 } from '@mui/material';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -112,8 +111,6 @@ function Dashboard() {
     // The backend aggregates most of this screen into one call; the week chart uses the workout list.
     const [summary, setSummary] = useState(null);
     const [workouts, setWorkouts] = useState([]);
-    const [verifyNotice, setVerifyNotice] = useState('');
-    const [resending, setResending] = useState(false);
 
     const name = summary?.name || localStorage.getItem('name') || '';
     const firstName = name.split(' ')[0];
@@ -130,18 +127,6 @@ function Dashboard() {
             .catch(() => {});
         return () => { ignore = true; };
     }, []);
-
-    const resendVerification = async () => {
-        setResending(true);
-        try {
-            const res = await API.post('/auth/resend-verification');
-            setVerifyNotice(res.data?.message || 'Verification link sent.');
-        } catch (err) {
-            setVerifyNotice(errorMessage(err, 'Could not send the link. Please try again in a minute.'));
-        } finally {
-            setResending(false);
-        }
-    };
 
     const now = new Date();
     const week = lastSevenDays(workouts);
@@ -180,13 +165,6 @@ function Dashboard() {
                         {now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
                     </Typography>
                 </Box>
-                {summary && !summary.emailVerified && (
-                    <Alert severity="warning"
-                           action={<Button color="inherit" size="small" disabled={resending} onClick={resendVerification}>Resend link</Button>}>
-                        Please confirm your email address. We sent a link to {localStorage.getItem('email')}.
-                        {verifyNotice && <Typography sx={{ fontSize: '0.8rem', mt: 0.5 }}>{verifyNotice}</Typography>}
-                    </Alert>
-                )}
 
                 {/* Getting started, until every step is done */}
                 {summary && completedSteps < journeySteps.length && (

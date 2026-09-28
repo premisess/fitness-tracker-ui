@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
@@ -11,7 +11,7 @@ import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import VerifyEmail from './pages/VerifyEmail';
+import ConfirmEmail from './pages/ConfirmEmail';
 import Nutrition from './pages/Nutrition';
 import ExerciseLibrary from './pages/ExerciseLibrary';
 import Analytics from './pages/Analytics';
@@ -47,7 +47,9 @@ function App() {
                     <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/confirm-email" element={<ConfirmEmail />} />
+                    {/* Links from older confirmation emails. */}
+                    <Route path="/verify-email" element={<Navigate to="/confirm-email" replace />} />
                     <Route path="/privacy" element={<Privacy />} />
                     {/* Signed-in pages share the sidebar layout. */}
                     <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

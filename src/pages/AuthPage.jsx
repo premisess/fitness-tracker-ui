@@ -83,6 +83,10 @@ function AuthPage() {
         localStorage.setItem('name', data.name);
         localStorage.setItem('email', data.email);
         if (isNewAccount) localStorage.setItem('hasLoggedInBefore', 'false');
+        if (data.verificationRequired) {
+            navigate('/confirm-email');
+            return;
+        }
         navigate(data.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard');
     };
 

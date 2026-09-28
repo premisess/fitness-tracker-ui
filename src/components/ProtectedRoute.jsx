@@ -6,7 +6,7 @@ import { Box, CircularProgress } from '@mui/material';
 function ProtectedRoute({ children, adminOnly = false }) {
     // The session lives in an HttpOnly cookie invisible to JS, so the only way
     // to know if we're logged in is to ask the backend.
-    const [status, setStatus] = useState('checking'); // checking | ok | unauthorized | forbidden
+    const [status, setStatus] = useState('checking'); // checking | ok | unauthorized | forbidden | unconfirmed
 
     useEffect(() => {
         let cancelled = false;
@@ -16,7 +16,12 @@ function ProtectedRoute({ children, adminOnly = false }) {
                 localStorage.setItem('name', res.data.name);
                 localStorage.setItem('email', res.data.email);
                 localStorage.setItem('role', res.data.role);
-                setStatus(adminOnly && res.data.role !== 'ADMIN' ? 'forbidden' : 'ok');
+                if (res.data.verificationRequired) {
+                    // Signed up but hasn't entered the emailed code yet.
+                    setStatus('unconfirmed');
+                } else {
+                    setStatus(adminOnly && res.data.role !== 'ADMIN' ? 'forbidden' : 'ok');
+                }
             })
             .catch(() => {
                 if (!cancelled) {
@@ -37,6 +42,10 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
     if (status === 'unauthorized') {
         return <Navigate to="/login" />;
+    }
+
+    if (status === 'unconfirmed') {
+        return <Navigate to="/confirm-email" replace />;
     }
 
     if (status === 'forbidden') {
